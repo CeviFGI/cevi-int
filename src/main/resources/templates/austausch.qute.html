@@ -1,0 +1,28 @@
+{#include base}
+<style>
+  .exchange {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 0.5em;
+    margin-bottom: 1em;
+  }
+
+  .exchange .organization {
+    font-weight: bold;
+  }
+
+  .exchange .description {
+    color: #6f7287;
+  }
+</style>
+
+<h2>Austausch</h2>
+
+{#for exchangeItem in exchange}
+<div class="exchange">
+    <p class="organization">{exchangeItem.organization}</p>
+    <p class="description">{exchangeItem.description}</p>
+</div>
+{/for}
+{/include}

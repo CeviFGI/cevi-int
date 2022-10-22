@@ -1,0 +1,30 @@
+{#include base}
+<style>
+  .volontariat {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 0.5em;
+    margin-bottom: 1em;
+  }
+
+  .volontariat .organization {
+    font-weight: bold;
+  }
+
+  .volontariat .description {
+    color: #6f7287;
+  }
+</style>
+
+<h2>Volontariat</h2>
+
+    {#for volontariat in volontariate}
+    <div class="volontariat">
+        <p class="organization">{volontariat.organization}</p>
+        <p class="location">{volontariat.location}</p>
+        <p class="description">{volontariat.description.raw}</p>
+    </div>
+    {/for}
+
+{/include}
