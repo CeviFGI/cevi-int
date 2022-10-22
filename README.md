@@ -26,3 +26,9 @@ You can create and run a docker image using:
 sudo docker build -f src/main/docker/Dockerfile.jvm -t quarkus/international-jvm .
 sudo docker run -i --rm -p 8080:8080 quarkus/international-jvm
 ```
+
+## Start the application based on the last published docker image
+
+```shell script
+sudo docker-compose up
+```
