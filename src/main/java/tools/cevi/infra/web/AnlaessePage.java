@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @Path("/anlaesse")
 public class AnlaessePage {
     @Inject
-    private EventService eventService;
+    EventService eventService;
 
     private final Template anlaesse;
 

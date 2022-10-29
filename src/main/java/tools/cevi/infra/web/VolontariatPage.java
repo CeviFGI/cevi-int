@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @Path("/volontariat")
 public class VolontariatPage {
     @Inject
-    private VolontariatService volontariatService;
+    VolontariatService volontariatService;
 
     private final Template volontariat;
 

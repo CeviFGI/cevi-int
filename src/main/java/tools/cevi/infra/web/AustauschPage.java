@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @Path("/austausch")
 public class AustauschPage {
     @Inject
-    private ExchangeService exchangeService;
+    ExchangeService exchangeService;
 
     private final Template austausch;
 
