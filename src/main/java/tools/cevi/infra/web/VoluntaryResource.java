@@ -17,11 +17,11 @@ public class VoluntaryResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance voluntaryServiceList(List<Voluntary> services);
+        public static native TemplateInstance list(List<Voluntary> services);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get() {
-        return Templates.voluntaryServiceList(service.listVoluntaryServices());
+    public TemplateInstance list() {
+        return Templates.list(service.listVoluntaryServices());
     }
 }

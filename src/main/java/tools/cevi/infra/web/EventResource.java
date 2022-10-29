@@ -18,12 +18,12 @@ public class EventResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance eventList(List<Event> events);
+        public static native TemplateInstance list(List<Event> events);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get() {
-        return Templates.eventList(service.listEvents());
+    public TemplateInstance list() {
+        return Templates.list(service.listEvents());
     }
 }

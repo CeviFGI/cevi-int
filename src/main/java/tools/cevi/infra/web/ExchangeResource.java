@@ -18,12 +18,12 @@ public class ExchangeResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance exchangeList(List<Exchange> exchanges);
+        public static native TemplateInstance list(List<Exchange> exchanges);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get() {
-        return Templates.exchangeList(service.listExchanges());
+    public TemplateInstance list() {
+        return Templates.list(service.listExchanges());
     }
 }

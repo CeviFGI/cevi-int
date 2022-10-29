@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class IndexPageTest {
+public class ContactResourceTest {
     @Test
     public void page_working() {
-        given().when().get("/").then().statusCode(200);
+        given().when().get("/kontakt").then().statusCode(200);
     }
 }

@@ -11,12 +11,12 @@ import javax.ws.rs.core.MediaType;
 public class ContactResource {
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance contactForm();
+        public static native TemplateInstance form();
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get() {
-        return Templates.contactForm();
+    public TemplateInstance form() {
+        return Templates.form();
     }
 }

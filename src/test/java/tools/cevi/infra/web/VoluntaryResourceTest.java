@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class AustauschPageTest {
+public class VoluntaryResourceTest {
     @Test
     public void page_working() {
-        given().when().get("/austausch").then().statusCode(200);
+        given().when().get("/volontariat").then().statusCode(200);
     }
 }

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class KontaktPageTest {
+public class EventResourceTest {
     @Test
     public void page_working() {
-        given().when().get("/kontakt").then().statusCode(200);
+        given().when().get("/anlaesse").then().statusCode(200);
     }
 }

@@ -6,9 +6,14 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class AnlaessePageTest {
+public class IndexResourceTest {
     @Test
     public void page_working() {
-        given().when().get("/anlaesse").then().statusCode(200);
+        given().when().get("/").then().statusCode(200);
+    }
+
+    @Test
+    public void version_working() {
+        given().when().get("/version").then().statusCode(200);
     }
 }
