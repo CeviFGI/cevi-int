@@ -2,17 +2,16 @@ package tools.cevi.service;
 
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
-import tools.cevi.domain.VolontariatItem;
+import tools.cevi.domain.Voluntary;
+import tools.cevi.infra.jpa.VoluntaryServiceEntity;
 
 @ApplicationScoped
 public class VoluntaryService {
-    public List<VolontariatItem> listVoluntaryServices() {
-        return List.of(
-                new VolontariatItem("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>"),
-                new VolontariatItem("Volunteers for Europe", "http://vfe.cvjm.de/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>"),
-                new VolontariatItem("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>"),
-                new VolontariatItem("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>"),
-                new VolontariatItem("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>")
-                );
+    public List<Voluntary> listVoluntaryServices() {
+        return VoluntaryServiceEntity.listAll().stream().map(e -> this.map((VoluntaryServiceEntity) e)).toList();
+    }
+
+    private Voluntary map(VoluntaryServiceEntity entity) {
+        return new Voluntary(entity.organization, entity.organizationLink, entity.location, entity.description);
     }
 }

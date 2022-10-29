@@ -8,17 +8,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import tools.cevi.domain.VolontariatItem;
-import tools.cevi.service.VoluntaryService;
+import tools.cevi.domain.Voluntary;
 
 @Path("volontariat")
 public class VoluntaryResource {
     @Inject
-    VoluntaryService service;
+    tools.cevi.service.VoluntaryService service;
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance voluntaryServiceList(List<VolontariatItem> services);
+        public static native TemplateInstance voluntaryServiceList(List<Voluntary> services);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)

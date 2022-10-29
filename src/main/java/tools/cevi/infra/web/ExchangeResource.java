@@ -8,7 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import tools.cevi.domain.ExchangeItem;
+import tools.cevi.domain.Exchange;
 import tools.cevi.service.ExchangeService;
 
 @Path("austausch")
@@ -18,7 +18,7 @@ public class ExchangeResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance exchangeList(List<ExchangeItem> exchanges);
+        public static native TemplateInstance exchangeList(List<Exchange> exchanges);
     }
 
     @GET

@@ -8,7 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import tools.cevi.domain.EventItem;
+import tools.cevi.domain.Event;
 import tools.cevi.service.EventService;
 
 @Path("anlaesse")
@@ -18,7 +18,7 @@ public class EventResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance eventList(List<EventItem> events);
+        public static native TemplateInstance eventList(List<Event> events);
     }
 
     @GET
