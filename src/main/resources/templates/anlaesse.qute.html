@@ -1,31 +1,10 @@
 {#include base}
-<style>
-  .event {
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 0.5em;
-    margin-bottom: 1em;
-  }
-
-  .event .date {
-    color: #d1410c;
-  }
-
-  .event .title {
-    font-weight: bold;
-  }
-
-  .event .summary {
-    color: #6f7287;
-  }
-</style>
 <h2>Anlässe</h2>
 
 <p>Hier findest du eine Übersicht über die nächsten internationalen Anlässe.</p>
 
 {#for event in events}
-<div class="event">
+<div class="box">
   <p class="title">{event.title}</p>
   <p class="date">{event.date}</p>
   <p class="location">{event.location}</p>

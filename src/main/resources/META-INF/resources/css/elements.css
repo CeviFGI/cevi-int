@@ -1,0 +1,19 @@
+  .box {
+    background-color: rgb(243 244 246);
+    border: 2px solid black;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1em;
+  }
+
+  .box .date {
+    color: #d1410c;
+  }
+
+  .box .title {
+    font-weight: bold;
+  }
+
+  .box .summary {
+    color: black;
+  }

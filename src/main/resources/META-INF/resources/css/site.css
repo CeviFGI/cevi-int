@@ -1,0 +1,26 @@
+@import "menu.css";
+@import "elements.css";
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+    border-top: 5px solid #424242;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+main {
+  flex: 1;
+  max-width: 800px;
+  padding: 30px 15px 30px 15px;
+}
+
+footer {
+  border-top: 0.1rem solid #e8e8e8;
+  padding: 30px 15px 30px 15px;
+}
