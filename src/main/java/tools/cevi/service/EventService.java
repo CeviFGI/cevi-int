@@ -8,7 +8,6 @@ import tools.cevi.infra.jpa.EventEntity;
 @ApplicationScoped
 public class EventService {
     public List<Event> listEvents() {
-
         return EventEntity.listAll().stream().map(e -> this.map((EventEntity) e)).toList();
     }
 
