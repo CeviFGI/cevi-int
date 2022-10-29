@@ -4,12 +4,7 @@
 <p>Hier findest du eine Übersicht über die nächsten internationalen Anlässe.</p>
 
 {#for event in events}
-<div class="box">
-  <p class="title">{event.title}</p>
-  <p class="date">{event.date}</p>
-  <p>{event.location}</p>
-  <p>{event.description.raw}</p>
-</div>
+  {#event event}{/event}
 {/for}
 
 {/include}
