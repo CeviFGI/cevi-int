@@ -9,6 +9,15 @@ You can run your application in dev mode using:
 
 It also starts a dev UI under http://localhost:8080/q/dev/.
 
+## Running the application in dev mode against mysql
+
+You can run your application in dev mode using:
+```shell script
+QUARKUS_PROFILE=mysql ./mvnw compile quarkus:dev
+```
+
+It also starts a dev UI under http://localhost:8080/q/dev/.
+
 ## Packaging and running the application (jar)
 
 The application can be packaged using:
@@ -32,3 +41,5 @@ sudo docker run -i --rm -p 8080:8080 quarkus/international-jvm
 ```shell script
 sudo docker-compose up
 ```
+
+Visit http://localhost:9000 to see the page and http://localhost:9100 to access phpmyadmin to see the database.

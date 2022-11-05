@@ -2,7 +2,36 @@ version: "3.9"
 
 services:
 
-  app:
-    image: ghcr.io/patrickuhlmann/cevi-int/quarkus:main
-    ports:
-      - "8080:8080"
+    app:
+      image: ghcr.io/patrickuhlmann/cevi-int/quarkus:main
+      ports:
+        - "9000:8080"
+      
+    mysql:
+      image: mysql:8.0
+      volumes:
+        - ./db/international.sql:/docker-entrypoint-initdb.d/dump.sql
+        #- ./data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=international
+        - MYSQL_DATABASE=international
+        - MYSQL_USER=international
+        - MYSQL_PASSWORD=international
+      ports:
+        - "3306:3306"
+      healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 5s
+        retries: 12
+
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin:5.2
+      environment:
+        - PMA_HOST=mysql
+        - PMA_USER=international
+        - PMA_PASSWORD=international
+      ports:
+        - "9100:80"
+      depends_on:
+        mysql:
+          condition: service_healthy
