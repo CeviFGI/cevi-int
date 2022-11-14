@@ -30,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: fatjar
-        path: target/international-1.0.0-SNAPSHOT-runner.jar
+        path: target/international-*-SNAPSHOT-runner.jar
         
     - name: Build regular jar
       run: ./mvnw package
@@ -52,19 +52,8 @@ jobs:
       id: prep
       run: |
         DOCKER_IMAGE=ghcr.io/${{ github.repository }}/quarkus
-        VERSION=edge
-        if [[ $GITHUB_REF == refs/tags/* ]]; then
-          VERSION=${GITHUB_REF#refs/tags/}
-        elif [[ $GITHUB_REF == refs/heads/* ]]; then
-          VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-        elif [[ $GITHUB_REF == refs/pull/* ]]; then
-          VERSION=pr-${{ github.event.number }}
-        fi
-        TAGS="${DOCKER_IMAGE}:${VERSION}"
-        if [ "${{ github.event_name }}" = "push" ]; then
-          TAGS="$TAGS,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
-        fi
-        echo ::set-output name=version::${VERSION}
+        VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+        TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
         echo ::set-output name=tags::${TAGS}
         echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
@@ -108,19 +97,8 @@ jobs:
       id: prep
       run: |
         DOCKER_IMAGE=registry.cevi.tools/cevi/international
-        VERSION=edge
-        if [[ $GITHUB_REF == refs/tags/* ]]; then
-          VERSION=${GITHUB_REF#refs/tags/}
-        elif [[ $GITHUB_REF == refs/heads/* ]]; then
-          VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-        elif [[ $GITHUB_REF == refs/pull/* ]]; then
-          VERSION=pr-${{ github.event.number }}
-        fi
-        TAGS="${DOCKER_IMAGE}:${VERSION}"
-        if [ "${{ github.event_name }}" = "push" ]; then
-          TAGS="$TAGS,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
-        fi
-        echo ::set-output name=version::${VERSION}
+        VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+        TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
         echo ::set-output name=tags::${TAGS}
         echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
