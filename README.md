@@ -9,15 +9,6 @@ You can run your application in dev mode using:
 
 It also starts a dev UI under http://localhost:8080/q/dev/.
 
-## Running the application in dev mode against mysql
-
-You can run your application in dev mode using:
-```shell script
-QUARKUS_PROFILE=mysql ./mvnw compile quarkus:dev
-```
-
-It also starts a dev UI under http://localhost:8080/q/dev/.
-
 ## Packaging and running the application (jar)
 
 The application can be packaged using:
