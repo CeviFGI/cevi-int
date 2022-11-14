@@ -34,10 +34,5 @@ CREATE TABLE contact_form_entries (
 );
 
 --
--- Sequences
---
-CREATE SEQUENCE hibernate_sequence;
-
---
 -- Indexes
 --
