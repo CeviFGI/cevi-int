@@ -10,7 +10,9 @@ import tools.cevi.service.VoluntaryService;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
@@ -25,7 +27,7 @@ public class VoluntaryResourceTest {
     @Test
     public void page_working() {
         var voluntaryServices = service.listVoluntaryServices();
-        assertThat(voluntaryServices, hasSize(2));
+        assertThat(voluntaryServices, is(not(empty())));
         given().when().get(voluntaryEndpoint).then().statusCode(200).body(containsString(voluntaryServices.get(0).description()));
     }
 }

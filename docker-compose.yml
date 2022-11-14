@@ -4,14 +4,17 @@ services:
 
     app:
       image: ghcr.io/patrickuhlmann/cevi-int/quarkus:main
+      environment:
+        - QUARKUS_DATASOURCE_USERNAME=international
+        - QUARKUS_DATASOURCE_PASSWORD=international
+        - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3306/international
+        - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=validate
+        - QUARKUS_LOG_LEVEL=INFO
       ports:
         - "9000:8080"
       
     mysql:
       image: mysql:8.0
-      volumes:
-        - ./db/international.sql:/docker-entrypoint-initdb.d/dump.sql
-        #- ./data:/var/lib/mysql
       environment:
         - MYSQL_ROOT_PASSWORD=international
         - MYSQL_DATABASE=international

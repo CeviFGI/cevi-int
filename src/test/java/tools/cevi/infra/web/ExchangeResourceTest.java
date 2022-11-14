@@ -10,7 +10,9 @@ import tools.cevi.service.ExchangeService;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
@@ -24,7 +26,7 @@ public class ExchangeResourceTest {
     @Test
     public void page_working() {
         var exchanges = service.listExchanges();
-        assertThat(exchanges, hasSize(3));
+        assertThat(exchanges, is(not(empty())));
         given().when().get(exchangeEndpoint).then().statusCode(200).body(containsString(exchanges.get(0).description()));
     }
 }

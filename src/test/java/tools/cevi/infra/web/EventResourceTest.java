@@ -10,7 +10,9 @@ import tools.cevi.service.EventService;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
@@ -25,7 +27,7 @@ public class EventResourceTest {
     @Test
     public void page_working() {
         var events = service.listEvents();
-        assertThat(events, hasSize(4));
+        assertThat(events, is(not(empty())));
         given().when().get(eventEndpoint).then().statusCode(200).body(containsString(events.get(0).description()));
     }
 }

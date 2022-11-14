@@ -11,8 +11,10 @@ import tools.cevi.service.ContactService;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
 public class ContactResourceTest {
@@ -34,7 +36,7 @@ public class ContactResourceTest {
                 .when().post(contactEndpoint).then().statusCode(200);
 
        var messages = service.listContactMessages();
-        assertThat(messages, hasSize(1));
+        assertThat(messages, is(not(empty())));
         assertThat(messages.get(0).message(), equalTo("my message"));
     }
 }
