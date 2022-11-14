@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 public class DemoData {
     @Transactional
     void startup(@Observes StartupEvent event) {
-        if (ProfileManager.getActiveProfile().equals("mysql")) {
+        if (ProfileManager.getActiveProfile().equals("mysql") || ProfileManager.getActiveProfile().equals("prod")) {
             return;
         }
 
