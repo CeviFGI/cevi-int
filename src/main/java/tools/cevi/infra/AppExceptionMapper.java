@@ -1,4 +1,4 @@
-package tools.cevi.infra.web;
+package tools.cevi.infra;
 
 import io.quarkus.logging.Log;
 import io.quarkus.qute.Template;

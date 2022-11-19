@@ -1,27 +1,23 @@
-package tools.cevi.infra.web;
+package tools.cevi.event;
 
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import java.util.List;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import tools.cevi.domain.Voluntary;
 
-@Path("volontariat")
-public class VoluntaryResource {
-    @Inject
-    tools.cevi.service.VoluntaryService service;
-
+@Path("anlaesse")
+public class EventResource {
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance list(List<Voluntary> services);
+        public static native TemplateInstance list(List<Event> events);
     }
+
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance list() {
-        return Templates.list(service.listVoluntaryServices());
+        return Templates.list(Event.listAll());
     }
 }

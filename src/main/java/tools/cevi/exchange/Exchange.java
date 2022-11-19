@@ -1,4 +1,4 @@
-package tools.cevi.infra.jpa;
+package tools.cevi.exchange;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import javax.persistence.Column;
@@ -9,17 +9,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-@Table(name = "events")
+@Table(name = "exchanges")
 @Entity
-public class EventEntity extends PanacheEntityBase {
+public class Exchange extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    public String title;
-    public String date;
-    public String location;
+    public String organization;
+    public String organizationLink;
     @Column(columnDefinition = "TEXT")
     public String description;
 }

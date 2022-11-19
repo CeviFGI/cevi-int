@@ -1,4 +1,4 @@
-package tools.cevi.infra.web;
+package tools.cevi.infra;
 
 import io.vertx.core.http.HttpServerRequest;
 import org.jboss.logging.Logger;

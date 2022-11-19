@@ -1,4 +1,4 @@
-package tools.cevi.infra.web;
+package tools.cevi.infra;
 
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;

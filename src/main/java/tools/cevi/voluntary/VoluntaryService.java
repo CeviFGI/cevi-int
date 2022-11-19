@@ -1,4 +1,4 @@
-package tools.cevi.infra.jpa;
+package tools.cevi.voluntary;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import javax.persistence.Column;
@@ -9,9 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-@Table(name = "exchanges")
+@Table(name = "voluntary_services")
 @Entity
-public class ExchangeEntity extends PanacheEntityBase {
+public class VoluntaryService extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -19,6 +19,7 @@ public class ExchangeEntity extends PanacheEntityBase {
     private Long id;
     public String organization;
     public String organizationLink;
+    public String location;
     @Column(columnDefinition = "TEXT")
     public String description;
 }

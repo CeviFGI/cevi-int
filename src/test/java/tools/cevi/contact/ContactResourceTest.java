@@ -1,13 +1,12 @@
-package tools.cevi.infra.web;
+package tools.cevi.contact;
 
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import java.net.URL;
-import javax.inject.Inject;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import tools.cevi.service.ContactService;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,9 +17,6 @@ import static org.hamcrest.Matchers.not;
 
 @QuarkusTest
 public class ContactResourceTest {
-    @Inject
-    ContactService service;
-
     @TestHTTPEndpoint(ContactResource.class)
     @TestHTTPResource
     URL contactEndpoint;
@@ -35,8 +31,8 @@ public class ContactResourceTest {
         given().contentType(ContentType.URLENC).formParam("message", "my message")
                 .when().post(contactEndpoint).then().statusCode(200);
 
-       var messages = service.listContactMessages();
+       List<ContactFormEntry> messages = ContactFormEntry.listAll();
         assertThat(messages, is(not(empty())));
-        assertThat(messages.get(0).message(), equalTo("my message"));
+        assertThat(messages.get(0).message, equalTo("my message"));
     }
 }

@@ -1,4 +1,4 @@
-package tools.cevi.infra.web;
+package tools.cevi.infra;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
