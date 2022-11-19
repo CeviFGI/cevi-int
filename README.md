@@ -34,3 +34,22 @@ sudo docker-compose up
 ```
 
 Visit http://localhost:9000 to see the page and http://localhost:9100 to access phpmyadmin to see the database.
+
+## Configuration
+
+When running on production you should set the following environment variables to configure the application:
+
+Database configuration:
+  * QUARKUS_DATASOURCE_USERNAME 
+  * QUARKUS_DATASOURCE_PASSWORD 
+  * QUARKUS_DATASOURCE_JDBC_URL
+
+Mail configuration:
+  * APPLICATION_CONTACTFORM_TO
+  * QUARKUS_MAILER_AUTH_METHODS
+  * QUARKUS_MAILSER_FROM
+  * QUARKUS_MAILER_HOST
+  * QUARKUS_MAILER_PORT
+  * QUARKUS_MAILER_SSL
+  * QUARKUS_MAILER_USERNAME
+  * QUARKUS_MAILER_PASSWORD
