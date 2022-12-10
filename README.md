@@ -1,5 +1,17 @@
 # cevi international
 
+Technology
+* [Quarkus](https://quarkus.io)
+  * [Resteasy](https://quarkus.io/guides/resteasy) (REST)
+  * [Mailer](https://quarkus.io/guides/mailer-reference)
+  * [Qute](https://quarkus.io/guides/qute)(Template engine)
+  * [Panache](https://quarkus.io/guides/hibernate-orm-panache) (ORM)
+* [Flyway](https://quarkus.io/guides/flyway) (Database migration)
+* [H2](https://www.h2database.com) (In-Memory Database)
+* [Mysql](https://www.mysql.com) (Database)
+
+Note: Not using resteasy reactive as no H2 reactive driver is [available](https://github.com/quarkusio/quarkus/issues/20471)
+
 ## Running the application in dev mode
 
 You can run your application in dev mode using:
