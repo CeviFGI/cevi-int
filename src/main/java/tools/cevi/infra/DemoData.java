@@ -5,6 +5,8 @@ import io.quarkus.runtime.StartupEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.transaction.Transactional;
+
+import tools.cevi.auth.User;
 import tools.cevi.event.Event;
 import tools.cevi.exchange.Exchange;
 import tools.cevi.voluntary.VoluntaryService;
@@ -28,6 +30,8 @@ public class DemoData {
             createExchange("Olivenernte", "15. - 24. Oktober 2022", "Palästina");
             createExchange("European Unify Conference", "20. - 23. Oktober 2022", "Wien");
             createExchange("YE 50th anniversary", "28. Juni - 02. Juli 2023", "Berlin");
+
+            User.add("patrick", "patrick", "admin");
 
             Log.info("Generation finished");
         }
