@@ -45,7 +45,7 @@ public class ContactResourceTest {
     }
 
     @Test
-    public void contact_form_saved() {
+    public void form_saved() {
         given().contentType(ContentType.URLENC).formParam("message", "my message")
                 .when().post(contactEndpoint).then().statusCode(200);
 
@@ -60,6 +60,5 @@ public class ContactResourceTest {
         assertThat(actual.getSubject(), equalTo("[Cevi International Webseite] Kontaktformular ausgefüllt"));
 
         assertThat(mailbox.getTotalMessagesSent(), equalTo(1));
-
     }
 }

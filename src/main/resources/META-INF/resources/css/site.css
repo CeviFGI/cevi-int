@@ -1,6 +1,7 @@
 @import "menu.css";
 @import "elements.css";
 @import "form.css";
+@import "colors.css";
 
 body {
   display: flex;
