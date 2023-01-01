@@ -34,7 +34,12 @@ public class VoluntaryResourceTest {
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
-                .when().post(voluntaryEndpoint).then().statusCode(401);
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"))
+                .cookie("quarkus-redirect-location", containsString(voluntaryEndpoint.toString()));
     }
 
     @Test

@@ -13,6 +13,9 @@
       <a href="/volontariat">Volontariat</a>
       <a href="/austausch">Austausch</a>
       <a href="/kontakt">Kontakt</a>
+      {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
+      <a href="/auth/logout">Ausloggen</a>
+      {/if}
     </nav>
   </header>
   <main>

@@ -35,7 +35,12 @@ public class EventResourceTest {
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
-                .when().post(eventEndpoint).then().statusCode(401);
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"))
+                .cookie("quarkus-redirect-location", containsString(eventEndpoint.toString()));
     }
 
     @Test

@@ -32,7 +32,12 @@ public class ExchangeResourceTest {
         given().contentType(ContentType.URLENC).formParam("organization", "test org")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("description", "desc")
-                .when().post(exchangeEndpoint).then().statusCode(401);
+                .when()
+                .post(exchangeEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"))
+                .cookie("quarkus-redirect-location", containsString(exchangeEndpoint.toString()));
     }
 
     @Test
