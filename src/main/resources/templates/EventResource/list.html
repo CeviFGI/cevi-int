@@ -1,7 +1,9 @@
 {#include base}
 <h2>Anlässe</h2>
 
+{#if inject:vertxRequest.getCookie('quarkus-credential') != null}
 <a href="/anlaesse/add">Neuen Anlass eintragen</a>
+{/if}
 
 <p>Hier findest du eine Übersicht über die nächsten internationalen Anlässe.</p>
 

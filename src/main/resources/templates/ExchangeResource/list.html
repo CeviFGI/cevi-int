@@ -1,7 +1,9 @@
 {#include base}
 <h2>Austausch</h2>
 
+{#if inject:vertxRequest.getCookie('quarkus-credential') != null}
 <a href="/austausch/add">Neue Austauschmöglichkeit eintragen</a>
+{/if}
 
 <p>Hier findest du eine Übersicht über die nächsten Austauschmöglichkeiten.</p>
 

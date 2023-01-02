@@ -22,14 +22,35 @@ public class VoluntaryResourceTest {
     URL voluntaryEndpoint;
 
     @Test
-    public void page_working() {
+    public void list_no_auth() {
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
         assertThat(voluntaryServices, is(not(empty())));
-        given().when().get(voluntaryEndpoint).then().statusCode(200).body(containsString(voluntaryServices.get(0).description));
+        given()
+                .when()
+                .get(voluntaryEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(voluntaryServices.get(0).description))
+                .body(not(containsString("Neues Volontariat eintragen<")));
     }
 
     @Test
-    public void form_save_need_auth() {
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void list_auth() {
+        List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
+        assertThat(voluntaryServices, is(not(empty())));
+        given()
+                .cookie("quarkus-credential")
+                .when()
+                .get(voluntaryEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(voluntaryServices.get(0).description))
+                .body(containsString("Neues Volontariat eintragen"));
+    }
+
+    @Test
+    public void form_save_no_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
@@ -44,7 +65,7 @@ public class VoluntaryResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void form_saved() {
+    public void form_save_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")

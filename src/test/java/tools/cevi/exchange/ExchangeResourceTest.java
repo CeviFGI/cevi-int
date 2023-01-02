@@ -21,14 +21,35 @@ public class ExchangeResourceTest {
     @TestHTTPResource
     URL exchangeEndpoint;
     @Test
-    public void page_working() {
+    public void list_no_auth() {
         List<Exchange> exchanges = Exchange.listAll();
         assertThat(exchanges, is(not(empty())));
-        given().when().get(exchangeEndpoint).then().statusCode(200).body(containsString(exchanges.get(0).description));
+        given()
+                .when()
+                .get(exchangeEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(exchanges.get(0).description))
+                .body(not(containsString("Neue Austauschmöglichkeit eintragen")));
     }
 
     @Test
-    public void form_save_need_auth() {
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void list_auth() {
+        List<Exchange> exchanges = Exchange.listAll();
+        assertThat(exchanges, is(not(empty())));
+        given()
+                .cookie("quarkus-credential")
+                .when()
+                .get(exchangeEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(exchanges.get(0).description))
+                .body(containsString("Neue Austauschmöglichkeit eintragen"));
+    }
+
+    @Test
+    public void form_save_no_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("description", "desc")
@@ -42,7 +63,7 @@ public class ExchangeResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void form_saved() {
+    public void form_save_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("description", "desc")

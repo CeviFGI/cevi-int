@@ -23,14 +23,35 @@ public class EventResourceTest {
     URL eventEndpoint;
 
     @Test
-    public void page_working() {
+    public void list_no_auth() {
         List<Event> events = Event.listAll();
         assertThat(events, is(not(empty())));
-        given().when().get(eventEndpoint).then().statusCode(200).body(containsString(events.get(0).description));
+        given()
+                .when()
+                .get(eventEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(events.get(0).description))
+                .body(not(containsString("Neuen Anlass eintragen")));
     }
 
     @Test
-    public void form_save_need_auth() {
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void list_with_auth() {
+        List<Event> events = Event.listAll();
+        assertThat(events, is(not(empty())));
+        given()
+                .cookie("quarkus-credential")
+                .when()
+                .get(eventEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString(events.get(0).description))
+                .body(containsString("Neuen Anlass eintragen"));
+    }
+
+    @Test
+    public void form_save_no_auth() {
         given().contentType(ContentType.URLENC).formParam("title", "test title")
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
@@ -45,12 +66,17 @@ public class EventResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void form_saved() {
-        given().contentType(ContentType.URLENC).formParam("title", "test title")
+    public void form_save_auth() {
+        given()
+                .contentType(ContentType.URLENC)
+                .formParam("title", "test title")
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
-                .when().post(eventEndpoint).then().statusCode(200);
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(200);
 
         List<Event> events = Event.listAll();
         assertThat(events, is(not(empty())));
