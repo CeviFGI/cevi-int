@@ -18,7 +18,7 @@ public class Exchange extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    public Long id;
     @NotBlank
     public String organization;
     @NotBlank
@@ -26,4 +26,14 @@ public class Exchange extends PanacheEntityBase {
     @NotBlank
     @Column(columnDefinition = "TEXT")
     public String description;
+
+    @Override
+    public String toString() {
+        return "Exchange{" +
+                "id=" + id +
+                ", organization='" + organization + '\'' +
+                ", organizationLink='" + organizationLink + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

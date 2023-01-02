@@ -1,9 +1,8 @@
 <div class="box">
-    <p class="title">{it.title}</p>
-    <p class="date">{it.date}</p>
+    <p class="title">{it.organization}</p>
     <p>{it.location}</p>
     <p>{it.description.raw}</p>
     {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
-    <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a>
+    <a href="/volontariat/edit?id={it.id}">Bearbeiten</a>
     {/if}
 </div>

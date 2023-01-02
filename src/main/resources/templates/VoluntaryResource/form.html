@@ -1,5 +1,9 @@
 {#include base}
+{#if id }
+<h2>Volontariat bearbeiten</h2>
+{#else}
 <h2>Neues Volontariat eintragen</h2>
+{/if}
 
 <p><a href="/volontariat">zurück zur Übersicht</a></p>
 
@@ -13,6 +17,7 @@
 {/if}
 
 <form action="/volontariat" method="post">
+    <input type="hidden" name="id" value="{id}" />
     <strong>Organisation:</strong> <input type="text" name="organization" value="{organization}"><br>
     <strong>Organisationslink:</strong> <input type="text" name="organizationLink" value="{organizationLink}"><br>
     <strong>Ort:</strong> <input type="text" name="location" value="{location}"><br>

@@ -8,9 +8,6 @@
 <p>Hier findest du eine Übersicht über die nächsten Austauschmöglichkeiten.</p>
 
 {#for exchangeItem in exchanges}
-<div class="box">
-    <p class="title">{exchangeItem.organization}</p>
-    <p>{exchangeItem.description}</p>
-</div>
+{#exchange exchangeItem}{/exchange}
 {/for}
 {/include}

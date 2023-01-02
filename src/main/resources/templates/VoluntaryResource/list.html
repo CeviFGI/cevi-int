@@ -8,11 +8,6 @@
 <p>Hier findest du eine Übersicht über mögliche Volontariate.</p>
 
 {#for service in services}
-<div class="box">
-    <p class="title">{service.organization}</p>
-    <p>{service.location}</p>
-    <p>{service.description.raw}</p>
-</div>
+{#voluntaryService service}{/voluntaryService}
 {/for}
-
 {/include}

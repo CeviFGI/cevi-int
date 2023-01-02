@@ -18,7 +18,7 @@ public class Event extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    public Long id;
     @NotBlank
     public String title;
     @NotBlank
@@ -28,4 +28,15 @@ public class Event extends PanacheEntityBase {
     @NotBlank
     @Column(columnDefinition = "TEXT")
     public String description;
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                ", location='" + location + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -19,4 +19,12 @@ public class ContactFormEntry extends PanacheEntityBase {
     private Long id;
     @Column(columnDefinition = "TEXT")
     public String message;
+
+    @Override
+    public String toString() {
+        return "ContactFormEntry{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

@@ -23,7 +23,7 @@ public class EventResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance list(List<Event> events);
-        public static native TemplateInstance add(String title, String date, String location, String description, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance form(long id, String title, String date, String location, String description, List<ValidationMessage> validationMessages);
     }
 
     @GET
@@ -37,15 +37,35 @@ public class EventResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance add() {
-        return Templates.add("", "", "", "", List.of());
+        return Templates.form(0, "", "", "", "", List.of());
+    }
+
+    @GET
+    @Path("edit")
+    @RolesAllowed("admin")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance edit(@QueryParam("id") long id) {
+        Event event = Event.findById(id);
+        if (event == null) {
+            throw new NotFoundException("Event with id " + id + " not found");
+        }
+        return Templates.form(id, event.title, event.date, event.location, event.description, List.of());
     }
 
     @POST
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance submit(@FormParam("title") String title, @FormParam("date") String date,
+    public TemplateInstance submit(@FormParam("id") long id, @FormParam("title") String title, @FormParam("date") String date,
                                    @FormParam("location") String location, @FormParam("description") String description) {
 
+        if (id == 0) {
+            return handleAdd(title, date, location, description);
+        } else {
+            return handleEdit(id, title, date, location, description);
+        }
+    }
+
+    private TemplateInstance handleAdd(String title, String date, String location, String description) {
         Event event = new Event();
         event.title = title;
         event.date = date;
@@ -58,12 +78,41 @@ public class EventResource {
                 QuarkusTransaction.begin();
                 event.persist();
                 QuarkusTransaction.commit();
+                Log.info("Created: " + event);
                 return Templates.list(Event.listAll());
             } catch (Exception e) {
-                Log.error("Unable to save event [" + event  + "] to database.", e);
+                Log.error("Unable to save [" + event  + "] to database.", e);
                 QuarkusTransaction.rollback();
             }
         }
-        return Templates.add(title, date, location, description, violations.stream().map(ValidationMessage::of).toList());
+        return Templates.form(0, title, date, location, description, violations.stream().map(ValidationMessage::of).toList());
+    }
+
+    private TemplateInstance handleEdit(long id, String title, String date, String location, String description) {
+        Event event = null;
+        Set<ConstraintViolation<Event>> violations = Set.of();
+        try {
+            QuarkusTransaction.begin();
+
+            event = Event.findById(id);
+            event.title = title;
+            event.date = date;
+            event.location = location;
+            event.description = description;
+
+            violations = validator.validate(event);
+            if (violations.isEmpty()) {
+                event.persist();
+                QuarkusTransaction.commit();
+                Log.info("Updated: " + event);
+                return Templates.list(Event.listAll());
+            } else {
+                QuarkusTransaction.rollback();
+            }
+        } catch (Exception e) {
+            Log.error("Unable to save event [" + event  + "] to database.", e);
+            QuarkusTransaction.rollback();
+        }
+        return Templates.form(id, title, date, location, description, violations.stream().map(ValidationMessage::of).toList());
     }
 }

@@ -1,10 +1,12 @@
 package tools.cevi.event;
 
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
@@ -22,6 +24,14 @@ public class EventResourceTest {
     @TestHTTPResource
     URL eventEndpoint;
 
+    @TestHTTPEndpoint(EventResource.class)
+    @TestHTTPResource("edit")
+    URL editEndpoint;
+
+    @TestHTTPEndpoint(EventResource.class)
+    @TestHTTPResource("add")
+    URL addEndpoint;
+
     @Test
     public void list_no_auth() {
         List<Event> events = Event.listAll();
@@ -32,7 +42,8 @@ public class EventResourceTest {
                 .then()
                 .statusCode(200)
                 .body(containsString(events.get(0).description))
-                .body(not(containsString("Neuen Anlass eintragen")));
+                .body(not(containsString("Neuen Anlass eintragen")))
+                .body(not(containsString("Bearbeiten")));
     }
 
     @Test
@@ -47,11 +58,35 @@ public class EventResourceTest {
                 .then()
                 .statusCode(200)
                 .body(containsString(events.get(0).description))
-                .body(containsString("Neuen Anlass eintragen"));
+                .body(containsString("Neuen Anlass eintragen"))
+                .body(containsString("Bearbeiten"));
     }
 
     @Test
-    public void form_save_no_auth() {
+    public void add_form_no_auth() {
+        given()
+                .redirects()
+                .follow(false)
+                .when()
+                .get(addEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_form_with_auth() {
+        given()
+                .when()
+                .get(addEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Neuen Anlass anlegen"));
+    }
+
+    @Test
+    public void add_submit_no_auth() {
         given().contentType(ContentType.URLENC).formParam("title", "test title")
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
@@ -60,13 +95,14 @@ public class EventResourceTest {
                 .post(eventEndpoint)
                 .then()
                 .statusCode(302)
-                .header("location", containsString("/auth/login"))
-                .cookie("quarkus-redirect-location", containsString(eventEndpoint.toString()));
+                .header("location", containsString("/auth/login"));
     }
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void form_save_auth() {
+    public void add_submit_with_auth() {
+        long eventCount = Event.count();
+
         given()
                 .contentType(ContentType.URLENC)
                 .formParam("title", "test title")
@@ -78,8 +114,74 @@ public class EventResourceTest {
                 .then()
                 .statusCode(200);
 
+        assertThat(Event.count(), equalTo(eventCount+1));
         List<Event> events = Event.listAll();
-        assertThat(events, is(not(empty())));
         assertThat(events.get(events.size()-1).title, equalTo("test title"));
+    }
+
+    @Test
+    public void edit_form_no_auth() {
+        given()
+                .redirects()
+                .follow(false)
+                .queryParam("id", 1)
+                .when()
+                .get(editEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_form_with_auth() {
+        given()
+                .queryParam("id", 1)
+                .when()
+                .get(editEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Anlass bearbeiten"));
+    }
+
+    @Test
+    public void edit_submit_no_auth() {
+        given().contentType(ContentType.URLENC)
+                .formParam("id", "1")
+                .formParam("title", "test title")
+                .formParam("date", "12-19-2022")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_submit_with_auth() {
+        long id = 1;
+        long eventCount = Event.count();
+        var uuid = UUID.randomUUID();
+
+        given()
+                .contentType(ContentType.URLENC)
+                .formParam("id", "1")
+                .formParam("title", "title_" + uuid)
+                .formParam("date", "12-19-2022")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(200);
+
+        assertThat(Event.count(), equalTo(eventCount));
+
+        QuarkusTransaction.begin();
+        assertThat(((Event) Event.findById(id)).title, equalTo("title_" + uuid));
+        QuarkusTransaction.rollback();
     }
 }

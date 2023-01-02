@@ -1,10 +1,12 @@
 package tools.cevi.voluntary;
 
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
@@ -21,6 +23,14 @@ public class VoluntaryResourceTest {
     @TestHTTPResource
     URL voluntaryEndpoint;
 
+    @TestHTTPEndpoint(VoluntaryResource.class)
+    @TestHTTPResource("edit")
+    URL editEndpoint;
+
+    @TestHTTPEndpoint(VoluntaryResource.class)
+    @TestHTTPResource("add")
+    URL addEndpoint;
+
     @Test
     public void list_no_auth() {
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
@@ -31,12 +41,13 @@ public class VoluntaryResourceTest {
                 .then()
                 .statusCode(200)
                 .body(containsString(voluntaryServices.get(0).description))
-                .body(not(containsString("Neues Volontariat eintragen<")));
+                .body(not(containsString("Neues Volontariat eintragen<")))
+                .body(not(containsString("Bearbeiten")));
     }
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void list_auth() {
+    public void list_with_auth() {
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
         assertThat(voluntaryServices, is(not(empty())));
         given()
@@ -46,11 +57,35 @@ public class VoluntaryResourceTest {
                 .then()
                 .statusCode(200)
                 .body(containsString(voluntaryServices.get(0).description))
+                .body(containsString("Neues Volontariat eintragen"))
+                .body(containsString("Bearbeiten"));
+    }
+
+    @Test
+    public void add_form_no_auth() {
+        given()
+                .redirects()
+                .follow(false)
+                .when()
+                .get(addEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_form_with_auth() {
+        given()
+                .when()
+                .get(addEndpoint)
+                .then()
+                .statusCode(200)
                 .body(containsString("Neues Volontariat eintragen"));
     }
 
     @Test
-    public void form_save_no_auth() {
+    public void add_submit_no_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
@@ -65,7 +100,7 @@ public class VoluntaryResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
-    public void form_save_auth() {
+    public void add_submit_with_auth() {
         given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
@@ -75,5 +110,71 @@ public class VoluntaryResourceTest {
         List<VoluntaryService> voluntaryService = VoluntaryService.listAll();
         assertThat(voluntaryService, is(not(empty())));
         assertThat(voluntaryService.get(voluntaryService.size()-1).organization, equalTo("test org vol"));
+    }
+
+    @Test
+    public void edit_form_no_auth() {
+        given()
+                .redirects()
+                .follow(false)
+                .queryParam("id", 1)
+                .when()
+                .get(editEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_form_with_auth() {
+        given()
+                .queryParam("id", 1)
+                .when()
+                .get(editEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Volontariat bearbeiten"));
+    }
+
+    @Test
+    public void edit_submit_no_auth() {
+        given().contentType(ContentType.URLENC)
+                .formParam("id", "1")
+                .formParam("organization", "test title")
+                .formParam("organizationLink", "12-19-2022")
+                .formParam("location", "hier")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_submit_with_auth() {
+        long id = 1;
+        long voluntaryServiceCount = VoluntaryService.count();
+        var uuid = UUID.randomUUID();
+
+        given()
+                .contentType(ContentType.URLENC)
+                .formParam("id", "1")
+                .formParam("organization", "organization_" + uuid)
+                .formParam("organizationLink", "12-19-2022")
+                .formParam("location", "hier")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(200);
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+
+        QuarkusTransaction.begin();
+        assertThat(((VoluntaryService) VoluntaryService.findById(id)).organization, equalTo("organization_" + uuid));
+        QuarkusTransaction.rollback();
     }
 }

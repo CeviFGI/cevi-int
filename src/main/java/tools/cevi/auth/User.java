@@ -40,4 +40,14 @@ public class User extends PanacheEntityBase {
         user.role = role;
         user.persist();
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }

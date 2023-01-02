@@ -1,0 +1,7 @@
+<div class="box">
+    <p class="title">{it.organization}</p>
+    <p>{it.description}</p>
+    {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
+    <a href="/austausch/edit?id={it.id}">Bearbeiten</a>
+    {/if}
+</div>

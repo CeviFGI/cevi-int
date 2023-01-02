@@ -1,5 +1,10 @@
 {#include base}
+
+{#if id }
+<h2>Anlass bearbeiten</h2>
+{#else}
 <h2>Neuen Anlass anlegen</h2>
+{/if}
 
 <p><a href="/anlaesse">zurück zur Übersicht</a></p>
 
@@ -13,8 +18,9 @@
 {/if}
 
 <form action="/anlaesse" method="post">
+    <input type="hidden" name="id" value="{id}" />
     <strong>Titel:</strong> <input type="text" name="title" value="{title}"><br>
-    <strong>Datum:</strong> <input type="date" name="date" value="{date}"><br>
+    <strong>Datum:</strong> <input type="text" name="date" value="{date}"><br>
     <strong>Ort:</strong> <input type="text" name="location" value="{location}"><br>
     <strong>Beschreibung:</strong> <textarea rows="20" cols="80" name="description">{description}</textarea><br>
     <input type="submit" value="Senden">

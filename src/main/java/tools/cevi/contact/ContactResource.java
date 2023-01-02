@@ -46,6 +46,7 @@ public class ContactResource {
             entry.message = message;
             entry.persist();
             QuarkusTransaction.commit();
+            Log.info("Submitted " + message);
         } catch (Exception e) {
             Log.error("Unable to save message [" + message + "] to database. Try sending mail", e);
             QuarkusTransaction.rollback();
