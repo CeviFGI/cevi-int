@@ -75,7 +75,7 @@
 #   accessed directly. (example: "foo.example.com,bar.example.com")
 #
 ###
-FROM registry.access.redhat.com/ubi8/openjdk-17:1.11
+FROM registry.access.redhat.com/ubi8/openjdk-17:latest
 
 ENV LANGUAGE='en_US:en'
 
@@ -85,9 +85,11 @@ COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
 COPY --chown=185 target/quarkus-app/*.jar /deployments/
 COPY --chown=185 target/quarkus-app/app/ /deployments/app/
 COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --chmod=0755 --chown=185 src/main/docker/mount_secrets.sh /tmp/mount_secrets.sh
 
 EXPOSE 8080
 USER 185
 ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
+CMD ["/bin/sh", "-c", "/tmp/mount_secrets.sh;/usr/local/s2i/run"]
