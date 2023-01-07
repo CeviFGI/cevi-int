@@ -27,7 +27,7 @@ jobs:
       run: ./mvnw package -Dquarkus.package.type=uber-jar
 
     - name: Archive uber-jar
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: fatjar
         path: target/international-*-SNAPSHOT-runner.jar
@@ -36,7 +36,7 @@ jobs:
       run: ./mvnw package
       
     - name: Archive regular jar
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: quarkusApp
         path: target/quarkus-app
