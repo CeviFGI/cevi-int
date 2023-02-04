@@ -31,6 +31,10 @@ public class ExchangeResourceTest {
     @TestHTTPResource("add")
     URL addEndpoint;
 
+    @TestHTTPEndpoint(ExchangeResource.class)
+    @TestHTTPResource("delete")
+    URL deleteEndpoint;
+
     @Test
     public void list_no_auth() {
         List<Exchange> exchanges = Exchange.listAll();
@@ -112,10 +116,12 @@ public class ExchangeResourceTest {
 
     @Test
     public void edit_form_no_auth() {
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
         given()
                 .redirects()
                 .follow(false)
-                .queryParam("id", 1)
+                .queryParam("id", firstId)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -126,8 +132,10 @@ public class ExchangeResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_form_with_auth() {
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
         given()
-                .queryParam("id", 1)
+                .queryParam("id", firstId)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -137,8 +145,10 @@ public class ExchangeResourceTest {
 
     @Test
     public void edit_submit_no_auth() {
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
         given().contentType(ContentType.URLENC)
-                .formParam("id", "1")
+                .formParam("id", firstId)
                 .formParam("organization", "test title")
                 .formParam("organizationLink", "12-19-2022")
                 .formParam("description", "desc")
@@ -152,13 +162,13 @@ public class ExchangeResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_submit_with_auth() {
-        long id = 1;
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
         long exchangeCount = Exchange.count();
         var uuid = UUID.randomUUID();
 
         given()
                 .contentType(ContentType.URLENC)
-                .formParam("id", "1")
+                .formParam("id", firstId)
                 .formParam("organization", "organization_" + uuid)
                 .formParam("organizationLink", "12-19-2022")
                 .formParam("description", "desc")
@@ -170,7 +180,55 @@ public class ExchangeResourceTest {
         assertThat(Exchange.count(), equalTo(exchangeCount));
 
         QuarkusTransaction.begin();
-        assertThat(((Exchange) Exchange.findById(id)).organization, equalTo("organization_" + uuid));
+        assertThat(((Exchange) Exchange.findById(firstId)).organization, equalTo("organization_" + uuid));
         QuarkusTransaction.rollback();
+    }
+
+    @Test
+    public void delete_no_auth() {
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .redirects()
+                .follow(false)
+                .queryParam("id", firstId)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_with_auth() {
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .queryParam("id", firstId)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Austausch löschen"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_confirmed_with_auth() {
+        long exchangeCount = Exchange.count();
+
+        long firstId = ((Exchange) Exchange.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .queryParam("id", firstId)
+                .queryParam("confirmed", true)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Austausch"));
+
+        assertThat(Exchange.count(), equalTo(exchangeCount-1));
     }
 }

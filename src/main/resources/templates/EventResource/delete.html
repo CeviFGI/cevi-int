@@ -1,0 +1,13 @@
+{#include base}
+
+<h2>Anlass löschen</h2>
+
+<p><a href="/anlaesse">zurück zur Übersicht</a></p>
+
+{#event event showActions=false}{/event}
+
+<p>Möchten sie obenstehenden Anlass wirklich löschen?</p>
+
+<a href="/anlaesse">Nein</a><a class="margin-left" href="/anlaesse/delete?id={id}&confirmed=true">Ja</a>
+
+{/include}

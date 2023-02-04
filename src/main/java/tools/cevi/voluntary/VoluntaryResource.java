@@ -24,6 +24,7 @@ public class VoluntaryResource {
     public static class Templates {
         public static native TemplateInstance list(List<VoluntaryService> services);
         public static native TemplateInstance form(long id, String organization, String organizationLink, String location, String description, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance delete(long id, VoluntaryService service);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -49,6 +50,22 @@ public class VoluntaryResource {
             throw new NotFoundException("VoluntaryService with id " + id + " not found");
         }
         return Templates.form(id, voluntaryService.organization, voluntaryService.organizationLink, voluntaryService.location, voluntaryService.description, List.of());
+    }
+
+    @GET
+    @Path("delete")
+    @RolesAllowed("admin")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
+        VoluntaryService service = VoluntaryService.findById(id);
+        if (service == null) {
+            throw new NotFoundException("VoluntaryService with id " + id + " not found");
+        }
+        if (confirmed != null && confirmed) {
+            return handleDelete(id);
+        } else {
+            return Templates.delete(id, service);
+        }
     }
 
     @POST
@@ -115,5 +132,18 @@ public class VoluntaryResource {
             QuarkusTransaction.rollback();
         }
         return Templates.form(id, organization, organizationLink, location, description, violations.stream().map(ValidationMessage::of).toList());
+    }
+
+    private TemplateInstance handleDelete(long id) {
+        try {
+            QuarkusTransaction.begin();
+            VoluntaryService voluntaryService = VoluntaryService.findById(id);
+            voluntaryService.delete();
+            QuarkusTransaction.commit();
+        } catch (Exception e) {
+            Log.error("Unable to delete VoluntaryService [" + id  + "] from database.", e);
+            QuarkusTransaction.rollback();
+        }
+        return Templates.list(VoluntaryService.listAll());
     }
 }

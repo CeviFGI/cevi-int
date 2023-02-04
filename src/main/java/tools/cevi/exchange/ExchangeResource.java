@@ -24,6 +24,7 @@ public class ExchangeResource {
     public static class Templates {
         public static native TemplateInstance list(List<Exchange> exchanges);
         public static native TemplateInstance form(long id, String organization, String organizationLink, String description, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance delete(long id, Exchange exchange);
     }
 
     @GET
@@ -50,6 +51,22 @@ public class ExchangeResource {
             throw new NotFoundException("Exchange with id " + id + " not found");
         }
         return Templates.form(id, exchange.organization, exchange.organizationLink, exchange.description, List.of());
+    }
+
+    @GET
+    @Path("delete")
+    @RolesAllowed("admin")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
+        Exchange exchange = Exchange.findById(id);
+        if (exchange == null) {
+            throw new NotFoundException("Exchange with id " + id + " not found");
+        }
+        if (confirmed != null && confirmed) {
+            return handleDelete(id);
+        } else {
+            return Templates.delete(id, exchange);
+        }
     }
 
     @POST
@@ -113,5 +130,18 @@ public class ExchangeResource {
             QuarkusTransaction.rollback();
         }
         return Templates.form(id, organization, organizationLink, description, violations.stream().map(ValidationMessage::of).toList());
+    }
+
+    private TemplateInstance handleDelete(long id) {
+        try {
+            QuarkusTransaction.begin();
+            Exchange exchange = Exchange.findById(id);
+            exchange.delete();
+            QuarkusTransaction.commit();
+        } catch (Exception e) {
+            Log.error("Unable to delete exchange [" + id  + "] from database.", e);
+            QuarkusTransaction.rollback();
+        }
+        return Templates.list(Exchange.listAll());
     }
 }

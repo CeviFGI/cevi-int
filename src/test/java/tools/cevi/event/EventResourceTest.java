@@ -32,6 +32,10 @@ public class EventResourceTest {
     @TestHTTPResource("add")
     URL addEndpoint;
 
+    @TestHTTPEndpoint(EventResource.class)
+    @TestHTTPResource("delete")
+    URL deleteEndpoint;
+
     @Test
     public void list_no_auth() {
         List<Event> events = Event.listAll();
@@ -121,10 +125,12 @@ public class EventResourceTest {
 
     @Test
     public void edit_form_no_auth() {
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
         given()
                 .redirects()
                 .follow(false)
-                .queryParam("id", 1)
+                .queryParam("id", firstId)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -135,8 +141,10 @@ public class EventResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_form_with_auth() {
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
         given()
-                .queryParam("id", 1)
+                .queryParam("id", firstId)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -146,8 +154,10 @@ public class EventResourceTest {
 
     @Test
     public void edit_submit_no_auth() {
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
         given().contentType(ContentType.URLENC)
-                .formParam("id", "1")
+                .formParam("id", firstId)
                 .formParam("title", "test title")
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
@@ -162,13 +172,13 @@ public class EventResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_submit_with_auth() {
-        long id = 1;
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
         long eventCount = Event.count();
         var uuid = UUID.randomUUID();
 
         given()
                 .contentType(ContentType.URLENC)
-                .formParam("id", "1")
+                .formParam("id", firstId)
                 .formParam("title", "title_" + uuid)
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
@@ -181,7 +191,55 @@ public class EventResourceTest {
         assertThat(Event.count(), equalTo(eventCount));
 
         QuarkusTransaction.begin();
-        assertThat(((Event) Event.findById(id)).title, equalTo("title_" + uuid));
+        assertThat(((Event) Event.findById(firstId)).title, equalTo("title_" + uuid));
         QuarkusTransaction.rollback();
+    }
+
+    @Test
+    public void delete_no_auth() {
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .redirects()
+                .follow(false)
+                .queryParam("id", firstId)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(302)
+                .header("location", containsString("/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_with_auth() {
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .queryParam("id", firstId)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Anlass löschen"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_confirmed_with_auth() {
+        long eventCount = Event.count();
+
+        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+
+        given()
+                .queryParam("id", firstId)
+                .queryParam("confirmed", true)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Anlässe"));
+
+        assertThat(Event.count(), equalTo(eventCount-1));
     }
 }

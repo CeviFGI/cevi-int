@@ -3,7 +3,7 @@
     <p class="date">{it.date}</p>
     <p>{it.location}</p>
     <p>{it.description.raw}</p>
-    {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
-    <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a>
+    {#if inject:vertxRequest.getCookie('quarkus-credential') != null && showActions}
+    <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/anlaesse/delete?id={it.id}">Löschen</a>
     {/if}
 </div>
