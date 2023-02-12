@@ -84,7 +84,9 @@ jobs:
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
           org.opencontainers.image.revision=${{ github.sha }}
-
+          org.opencontainers.image.source=https://github.com/patrickuhlmann/cevi-int
+          org.opencontainers.image.description=Cevi.tools International Webpage
+          org.opencontainers.image.license=MIT
 
   buildCeviTool:
     runs-on: ubuntu-latest
@@ -129,3 +131,6 @@ jobs:
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
           org.opencontainers.image.revision=${{ github.sha }}
+          org.opencontainers.image.source=https://github.com/patrickuhlmann/cevi-int
+          org.opencontainers.image.description=Cevi.tools International Webpage
+          org.opencontainers.image.license=MIT
