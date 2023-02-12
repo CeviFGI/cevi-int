@@ -21,8 +21,15 @@
     <strong>Organisation:</strong> <input type="text" name="organization" value="{organization}"><br>
     <strong>Organisationslink:</strong> <input type="text" name="organizationLink" value="{organizationLink}"><br>
     <strong>Ort:</strong> <input type="text" name="location" value="{location}"><br>
-    <strong>Beschreibung:</strong> <textarea rows="20" cols="80" name="description">{description}</textarea><br>
+    <strong>Beschreibung:</strong> <textarea id="summernote" name="description">{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
+<script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            height: 400
+        });
+    });
+</script>
 
 {/include}
