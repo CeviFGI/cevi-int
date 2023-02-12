@@ -58,10 +58,10 @@ jobs:
         echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2.2.1
+      uses: docker/setup-buildx-action@v2
 
     - name: Login to GitHub Container Registry
-      uses: docker/login-action@v2.1.0
+      uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
@@ -74,7 +74,7 @@ jobs:
         path: target/quarkus-app
 
     - name: Build container
-      uses: docker/build-push-action@v3.2.0
+      uses: docker/build-push-action@v4
       with:
         context: ./
         file: src/main/docker/Dockerfile.jvm
@@ -103,10 +103,10 @@ jobs:
         echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2.2.1
+      uses: docker/setup-buildx-action@v2
 
     - name: Login to Cevi Tools Container Registry
-      uses: docker/login-action@v2.1.0
+      uses: docker/login-action@v2
       with:
         registry: registry.cevi.tools
         username: ${{ secrets.TOOLS_USERNAME }}
@@ -119,7 +119,7 @@ jobs:
         path: target/quarkus-app
 
     - name: Build container
-      uses: docker/build-push-action@v3.2.0
+      uses: docker/build-push-action@v4
       with:
         context: ./
         file: src/main/docker/Dockerfile.jvm
