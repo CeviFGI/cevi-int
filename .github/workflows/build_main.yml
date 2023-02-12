@@ -76,10 +76,11 @@ jobs:
     - name: Build container
       uses: docker/build-push-action@v4
       with:
-        context: ./
+        context: .
         file: src/main/docker/Dockerfile.jvm
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.prep.outputs.tags }}
+        provenance: false
         labels: |
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
@@ -123,10 +124,11 @@ jobs:
     - name: Build container
       uses: docker/build-push-action@v4
       with:
-        context: ./
+        context: .
         file: src/main/docker/Dockerfile.jvm
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.prep.outputs.tags }}
+        provenance: false
         labels: |
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
