@@ -5,6 +5,8 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -106,11 +108,13 @@ public class EventResourceTest {
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_submit_with_auth() {
         long eventCount = Event.count();
+        String title = "CLEANUP add_submit_with_auth";
 
         given()
                 .contentType(ContentType.URLENC)
-                .formParam("title", "test title")
-                .formParam("date", "12-19-2022")
+                .formParam("title", title)
+                .formParam("date", "17.02.2023")
+                .formParam("displayDate", "2023-01-01")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
                 .when()
@@ -120,7 +124,68 @@ public class EventResourceTest {
 
         assertThat(Event.count(), equalTo(eventCount+1));
         List<Event> events = Event.listAll();
-        assertThat(events.get(events.size()-1).title, equalTo("test title"));
+        assertThat(events.get(events.size()-1).title, equalTo(title));
+        cleanupEvent(title);
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void order_upcomingevents_by_displayDate() {
+        String title1 = "CLEANUP order_upcomingevents_by_displayDate 1";
+        String title2 = "CLEANUP order_upcomingevents_by_displayDate 2";
+        createEvent(title1, LocalDate.now().plusDays(5));
+        createEvent(title2, LocalDate.now().plusDays(3));
+
+        List<Event> events = Event.upcomingEvents();
+        int position1 = -1;
+        int position2 = -1;
+        for (int i=0; i<events.size(); i++) {
+            if (events.get(i).title.equals(title1)) {
+                position1 = i;
+            } else if (events.get(i).title.equals(title2)) {
+                position2 = i;
+            }
+        }
+
+        // both events are found
+        assertThat(position1, greaterThan(-1));
+        assertThat(position2, greaterThan(-1));
+        // the second event comes first because the displayDate is before the first event
+        assertThat(position2, lessThan(position1));
+
+        cleanupEvent(title1, title2);
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void dont_show_past_events_as_upcoming() {
+        String title = "CLEANUP dont_show_past_events_as_upcoming";
+        createEvent(title, LocalDate.now().minusDays(5));
+        var pastEvent = Event.upcomingEvents().stream().filter(e -> e.title.equals(title)).toList();
+        assertThat(pastEvent, empty());
+    }
+
+    private long createEvent(String title, LocalDate displayDate) {
+        QuarkusTransaction.begin();
+        Event event = new Event();
+        event.title = title;
+        event.date = "some date";
+        event.displayDate = displayDate;
+        event.location = "some location";
+        event.description = "some description";
+        event.persist();
+        QuarkusTransaction.commit();
+        return event.id;
+    }
+
+    private long createEvent(String title) {
+        return createEvent(title, LocalDate.now());
+    }
+
+    private void cleanupEvent(String... title) {
+        QuarkusTransaction.begin();
+        Arrays.stream(title).forEach(Event::deleteByTitle);
+        QuarkusTransaction.commit();
     }
 
     @Test
@@ -172,16 +237,17 @@ public class EventResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_submit_with_auth() {
-        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP edit_submit_with_auth";
+        long id = createEvent(title);
         long eventCount = Event.count();
         var uuid = UUID.randomUUID();
 
         given()
                 .contentType(ContentType.URLENC)
-                .formParam("id", firstId)
-                .formParam("title", "title_" + uuid)
-                .formParam("date", "12-19-2022")
-                .formParam("location", "Bern")
+                .formParam("id", id)
+                .formParam("title", title)
+                .formParam("date", "some date")
+                .formParam("location", uuid)
                 .formParam("description", "desc")
                 .when()
                 .post(eventEndpoint)
@@ -191,8 +257,9 @@ public class EventResourceTest {
         assertThat(Event.count(), equalTo(eventCount));
 
         QuarkusTransaction.begin();
-        assertThat(((Event) Event.findById(firstId)).title, equalTo("title_" + uuid));
+        assertThat(((Event) Event.findById(id)).location, equalTo(uuid.toString()));
         QuarkusTransaction.rollback();
+        cleanupEvent(title);
     }
 
     @Test
@@ -227,12 +294,13 @@ public class EventResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void delete_confirmed_with_auth() {
+        String title = "CLEANUP delete_confirmed_with_auth";
+
+        long id = createEvent(title);
         long eventCount = Event.count();
 
-        long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
-
         given()
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .queryParam("confirmed", true)
                 .when()
                 .get(deleteEndpoint)
@@ -241,5 +309,6 @@ public class EventResourceTest {
                 .body(containsString("Anlässe"));
 
         assertThat(Event.count(), equalTo(eventCount-1));
+        cleanupEvent(title);
     }
 }

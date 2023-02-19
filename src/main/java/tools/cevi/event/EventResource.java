@@ -5,6 +5,7 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
@@ -23,14 +24,14 @@ public class EventResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance list(List<Event> events);
-        public static native TemplateInstance form(long id, String title, String date, String location, String description, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance form(long id, String title, String date, String displayDate, String location, String description, List<ValidationMessage> validationMessages);
         public static native TemplateInstance delete(long id, Event event);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance list() {
-        return Templates.list(Event.listAll());
+        return Templates.list(Event.upcomingEvents());
     }
 
     @GET
@@ -38,7 +39,7 @@ public class EventResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance add() {
-        return Templates.form(0, "", "", "", "", List.of());
+        return Templates.form(0, "", "", LocalDate.now().toString(), "", "", List.of());
     }
 
     @GET
@@ -50,7 +51,7 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        return Templates.form(id, event.title, event.date, event.location, event.description, List.of());
+        return Templates.form(id, event.title, event.date, event.displayDate.toString(), event.location, event.description, List.of());
     }
 
     @GET
@@ -73,19 +74,23 @@ public class EventResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance submit(@FormParam("id") long id, @FormParam("title") String title, @FormParam("date") String date,
+                                   @FormParam("displayDate") String displayDate,
                                    @FormParam("location") String location, @FormParam("description") String description) {
 
         if (id == 0) {
-            return handleAdd(title, date, location, description);
+            return handleAdd(title, date, displayDate, location, description);
         } else {
-            return handleEdit(id, title, date, location, description);
+            return handleEdit(id, title, date, displayDate, location, description);
         }
     }
 
-    private TemplateInstance handleAdd(String title, String date, String location, String description) {
+    private TemplateInstance handleAdd(String title, String date, String displayDate, String location, String description) {
         Event event = new Event();
         event.title = title;
         event.date = date;
+        if (tryParseDate(displayDate)) {
+            event.displayDate = LocalDate.parse(displayDate);
+        }
         event.location = location;
         event.description = description;
 
@@ -102,10 +107,19 @@ public class EventResource {
                 QuarkusTransaction.rollback();
             }
         }
-        return Templates.form(0, title, date, location, description, violations.stream().map(ValidationMessage::of).toList());
+        return Templates.form(0, title, date, displayDate, location, description, violations.stream().map(ValidationMessage::of).toList());
     }
 
-    private TemplateInstance handleEdit(long id, String title, String date, String location, String description) {
+    private boolean tryParseDate(String date) {
+        try {
+            LocalDate.parse(date);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    private TemplateInstance handleEdit(long id, String title, String date, String displayDate, String location, String description) {
         Event event = null;
         Set<ConstraintViolation<Event>> violations = Set.of();
         try {
@@ -114,6 +128,9 @@ public class EventResource {
             event = Event.findById(id);
             event.title = title;
             event.date = date;
+            if (tryParseDate(displayDate)) {
+                event.displayDate = LocalDate.parse(displayDate);
+            }
             event.location = location;
             event.description = description;
 
@@ -130,7 +147,7 @@ public class EventResource {
             Log.error("Unable to save event [" + event  + "] to database.", e);
             QuarkusTransaction.rollback();
         }
-        return Templates.form(id, title, date, location, description, violations.stream().map(ValidationMessage::of).toList());
+        return Templates.form(id, title, date, displayDate, location, description, violations.stream().map(ValidationMessage::of).toList());
     }
 
     private TemplateInstance handleDelete(long id) {
