@@ -2,7 +2,9 @@ package tools.cevi.auth;
 
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import io.quarkus.security.identity.SecurityIdentity;
 
+import javax.inject.Inject;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,14 +24,17 @@ public class AuthResource {
         public static native TemplateInstance loggedOut();
     }
 
+    @Inject
+    SecurityIdentity identity;
+
     @GET
     @Path("login")
     @Produces(MediaType.TEXT_HTML)
-    public Response login(@CookieParam("quarkus-credential") Cookie cookie) {
-        if (cookie != null) {
-            return Response.temporaryRedirect(URI.create("/")).build();
-        } else {
+    public Response login() {
+        if (identity.isAnonymous()) {
             return Response.ok().entity(Templates.login()).build();
+        } else {
+            return Response.temporaryRedirect(URI.create("/")).build();
         }
     }
 
