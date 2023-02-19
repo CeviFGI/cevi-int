@@ -25,8 +25,12 @@ public class AuthResource {
     @GET
     @Path("login")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance login() {
-        return Templates.login();
+    public Response login(@CookieParam("quarkus-credential") Cookie cookie) {
+        if (cookie != null) {
+            return Response.temporaryRedirect(URI.create("/")).build();
+        } else {
+            return Response.ok().entity(Templates.login()).build();
+        }
     }
 
     @GET

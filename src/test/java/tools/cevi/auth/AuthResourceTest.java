@@ -29,7 +29,26 @@ public class AuthResourceTest {
 
     @Test
     public void login_form() {
-        given().when().get(loginEndpoint).then().statusCode(200).body(containsString("Benutzer:"));
+        given()
+                .when()
+                .get(loginEndpoint)
+                .then()
+                .statusCode(200)
+                .body(containsString("Benutzer:"));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void redirect_to_home_if_logged_in() {
+        given()
+                .cookie("quarkus-credential")
+                .redirects()
+                .follow(false)
+                .when()
+                .get(loginEndpoint)
+                .then()
+                .statusCode(307)
+                .header("location", is("http://localhost:8081/"));
     }
 
     @Test
