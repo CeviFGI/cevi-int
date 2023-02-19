@@ -101,7 +101,7 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Created: " + event);
-                return Templates.list(Event.listAll());
+                return list();
             } catch (Exception e) {
                 Log.error("Unable to save [" + event  + "] to database.", e);
                 QuarkusTransaction.rollback();
@@ -139,7 +139,7 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Updated: " + event);
-                return Templates.list(Event.listAll());
+                return list();
             } else {
                 QuarkusTransaction.rollback();
             }
@@ -161,6 +161,6 @@ public class EventResource {
             Log.error("Unable to delete event [" + id  + "] from database.", e);
             QuarkusTransaction.rollback();
         }
-        return Templates.list(Event.listAll());
+        return list();
     }
 }
