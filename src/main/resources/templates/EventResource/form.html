@@ -29,7 +29,16 @@
 <script>
     $(document).ready(function() {
         $('#summernote').summernote({
-            height: 400
+            height: 400,
+            toolbar: [
+                ["history", ["undo", "redo"]],
+                ["style", ["style"]],
+                ["font", ["bold", "italic", "underline", "fontname", "strikethrough", "superscript", "subscript", "clear"]],
+                ["color", [, "color"]],
+                ["paragraph", ["ul", "ol", "paragraph", "height"]],
+                ["table", ["table"]],
+                ["insert", ["link", "picture", "video"]],
+                ["view", ["codeview"]], ]
         });
     });
 </script>
