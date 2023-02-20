@@ -28,6 +28,9 @@ public class Event extends PanacheEntityBase {
     @NotBlank
     public String title;
     @NotBlank
+    @Column(unique = true)
+    public String slug;
+    @NotBlank
     public String date;
     @NotBlank
     public String location;
@@ -41,8 +44,16 @@ public class Event extends PanacheEntityBase {
         return list("displayDate >= :today", Sort.by("displayDate"), Parameters.with("today", LocalDate.now()));
     }
 
-    public static long deleteByTitle(String title) {
-        return delete("title = :title", Parameters.with("title", title));
+    public static boolean isSlugUnique(String slug) {
+        return find("slug = :slug", Parameters.with("slug", slug)).count() == 0;
+    }
+
+    public static Event findBySlug(String slug) {
+        return (Event) find("slug = :slug", Parameters.with("slug", slug)).stream().findFirst().orElse(null);
+    }
+
+    public static long deleteById(Long id) {
+        return delete("id = :id", Parameters.with("id", id));
     }
 
     @Override
@@ -50,6 +61,7 @@ public class Event extends PanacheEntityBase {
         return "Event{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", slug='" + slug + '\'' +
                 ", date='" + date + '\'' +
                 ", location='" + location + '\'' +
                 ", displayDate=" + displayDate +

@@ -60,6 +60,7 @@ public class DemoData {
     private void createEvent(String title, String date, String location, String description, LocalDate displayDate) {
         Event entity = new Event();
         entity.title = title;
+        entity.slug = Slug.of(title).toString();
         entity.date = date;
         entity.location = location;
         entity.description = description;
