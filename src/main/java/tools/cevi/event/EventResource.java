@@ -30,7 +30,8 @@ public class EventResource {
     public static class Templates {
         public static native TemplateInstance list(List<Event> events);
         public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, Set<ValidationMessage> validationMessages);
-        public static native TemplateInstance delete(long id, Event event);
+        public static native TemplateInstance delete(Event event);
+        public static native TemplateInstance detail(Event event);
     }
 
     @GET
@@ -60,6 +61,17 @@ public class EventResource {
     }
 
     @GET
+    @Path("detail")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance detail(@QueryParam("slug") String slug) {
+        Event event = Event.findBySlug(slug);
+        if (event == null) {
+            throw new NotFoundException("Event with slug " + slug + " not found");
+        }
+        return Templates.detail(event);
+    }
+
+    @GET
     @Path("delete")
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
@@ -71,7 +83,7 @@ public class EventResource {
         if (confirmed != null && confirmed) {
             return handleDelete(id);
         } else {
-            return Response.status(Response.Status.OK).entity(Templates.delete(id, event).render()).build();
+            return Response.status(Response.Status.OK).entity(Templates.delete(event).render()).build();
         }
     }
 
@@ -203,7 +215,7 @@ public class EventResource {
         } catch (Exception e) {
             Log.error("Unable to delete event [" + id  + "] from database.", e);
             QuarkusTransaction.rollback();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(id, event)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(event)).build();
         }
     }
 }
