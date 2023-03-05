@@ -5,6 +5,7 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.core.Response;
 
 import tools.cevi.infra.Slug;
 import tools.cevi.infra.ValidationMessage;
@@ -61,7 +63,7 @@ public class EventResource {
     @Path("delete")
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
+    public Response delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
         Event event = Event.findById(id);
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
@@ -69,14 +71,14 @@ public class EventResource {
         if (confirmed != null && confirmed) {
             return handleDelete(id);
         } else {
-            return Templates.delete(id, event);
+            return Response.status(Response.Status.OK).entity(Templates.delete(id, event).render()).build();
         }
     }
 
     @POST
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance submit(@FormParam("id") long id, @FormParam("title") String title,
+    public Response submit(@FormParam("id") long id, @FormParam("title") String title,
                                    @FormParam("slug") String slug, @FormParam("date") String date,
                                    @FormParam("displayDate") String displayDate,
                                    @FormParam("location") String location, @FormParam("description") String description) {
@@ -88,7 +90,7 @@ public class EventResource {
         }
     }
 
-    private TemplateInstance handleAdd(String title, String slug, String date, String displayDate, String location, String description) {
+    private Response handleAdd(String title, String slug, String date, String displayDate, String location, String description) {
         if (slug == null || slug.isBlank()) {
             slug = generateUniqueSlug(0, title);
         }
@@ -117,18 +119,19 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Created: " + event);
-                return list();
+                return Response.temporaryRedirect(URI.create("/anlaesse")).build();
             } catch (Exception e) {
                 Log.error("Unable to save [" + event  + "] to database.", e);
                 QuarkusTransaction.rollback();
             }
         }
         Log.info("Violations encountered while adding: " + violations);
-        return Templates.form(0, title, slug, date, displayDate, location, description, violations);
+        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(0, title, slug, date, displayDate, location, description, violations).render()).build();
     }
 
     private String generateUniqueSlug(long id, String title) {
         String slug = Slug.of(title).toString();
+        slug = slug.substring(0, Math.min(slug.length(), 252));
         int counter = 0;
         while (!Event.isSlugUnique(slug) && Event.findBySlug(slug).id != id) {
             slug = Slug.of(title + counter).toString();
@@ -145,7 +148,7 @@ public class EventResource {
         return true;
     }
 
-    private TemplateInstance handleEdit(long id, String title, String slug, String date, String displayDate, String location, String description) {
+    private Response handleEdit(long id, String title, String slug, String date, String displayDate, String location, String description) {
         if (slug == null || slug.isBlank()) {
             slug = generateUniqueSlug(id, title);
             Log.info("Generated slug: " + slug);
@@ -176,7 +179,7 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Updated: " + event);
-                return list();
+                return Response.temporaryRedirect(URI.create("/anlaesse")).build();
             } else {
                 QuarkusTransaction.rollback();
             }
@@ -185,20 +188,22 @@ public class EventResource {
             QuarkusTransaction.rollback();
         }
         Log.info("Violations encountered while updating: " + violations);
-        return Templates.form(id, title, slug, date, displayDate, location, description, violations);
+        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, violations).render()).build();
     }
 
-    private TemplateInstance handleDelete(long id) {
+    private Response handleDelete(long id) {
 
+        Event event = null;
         try {
             QuarkusTransaction.begin();
-            Event event = Event.findById(id);
+            event = Event.findById(id);
             event.delete();
             QuarkusTransaction.commit();
+            return Response.temporaryRedirect(URI.create("/anlaesse")).build();
         } catch (Exception e) {
             Log.error("Unable to delete event [" + id  + "] from database.", e);
             QuarkusTransaction.rollback();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(id, event)).build();
         }
-        return list();
     }
 }

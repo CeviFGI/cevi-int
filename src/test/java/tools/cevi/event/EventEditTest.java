@@ -90,7 +90,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(307);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -120,7 +120,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(307);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -149,7 +149,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(307);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -176,7 +176,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(400)
                 .body(containsString("Es existiert bereits ein anderer Eintrag mit demselben Slug"));
     }
 }

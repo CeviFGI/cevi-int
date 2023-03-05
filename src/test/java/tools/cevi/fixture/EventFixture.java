@@ -50,7 +50,7 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(307);
 
         List<Event> events = Event.listAll();
         var event = events.get(events.size()-1);

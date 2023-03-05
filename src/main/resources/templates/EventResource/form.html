@@ -19,12 +19,12 @@
 
 <form action="/anlaesse" method="post">
     <input type="hidden" name="id" value="{id}" />
-    <strong>Titel:</strong> <input type="text" name="title" value="{title}" required><br>
-    <strong>Slug:</strong> <input type="text" name="slug" value="{slug}"> <img src="/img/question-mark.svg" style="height: 1em;" title="Der Slug wird für die Verlinkung verwendet. Er muss eindeutig sein. Ist dieser leer wird er automatisch aus dem Titel generiert."><br>
-    <strong>Datum:</strong> <input type="text" name="date" value="{date}" required><br>
+    <strong>Titel:</strong> <input type="text" maxlength="255" name="title" value="{title}" required><br>
+    <strong>Slug:</strong> <input type="text" maxlength="252" name="slug" value="{slug}"> <img src="/img/question-mark.svg" style="height: 1em;" title="Der Slug wird für die Verlinkung verwendet. Er muss eindeutig sein. Ist dieser leer wird er automatisch aus dem Titel generiert."><br>
+    <strong>Datum:</strong> <input type="text" maxlength="255" name="date" value="{date}" required><br>
     <strong>Displaydate:</strong> <input type="date" name="displayDate" value="{displayDate}" required> <img src="/img/question-mark.svg" style="height: 1em;" title="Das Displaydate wird verwendet um alte Anlässe auszublenden (wird bis und an diesem Datum angezeigt) und der Sortierung."><br>
-    <strong>Ort:</strong> <input type="text" name="location" value="{location}" required><br>
-    <strong>Beschreibung:</strong> <textarea id="summernote" name="description" required>{description}</textarea><br>
+    <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
+    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="summernote" name="description" required>{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
 <script>

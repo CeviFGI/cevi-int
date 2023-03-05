@@ -24,7 +24,6 @@ public class EventDeleteTest{
     public void login_when_delete_anonymous() {
         long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
 
-        // try delete form
         given()
                 .redirects()
                 .follow(false)
@@ -52,6 +51,22 @@ public class EventDeleteTest{
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_form_non_existing() {
+        long eventCount = Event.count();
+
+        given()
+                .queryParam("id", 10000000)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(404)
+                .body(containsString("Nicht gefunden"));
+
+        assertThat(Event.count(), equalTo(eventCount));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
     public void confirm_delete() {
         String title = "CLEANUP confirm_delete";
 
@@ -65,8 +80,25 @@ public class EventDeleteTest{
                 .get(deleteEndpoint)
                 .then()
                 .statusCode(200)
-                .body(containsString("Anlässe"));
+                .body(containsString("Hier findest du eine Liste"));
 
         assertThat(Event.count(), equalTo(eventCount-1));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void confirm_delete_non_existing() {
+        long eventCount = Event.count();
+
+        given()
+                .queryParam("id", 10000000)
+                .queryParam("confirmed", true)
+                .when()
+                .get(deleteEndpoint)
+                .then()
+                .statusCode(404)
+                .body(containsString("Nicht gefunden"));
+
+        assertThat(Event.count(), equalTo(eventCount));
     }
 }

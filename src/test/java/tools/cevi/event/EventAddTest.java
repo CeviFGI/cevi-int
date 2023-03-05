@@ -110,7 +110,7 @@ public class EventAddTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(400)
                 .body(containsString("Es existiert bereits ein anderer Eintrag mit demselben Slug"));
 
         assertThat(Event.count(), equalTo(eventCount+1));
@@ -118,6 +118,28 @@ public class EventAddTest {
         var event = events.get(events.size()-1);
         assertThat(event.title, equalTo(title));
         assertThat(event.slug, equalTo("add_with_slug")); // if no slug is defined one will be generated
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_with_too_long_title() {
+        long eventCount = Event.count();
+
+        given()
+                .contentType(ContentType.URLENC)
+                .formParam("title", "abcde".repeat(60))
+                .formParam("slug", "add_with_too_long_title")
+                .formParam("date", "17.02.2023")
+                .formParam("displayDate", "2023-01-01")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(400)
+                .body(containsString("Größe muss zwischen 0 und 255 sein"));
+
+        assertThat(Event.count(), equalTo(eventCount));
     }
 
     @Test

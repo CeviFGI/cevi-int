@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -26,18 +27,23 @@ public class Event extends PanacheEntityBase {
     @Column(name = "id", updatable = false, nullable = false)
     public Long id;
     @NotBlank
+    @Size(max= 255)
     public String title;
     @NotBlank
     @Column(unique = true)
+    @Size(max= 255)
     public String slug;
     @NotBlank
+    @Size(max= 255)
     public String date;
     @NotBlank
+    @Size(max= 255)
     public String location;
     @NotNull
     public LocalDate displayDate;
     @NotBlank
     @Column(columnDefinition = "TEXT")
+    @Size(max= 65535)
     public String description;
 
     public static List<Event> upcomingEvents() {
