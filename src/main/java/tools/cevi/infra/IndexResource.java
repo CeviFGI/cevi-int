@@ -28,14 +28,21 @@ public class IndexResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance index(String username);
+        public static native TemplateInstance fgi();
         public static native TemplateInstance version(String version, String flywaySchemaVersion);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance index() {
-        return Templates.index(identity.isAnonymous() ? "" : identity.getPrincipal().getName());
+    public Response index() {
+        return Response.temporaryRedirect(URI.create("/anlaesse")).build();
+    }
+
+    @Path("/fgi")
+    @GET()
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance fgi() {
+        return Templates.fgi();
     }
 
     @Path("/version")

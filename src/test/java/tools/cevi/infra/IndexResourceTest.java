@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
@@ -19,6 +18,10 @@ public class IndexResourceTest {
     @TestHTTPEndpoint(IndexResource.class)
     @TestHTTPResource
     URL indexEndpoint;
+
+    @TestHTTPEndpoint(IndexResource.class)
+    @TestHTTPResource("fgi")
+    URL fgiEndpoint;
 
     @TestHTTPEndpoint(IndexResource.class)
     @TestHTTPResource("version")
@@ -29,22 +32,21 @@ public class IndexResourceTest {
     URL adminEndpoint;
 
     @Test
-    public void index_when_not_logged_in() {
-        given().when().get(indexEndpoint).then().statusCode(200)
-                .body(containsString("Herzlich Willkommen"))
-                .body(not(containsString("Ausloggen")));
+    public void fgi_page() {
+        given().when().get(fgiEndpoint).then().statusCode(200)
+                .body(containsString("FGI - Fachgruppe International"));
     }
 
     @Test
     @TestSecurity(user = "patrick", roles = { "admin"})
-    public void index_when_logged_in() {
+    public void index_forward_to_anlaesse() {
         given()
-                .cookie("quarkus-credential")
+                .redirects().follow(false)
                 .when()
-                .get(indexEndpoint).then()
-                .statusCode(200)
-                .body(containsString("Herzlich Willkommen patrick"))
-                .body(containsString("Ausloggen"));
+                .get(indexEndpoint)
+                .then()
+                .statusCode(307)
+                .header("location", is("http://localhost:8081/anlaesse"));
     }
 
     @Test
