@@ -11,14 +11,14 @@
   <header>
     <a href="/"><img src="/logo.png" height="50px" /></a>
     <nav>
-      <a href="/anlaesse">Anlässe</a>
-      <!--<a href="/volontariat">Volontariat</a>
-      <a href="/austausch">Austausch</a>-->
-      <a href="/fgi">FGI</a>
-      <a href="/kontakt">Kontakt</a>
-      {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
-      <a href="/auth/logout">Ausloggen</a>
-      {/if}
+      <ul>
+        <li><a href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}class="active"{/if}>Anlässe</a></li>
+        <li><a href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}class="active"{/if}>FGI</a></li>
+        <li><a href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}class="active"{/if}>Kontakt</a></li>
+        {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
+        <li><a href="/auth/logout">Ausloggen</a></li>
+        {/if}
+      </ul>
     </nav>
   </header>
   <main>

@@ -1,4 +1,4 @@
-@import "menu.css";
+@import "nav.css";
 @import "elements.css";
 @import "form.css";
 @import "colors.css";
@@ -13,8 +13,11 @@ body {
 }
 
 header {
-    border-top: 5px solid #424242;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
 }
 
 main {

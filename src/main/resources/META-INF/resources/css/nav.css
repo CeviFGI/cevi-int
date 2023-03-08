@@ -1,0 +1,17 @@
+nav ul li {
+    display: inline;
+}
+
+nav a {
+  color: rgb(33, 33, 33);
+  text-decoration: none;
+  padding: 1em;
+}
+
+nav a.active {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+nav a:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
