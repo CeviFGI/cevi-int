@@ -16,8 +16,13 @@ header {
     border-bottom: 1px solid black;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: no-wrap;
+}
 
+/* prevent image to overflow on small screens */
+.logo {
+    max-width: 100%;
+    object-fit: contain;
 }
 
 main {
@@ -29,4 +34,11 @@ main {
 footer {
   border-top: 0.1rem solid #e8e8e8;
   padding: 30px 15px 30px 15px;
+}
+
+/* ensure wrapping is possible on large screens */
+@media (min-width: 768px) {
+    header {
+        flex-wrap: wrap;
+    }
 }

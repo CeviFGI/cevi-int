@@ -1,3 +1,7 @@
 input {
     margin-top: 0.5em;
 }
+
+textarea {
+    max-width: 100%;
+}
