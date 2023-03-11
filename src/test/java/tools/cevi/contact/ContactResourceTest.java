@@ -9,6 +9,8 @@ import io.restassured.http.ContentType;
 import java.net.URL;
 import java.util.List;
 import javax.inject.Inject;
+
+import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,13 +43,13 @@ public class ContactResourceTest {
 
     @Test
     public void page_working() {
-        given().when().get(contactEndpoint).then().statusCode(200);
+        given().when().get(contactEndpoint).then().statusCode(HttpStatus.SC_OK);
     }
 
     @Test
     public void form_saved() {
         given().contentType(ContentType.URLENC).formParam("message", "my message")
-                .when().post(contactEndpoint).then().statusCode(200);
+                .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK);
 
        List<ContactFormEntry> messages = ContactFormEntry.listAll();
         assertThat(messages, is(not(empty())));

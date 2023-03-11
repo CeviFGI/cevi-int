@@ -5,6 +5,7 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.EventFixture;
 
@@ -57,7 +58,7 @@ public class EventAddTest {
                 .when()
                 .get(addEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Neuen Anlass anlegen"));
     }
 
@@ -110,7 +111,7 @@ public class EventAddTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(containsString("Es existiert bereits ein anderer Eintrag mit demselben Slug"));
 
         assertThat(Event.count(), equalTo(eventCount+1));
@@ -136,7 +137,7 @@ public class EventAddTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(containsString("Größe muss zwischen 0 und 255 sein"));
 
         assertThat(Event.count(), equalTo(eventCount));

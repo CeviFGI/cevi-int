@@ -5,6 +5,7 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
@@ -27,13 +28,17 @@ public class AuthResourceTest {
     @TestHTTPResource("loggedOut")
     URL loggedOutEndpoint;
 
+    @TestHTTPEndpoint(AuthResource.class)
+    @TestHTTPResource
+    URL authEndpoint;
+
     @Test
     public void login_form() {
         given()
                 .when()
                 .get(loginEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Benutzer:"));
     }
 
@@ -47,7 +52,7 @@ public class AuthResourceTest {
                 .when()
                 .get(loginEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/"));
     }
 
@@ -59,7 +64,7 @@ public class AuthResourceTest {
                 .when()
                 .post("/auth/j_security_check")
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", is("http://localhost:8081/"))
                 .cookie("quarkus-credential");
     }
@@ -72,7 +77,7 @@ public class AuthResourceTest {
                 .when()
                 .post("/auth/j_security_check")
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("auth/error"));
     }
 
@@ -86,7 +91,7 @@ public class AuthResourceTest {
                 .when()
                 .get(logoutEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", containsString("auth/loggedOut"));
     }
 
@@ -98,12 +103,36 @@ public class AuthResourceTest {
                 .when()
                 .get(logoutEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/"));
     }
 
     @Test
     public void logged_out() {
-        given().when().get(loggedOutEndpoint).then().statusCode(200).body(containsString("Abgemeldet"));
+        given().when().get(loggedOutEndpoint).then().statusCode(HttpStatus.SC_OK).body(containsString("Abgemeldet"));
+    }
+
+    @Test
+    public void auth_redirect_to_login() {
+        given().contentType(ContentType.URLENC)
+                .redirects().follow(false)
+                .when()
+                .get(authEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_SEE_OTHER)
+                .header("location", is("http://localhost:8081/auth/login"));
+    }
+
+    @Test
+    @TestSecurity(user = "patrick", roles = { "admin"})
+    public void auth_redirect_to_home_if_logged_in() {
+        given().contentType(ContentType.URLENC)
+                .redirects().follow(false)
+                .cookie("quarkus-credential")
+                .when()
+                .get(authEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_SEE_OTHER)
+                .header("location", is("http://localhost:8081/"));
     }
 }

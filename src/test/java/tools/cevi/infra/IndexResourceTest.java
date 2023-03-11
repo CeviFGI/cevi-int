@@ -7,6 +7,7 @@ import java.net.URL;
 
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -33,7 +34,7 @@ public class IndexResourceTest {
 
     @Test
     public void fgi_page() {
-        given().when().get(fgiEndpoint).then().statusCode(200)
+        given().when().get(fgiEndpoint).then().statusCode(HttpStatus.SC_OK)
                 .body(containsString("FGI - Fachgruppe International"));
     }
 
@@ -45,13 +46,13 @@ public class IndexResourceTest {
                 .when()
                 .get(indexEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/anlaesse"));
     }
 
     @Test
     public void version_working() {
-        given().when().get(versionEndpoint).then().statusCode(200).body(containsString("Version:"));
+        given().when().get(versionEndpoint).then().statusCode(HttpStatus.SC_OK).body(containsString("Version:"));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class IndexResourceTest {
                 .when()
                 .get(adminEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/auth/login"));
     }
 
@@ -74,7 +75,7 @@ public class IndexResourceTest {
                 .when()
                 .get(adminEndpoint)
                 .then()
-                .statusCode(307)
+                .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/"));
     }
 }

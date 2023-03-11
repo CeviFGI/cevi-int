@@ -5,6 +5,7 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.callback.QuarkusTestAfterEachCallback;
 import io.quarkus.test.junit.callback.QuarkusTestMethodContext;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import tools.cevi.event.Event;
 import tools.cevi.infra.Slug;
 
@@ -50,7 +51,7 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(307);
+                .statusCode(HttpStatus.SC_OK);
 
         List<Event> events = Event.listAll();
         var event = events.get(events.size()-1);

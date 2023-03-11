@@ -4,6 +4,7 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.EventFixture;
 
@@ -31,7 +32,7 @@ public class EventDeleteTest{
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -45,7 +46,7 @@ public class EventDeleteTest{
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlass löschen"));
     }
 
@@ -59,7 +60,7 @@ public class EventDeleteTest{
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(404)
+                .statusCode(HttpStatus.SC_NOT_FOUND)
                 .body(containsString("Nicht gefunden"));
 
         assertThat(Event.count(), equalTo(eventCount));
@@ -79,7 +80,7 @@ public class EventDeleteTest{
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Hier findest du eine Liste"));
 
         assertThat(Event.count(), equalTo(eventCount-1));
@@ -96,7 +97,7 @@ public class EventDeleteTest{
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(404)
+                .statusCode(HttpStatus.SC_NOT_FOUND)
                 .body(containsString("Nicht gefunden"));
 
         assertThat(Event.count(), equalTo(eventCount));

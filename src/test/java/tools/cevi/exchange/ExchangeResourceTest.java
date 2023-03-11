@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -43,7 +44,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(exchangeEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(exchanges.get(0).description))
                 .body(not(containsString("Neue Austauschmöglichkeit eintragen")))
                 .body(not(containsString("Bearbeiten")));
@@ -59,7 +60,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(exchangeEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(exchanges.get(0).description))
                 .body(containsString("Neue Austauschmöglichkeit eintragen"))
                 .body(containsString("Bearbeiten"));
@@ -73,7 +74,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(addEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -84,7 +85,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(addEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Neue Austauschmöglichkeit erfassen"));
     }
 
@@ -96,7 +97,7 @@ public class ExchangeResourceTest {
                 .when()
                 .post(exchangeEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"))
                 .cookie("quarkus-redirect-location", containsString(exchangeEndpoint.toString()));
     }
@@ -107,7 +108,7 @@ public class ExchangeResourceTest {
         given().contentType(ContentType.URLENC).formParam("organization", "test org")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("description", "desc")
-                .when().post(exchangeEndpoint).then().statusCode(200);
+                .when().post(exchangeEndpoint).then().statusCode(HttpStatus.SC_OK);
 
         List<Exchange> exchanges = Exchange.listAll();
         assertThat(exchanges, is(not(empty())));
@@ -125,7 +126,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(editEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -139,7 +140,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(editEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Austauschmöglichkeit bearbeiten"));
     }
 
@@ -155,7 +156,7 @@ public class ExchangeResourceTest {
                 .when()
                 .post(exchangeEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -175,7 +176,7 @@ public class ExchangeResourceTest {
                 .when()
                 .post(exchangeEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
 
         assertThat(Exchange.count(), equalTo(exchangeCount));
 
@@ -195,7 +196,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -209,7 +210,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Austausch löschen"));
     }
 
@@ -226,7 +227,7 @@ public class ExchangeResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Austausch"));
 
         assertThat(Exchange.count(), equalTo(exchangeCount-1));

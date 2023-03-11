@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -43,7 +44,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(voluntaryEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(voluntaryServices.get(0).description))
                 .body(not(containsString("Neues Volontariat eintragen<")))
                 .body(not(containsString("Bearbeiten")));
@@ -59,7 +60,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(voluntaryEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(voluntaryServices.get(0).description))
                 .body(containsString("Neues Volontariat eintragen"))
                 .body(containsString("Bearbeiten"));
@@ -73,7 +74,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(addEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -84,7 +85,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(addEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Neues Volontariat eintragen"));
     }
 
@@ -97,7 +98,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .post(voluntaryEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"))
                 .cookie("quarkus-redirect-location", containsString(voluntaryEndpoint.toString()));
     }
@@ -127,7 +128,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(editEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -141,7 +142,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(editEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Volontariat bearbeiten"));
     }
 
@@ -158,7 +159,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .post(voluntaryEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -180,7 +181,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .post(voluntaryEndpoint)
                 .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
 
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
 
@@ -200,7 +201,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(302)
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
                 .header("location", containsString("/auth/login"));
     }
 
@@ -214,7 +215,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Volontariat löschen"));
     }
 
@@ -231,7 +232,7 @@ public class VoluntaryResourceTest {
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlässe"));
 
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount-1));

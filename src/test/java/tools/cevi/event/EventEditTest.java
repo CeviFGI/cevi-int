@@ -5,6 +5,7 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.EventFixture;
 
@@ -66,7 +67,7 @@ public class EventEditTest {
                 .when()
                 .get(editEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlass bearbeiten"));
     }
 
@@ -90,7 +91,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(307);
+                .statusCode(HttpStatus.SC_OK);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -120,7 +121,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(307);
+                .statusCode(HttpStatus.SC_OK);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -149,7 +150,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(307);
+                .statusCode(HttpStatus.SC_OK);
 
         assertThat(Event.count(), equalTo(eventCount));
 
@@ -176,7 +177,7 @@ public class EventEditTest {
                 .when()
                 .post(eventEndpoint)
                 .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(containsString("Es existiert bereits ein anderer Eintrag mit demselben Slug"));
     }
 }

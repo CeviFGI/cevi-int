@@ -3,6 +3,7 @@ package tools.cevi.event;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.EventFixture;
 
@@ -28,7 +29,7 @@ public class EventDetailTest {
                 .when()
                 .get(detailEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlassdetail"));
     }
 
@@ -39,7 +40,7 @@ public class EventDetailTest {
                 .when()
                 .get(detailEndpoint)
                 .then()
-                .statusCode(404)
+                .statusCode(HttpStatus.SC_NOT_FOUND)
                 .body(containsString("Nicht gefunden"));
     }
 }

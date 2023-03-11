@@ -4,6 +4,7 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.EventFixture;
 
@@ -31,7 +32,7 @@ public class EventUpcomingTest {
                 .when()
                 .get(eventEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(events.get(0).description))
                 .body(not(containsString("Neuen Anlass eintragen")))
                 .body(not(containsString("Bearbeiten")));
@@ -47,7 +48,7 @@ public class EventUpcomingTest {
                 .when()
                 .get(eventEndpoint)
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.SC_OK)
                 .body(containsString(events.get(0).description))
                 .body(containsString("Neuen Anlass eintragen"))
                 .body(containsString("Bearbeiten"));

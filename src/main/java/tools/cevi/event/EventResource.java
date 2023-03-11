@@ -131,7 +131,7 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Created: " + event);
-                return Response.temporaryRedirect(URI.create("/anlaesse")).build();
+                return Response.seeOther(URI.create("/anlaesse")).build();
             } catch (Exception e) {
                 Log.error("Unable to save [" + event  + "] to database.", e);
                 QuarkusTransaction.rollback();
@@ -191,7 +191,7 @@ public class EventResource {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Updated: " + event);
-                return Response.temporaryRedirect(URI.create("/anlaesse")).build();
+                return Response.seeOther(URI.create("/anlaesse")).build();
             } else {
                 QuarkusTransaction.rollback();
             }
@@ -211,7 +211,7 @@ public class EventResource {
             event = Event.findById(id);
             event.delete();
             QuarkusTransaction.commit();
-            return Response.temporaryRedirect(URI.create("/anlaesse")).build();
+            return Response.seeOther(URI.create("/anlaesse")).build();
         } catch (Exception e) {
             Log.error("Unable to delete event [" + id  + "] from database.", e);
             QuarkusTransaction.rollback();

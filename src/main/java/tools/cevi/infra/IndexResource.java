@@ -35,31 +35,31 @@ public class IndexResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response index() {
-        return Response.temporaryRedirect(URI.create("/anlaesse")).build();
+        return Response.seeOther(URI.create("/anlaesse")).build();
     }
 
     @Path("/fgi")
-    @GET()
+    @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance fgi() {
         return Templates.fgi();
     }
 
     @Path("/version")
-    @GET()
+    @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance version() {
         return Templates.version(version, flyway.info().current().getVersion().toString());
     }
 
     @Path("/admin")
-    @GET()
+    @GET
     @Produces(MediaType.TEXT_HTML)
     public Response admin() {
         if (identity.isAnonymous()) {
-            return Response.temporaryRedirect(URI.create("auth/login")).build();
+            return Response.seeOther(URI.create("auth/login")).build();
         } else {
-            return Response.temporaryRedirect(URI.create("/")).build();
+            return Response.seeOther(URI.create("/")).build();
         }
     }
 }
