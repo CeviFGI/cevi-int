@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Size;
 
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,8 +21,7 @@ import java.util.List;
 @Entity
 public class Event extends PanacheEntityBase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     public Long id;
     @NotBlank

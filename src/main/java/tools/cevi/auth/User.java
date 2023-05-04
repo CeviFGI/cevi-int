@@ -6,7 +6,6 @@ import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
 import io.quarkus.security.jpa.Password;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
 
@@ -15,8 +14,7 @@ import jakarta.persistence.*;
 @UserDefinition
 public class User extends PanacheEntityBase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     @Username

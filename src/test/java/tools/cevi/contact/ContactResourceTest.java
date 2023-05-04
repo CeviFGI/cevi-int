@@ -55,7 +55,7 @@ public class ContactResourceTest {
         assertThat(messages, is(not(empty())));
         assertThat(messages.get(messages.size()-1).message, equalTo("my message"));
 
-        List<Mail> sent = mailbox.getMessagesSentTo(to);
+        List<Mail> sent = mailbox.getMailsSentTo(to);
         assertThat(sent, hasSize(1));
         Mail actual = sent.get(0);
         assertThat(actual.getText(), stringContainsInOrder("my message"));
