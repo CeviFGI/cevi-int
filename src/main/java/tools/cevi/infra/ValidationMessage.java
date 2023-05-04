@@ -1,6 +1,6 @@
 package tools.cevi.infra;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 public record ValidationMessage(String fieldName, String message) {
     public static <T> ValidationMessage of(ConstraintViolation<T> violation) {

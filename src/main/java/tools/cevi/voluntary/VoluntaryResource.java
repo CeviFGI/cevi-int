@@ -4,16 +4,17 @@ import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+
+import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.ValidationMessage;
 
 import java.util.List;
 import java.util.Set;
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 @Path("volontariat")
 public class VoluntaryResource {

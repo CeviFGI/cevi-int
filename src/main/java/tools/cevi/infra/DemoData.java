@@ -2,9 +2,9 @@ package tools.cevi.infra;
 
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.transaction.Transactional;
 
 import tools.cevi.auth.User;
 import tools.cevi.event.Event;

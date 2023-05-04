@@ -8,7 +8,7 @@ import io.quarkus.security.jpa.Username;
 import io.quarkus.security.jpa.Password;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
