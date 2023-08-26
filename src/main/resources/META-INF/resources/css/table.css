@@ -1,0 +1,19 @@
+table {
+    margin-top: 1em;
+	border-collapse: collapse;
+}
+
+table td {
+	padding: 1em;
+}
+
+table thead td {
+	background-color: SteelBlue;
+	color: white;
+	font-weight: bold;
+	border: 1px solid lightgrey;
+}
+
+table tbody td {
+	border: 1px solid lightgrey;
+}

@@ -29,6 +29,7 @@ public class IndexResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance fgi();
+        public static native TemplateInstance datenschutzinformation();
         public static native TemplateInstance version(String version, String flywaySchemaVersion);
     }
 
@@ -43,6 +44,13 @@ public class IndexResource {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance fgi() {
         return Templates.fgi();
+    }
+
+    @Path("/datenschutzinformation")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance datenschutzinformation() {
+        return Templates.datenschutzinformation();
     }
 
     @Path("/version")
