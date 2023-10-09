@@ -12,6 +12,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.VoluntaryFixture;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -106,25 +107,23 @@ public class VoluntaryResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_submit_with_auth() {
-        given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
-                .formParam("organizationLink", "http://test.ch")
-                .formParam("location", "Bern")
-                .formParam("description", "desc")
-                .when().post(voluntaryEndpoint).then().statusCode(200);
+        String organization = "CLEANUP add_submit_with_auth";
+        VoluntaryFixture.createVoluntaryServiceWithRest(voluntaryEndpoint, organization);
 
         List<VoluntaryService> voluntaryService = VoluntaryService.listAll();
         assertThat(voluntaryService, is(not(empty())));
-        assertThat(voluntaryService.get(voluntaryService.size()-1).organization, equalTo("test org vol"));
+        assertThat(voluntaryService.get(voluntaryService.size()-1).organization, equalTo(organization));
     }
 
     @Test
     public void edit_form_no_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP edit_form_no_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         given()
                 .redirects()
                 .follow(false)
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -135,10 +134,11 @@ public class VoluntaryResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_form_with_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP edit_form_with_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         given()
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .when()
                 .get(editEndpoint)
                 .then()
@@ -148,10 +148,11 @@ public class VoluntaryResourceTest {
 
     @Test
     public void edit_submit_no_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP edit_submit_no_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         given().contentType(ContentType.URLENC)
-                .formParam("id", firstId)
+                .formParam("id", id)
                 .formParam("organization", "test title")
                 .formParam("organizationLink", "12-19-2022")
                 .formParam("location", "hier")
@@ -166,14 +167,15 @@ public class VoluntaryResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_submit_with_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP edit_submit_with_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         long voluntaryServiceCount = VoluntaryService.count();
         var uuid = UUID.randomUUID();
 
         given()
                 .contentType(ContentType.URLENC)
-                .formParam("id", firstId)
+                .formParam("id", id)
                 .formParam("organization", "organization_" + uuid)
                 .formParam("organizationLink", "12-19-2022")
                 .formParam("location", "hier")
@@ -186,18 +188,19 @@ public class VoluntaryResourceTest {
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
 
         QuarkusTransaction.begin();
-        assertThat(((VoluntaryService) VoluntaryService.findById(firstId)).organization, equalTo("organization_" + uuid));
+        assertThat(((VoluntaryService) VoluntaryService.findById(id)).organization, equalTo("organization_" + uuid));
         QuarkusTransaction.rollback();
     }
 
     @Test
     public void delete_no_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP delete_no_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         given()
                 .redirects()
                 .follow(false)
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .when()
                 .get(deleteEndpoint)
                 .then()
@@ -208,10 +211,11 @@ public class VoluntaryResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void delete_with_auth() {
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
+        String title = "CLEANUP delete_with_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
 
         given()
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .when()
                 .get(deleteEndpoint)
                 .then()
@@ -222,12 +226,13 @@ public class VoluntaryResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void delete_confirmed_with_auth() {
+        String title = "CLEANUP delete_confirmed_with_auth";
+        long id = VoluntaryFixture.createVoluntaryService(title);
+
         long voluntaryServiceCount = VoluntaryService.count();
 
-        long firstId = ((VoluntaryService) VoluntaryService.listAll().stream().findFirst().orElseThrow()).id;
-
         given()
-                .queryParam("id", firstId)
+                .queryParam("id", id)
                 .queryParam("confirmed", true)
                 .when()
                 .get(deleteEndpoint)

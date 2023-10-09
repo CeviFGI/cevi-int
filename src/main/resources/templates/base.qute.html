@@ -16,6 +16,7 @@
     <nav>
       <ul>
         <li><a href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}class="active"{/if}>Anlässe</a></li>
+        <li><a href="/volontariat" {#if inject:vertxRequest.uri.startsWith("/volontariat")}class="active"{/if}>Volontariat</a></li>
         <li><a href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}class="active"{/if}>FGI</a></li>
         <li><a href="/datenschutzinformation" {#if inject:vertxRequest.uri.startsWith("/datenschutzinformation")}class="active"{/if}>Datenschutzinformation</a></li>
         <li><a href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}class="active"{/if}>Kontakt</a></li>

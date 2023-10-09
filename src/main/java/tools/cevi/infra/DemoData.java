@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 
 import tools.cevi.auth.User;
 import tools.cevi.event.Event;
-import tools.cevi.exchange.Exchange;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.time.LocalDate;
@@ -29,22 +28,10 @@ public class DemoData {
             createVoluntaryService("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>");
             createVoluntaryService("Volunteers for Europe", "http://vfe.cvjm.de/", "Deutschland",  "Dauer 2 Wochen oder 3-6 Monate. Siehe Webseite von CVJM");
 
-            createExchange("Olivenernte", "15. - 24. Oktober 2022", "Palästina");
-            createExchange("European Unify Conference", "20. - 23. Oktober 2022", "Wien");
-            createExchange("YE 50th anniversary", "28. Juni - 02. Juli 2023", "Berlin");
-
             User.add("patrick", "patrick", "admin");
 
             Log.info("Generation finished");
         }
-    }
-
-    private void createExchange(String organization, String organizationLink, String description) {
-        Exchange entity = new Exchange();
-        entity.organization = organization;
-        entity.organizationLink = organizationLink;
-        entity.description = description;
-        entity.persist();
     }
 
     private void createVoluntaryService(String organization, String organizationLink, String location, String description) {
