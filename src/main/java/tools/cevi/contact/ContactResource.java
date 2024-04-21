@@ -26,21 +26,25 @@ public class ContactResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance form();
+        public static native TemplateInstance form(String message, boolean invalidAntispamValue);
         public static native TemplateInstance submitted();
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance form() {
-        return Templates.form();
+        return Templates.form("", false);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance submit(@FormParam("message") String message) {
+    public TemplateInstance submit(@FormParam("message") String message, @FormParam("spam") String spam) {
         try {
+            if (spam == null || !spam.equals("50")) {
+                return Templates.form(message, true);
+            }
+
             QuarkusTransaction.begin();
             ContactFormEntry entry = new ContactFormEntry();
             entry.message = message;

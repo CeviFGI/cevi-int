@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
 public class ContactResourceTest {
@@ -48,7 +49,7 @@ public class ContactResourceTest {
 
     @Test
     public void form_saved() {
-        given().contentType(ContentType.URLENC).formParam("message", "my message")
+        given().contentType(ContentType.URLENC).formParam("message", "my message").formParam("spam", "50")
                 .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK);
 
        List<ContactFormEntry> messages = ContactFormEntry.listAll();
@@ -62,5 +63,16 @@ public class ContactResourceTest {
         assertThat(actual.getSubject(), equalTo("[Cevi International Webseite] Kontaktformular ausgefüllt"));
 
         assertThat(mailbox.getTotalMessagesSent(), equalTo(1));
+    }
+
+    @Test
+    public void form_fail_spam() {
+        given().contentType(ContentType.URLENC).formParam("message", "my message").formParam("spam", "10")
+                .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein."));
+
+        List<Mail> sent = mailbox.getMailsSentTo(to);
+        assertThat(sent, hasSize(0));
+        assertThat(mailbox.getTotalMessagesSent(), equalTo(0));
     }
 }

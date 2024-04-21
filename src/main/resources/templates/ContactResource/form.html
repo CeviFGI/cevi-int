@@ -14,7 +14,11 @@
 </ul>
 
 <form action="kontakt" method="post">
-    <textarea rows="15" cols="80" placeholder="Hier kannst Du deine Nachricht eingeben. Falls du eine Antwort wünscht mit deiner E-Mail-Adresse/Telefonnummer" name="message"></textarea><br>
+    {#if invalidAntispamValue }
+        <p style="color: red">Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein.</p>
+    {/if}
+    <textarea rows="15" cols="80" placeholder="Hier kannst Du deine Nachricht eingeben. Falls du eine Antwort wünscht mit deiner E-Mail-Adresse/Telefonnummer" name="message">{message}</textarea><br>
+    Spamschutz <input name="spam" value="" /> (Geben Sie hier die Zahl 50 ein. Diese Massnahme schützt uns vor automatisiertem Spam.)<br />
     <input type="submit" value="Senden">
 </form>
 {/include}
