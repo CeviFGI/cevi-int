@@ -15,7 +15,7 @@ public class VoluntaryService extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    public Long id;
+    public int id;
     @NotBlank
     public String organization;
     @NotBlank

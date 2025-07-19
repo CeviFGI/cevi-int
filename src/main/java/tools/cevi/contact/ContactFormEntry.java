@@ -14,7 +14,7 @@ public class ContactFormEntry extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    private int id;
     @Column(columnDefinition = "TEXT")
     public String message;
 

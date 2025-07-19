@@ -16,7 +16,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 
 public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
-    private static final List<Long> createdVoluntryServices = new LinkedList<>();
+    private static final List<Integer> createdVoluntryServices = new LinkedList<>();
 
     public static long createVoluntaryService(String organization) {
         return createVoluntaryService(organization, LocalDate.now());
@@ -47,7 +47,7 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
                 .statusCode(HttpStatus.SC_OK);
 
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
-        var voluntaryService = voluntaryServices.get(voluntaryServices.size()-1);
+        var voluntaryService = voluntaryServices.getLast();
         Log.info("VoluntaryFixture created " + voluntaryService);
         createdVoluntryServices.add(voluntaryService.id);
         return voluntaryService.id;

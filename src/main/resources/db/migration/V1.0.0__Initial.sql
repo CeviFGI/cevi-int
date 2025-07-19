@@ -1,38 +1,34 @@
 --
--- Tables
+-- Tabellen
 --
 CREATE TABLE events (
-  id bigint NOT NULL AUTO_INCREMENT,
-  date varchar(255) DEFAULT NULL,
-  description text,
-  location varchar(255) DEFAULT NULL,
-  title varchar(255) DEFAULT NULL,
-  PRIMARY KEY(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  date TEXT DEFAULT NULL,
+  description TEXT,
+  location TEXT DEFAULT NULL,
+  title TEXT DEFAULT NULL
 );
 
 CREATE TABLE exchanges (
-  id bigint NOT NULL AUTO_INCREMENT,
-  description text,
-  organization varchar(255) DEFAULT NULL,
-  organizationLink varchar(255) DEFAULT NULL,
-  PRIMARY KEY(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  description TEXT,
+  organization TEXT DEFAULT NULL,
+  organizationLink TEXT DEFAULT NULL
 );
 
 CREATE TABLE voluntary_services (
-  id bigint NOT NULL AUTO_INCREMENT,
-  description text,
-  location varchar(255) DEFAULT NULL,
-  organization varchar(255) DEFAULT NULL,
-  organizationLink varchar(255) DEFAULT NULL,
-  PRIMARY KEY(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  description TEXT,
+  location TEXT DEFAULT NULL,
+  organization TEXT DEFAULT NULL,
+  organizationLink TEXT DEFAULT NULL
 );
 
 CREATE TABLE contact_form_entries (
-  id bigint NOT NULL AUTO_INCREMENT,
-  message varchar(255) DEFAULT NULL,
-  PRIMARY KEY(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message TEXT DEFAULT NULL
 );
 
 --
--- Indexes
+-- Indizes
 --

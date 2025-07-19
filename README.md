@@ -7,10 +7,8 @@ Technology
   * [Qute](https://quarkus.io/guides/qute)(Template engine)
   * [Panache](https://quarkus.io/guides/hibernate-orm-panache) (ORM)
 * [Flyway](https://quarkus.io/guides/flyway) (Database migration)
-* [H2](https://www.h2database.com) (In-Memory Database)
-* [Mysql](https://www.mysql.com) (Database)
 
-Note: Not using resteasy reactive as no H2 reactive driver is [available](https://github.com/quarkusio/quarkus/issues/20471)
+Note: komischerweise schlagen die Tests fehl wenn anstatt einer Datei eine ::memory: Datenbank verwendet wird.
 
 ## Running the application in dev mode
 
@@ -36,7 +34,7 @@ You can create and run a docker image using:
 ```shell script
 ./mvnw package
 sudo DOCKER_BUILDKIT=1  docker build -f src/main/docker/Dockerfile.jvm -t quarkus/international-jvm .
-sudo docker run -i --rm -p 8080:8080 quarkus/international-jvm
+sudo docker run -i --rm -p 8080:8080 -v /tmp:/data -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:sqlite:/data/int.sqlite?journal_mode=wal quarkus/international-jvm
 ```
 
 ## Start the application based on the last published docker image
@@ -52,7 +50,6 @@ Visit http://localhost:9000 to see the page and http://localhost:9100 to access 
 When running on production you should set the following environment variables to configure the application:
 | Environment variable | Description |
 | -------------------- | ----------- |
-|QUARKUS_DATASOURCE_USERNAME|username to connect to the database|
 |QUARKUS_DATASOURCE_JDBC_URL|connection string to locate the database|
 |APPLICATION_CONTACTFORM_TO|email adress where contact form submissions are sent to|
 |QUARKUS_MAILER_AUTH_METHODS|supported authentication methods of the mailserver, see https://quarkus.io/guides/mailer-reference|
@@ -66,7 +63,6 @@ Furthermore, you should create the following secrets:
 | Secret | Mapped Environment variable | Description |
 | ------ | --------------------------- | ----------- |
 |international_mailer_password |QUARKUS_MAILER_PASSWORD|password to connect to the smtp server|
-|international_datasource_password|QUARKUS_DATASOURCE_PASSWORD|password to connect to the database|
 |international_http_session_key|QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY|key to encrypt the authentication cookies|
 
 Of course, you could also set the mapped environment variables directly but this is not recommended for security reasons.

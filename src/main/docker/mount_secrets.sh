@@ -7,14 +7,6 @@ else
   echo "No $MAILER_PASSWORD_FILE to mount"
 fi
 
-DATASOURCE_PASSWORD_FILE=/run/secrets/international_datasource_password
-if [ -f "$DATASOURCE_PASSWORD_FILE" ]; then
-  export QUARKUS_DATASOURCE_PASSWORD=$(cat $DATASOURCE_PASSWORD_FILE)
-  echo "Mounted $DATASOURCE_PASSWORD_FILE"
-else
-  echo "No $DATASOURCE_PASSWORD_FILE to mount"
-fi
-
 HTTP_SESSION_KEY_FILE=/run/secrets/international_http_session_key
 if [ -f "$HTTP_SESSION_KEY_FILE" ]; then
   export QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY=$(cat $HTTP_SESSION_KEY_FILE)

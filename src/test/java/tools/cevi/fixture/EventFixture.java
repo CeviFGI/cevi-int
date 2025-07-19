@@ -17,7 +17,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 
 public class EventFixture implements QuarkusTestAfterEachCallback {
-    private static final List<Long> createdEvents = new LinkedList<>();
+    private static final List<Integer> createdEvents = new LinkedList<>();
 
     public static long createEvent(String title) {
         return createEvent(title, LocalDate.now());
@@ -54,7 +54,7 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
                 .statusCode(HttpStatus.SC_OK);
 
         List<Event> events = Event.listAll();
-        var event = events.get(events.size()-1);
+        var event = events.getLast();
         Log.info("EventFixture created " + event);
         createdEvents.add(event.id);
         return event.id;

@@ -23,7 +23,7 @@ public class Event extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    public Long id;
+    public int id;
     @NotBlank
     @Size(max= 255)
     public String title;
