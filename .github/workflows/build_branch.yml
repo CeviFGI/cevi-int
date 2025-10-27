@@ -25,7 +25,7 @@ jobs:
       run: ./mvnw package -Dquarkus.package.type=uber-jar
 
     - name: Archive jars
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: jars
         path: target/international-*-SNAPSHOT-runner.jar
