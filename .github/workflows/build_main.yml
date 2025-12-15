@@ -68,7 +68,7 @@ jobs:
         password: ${{ secrets.CR_PAT }}
 
     - name: Download quarkusApp
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: quarkusApp
         path: target/quarkus-app
@@ -116,7 +116,7 @@ jobs:
         password: ${{ secrets.TOOLS_PASSWORD }}
 
     - name: Download quarkusApp
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: quarkusApp
         path: target/quarkus-app
