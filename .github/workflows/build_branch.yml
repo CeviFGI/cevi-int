@@ -22,7 +22,7 @@ jobs:
         cache: 'maven'
           
     - name: Build uber-jar
-      run: ./mvnw package -Dquarkus.package.type=uber-jar
+      run: ./mvnw package -Dquarkus.package.jar.type=uber-jar
 
     - name: Archive jars
       uses: actions/upload-artifact@v6
