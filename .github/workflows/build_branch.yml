@@ -21,11 +21,19 @@ jobs:
         java-version: '21'
         cache: 'maven'
           
-    - name: Build uber-jar
-      run: ./mvnw package -Dquarkus.package.jar.type=uber-jar
+    - name: Build uber-jar and run tests (incl. Playwright e2e)
+      run: ./mvnw verify -Dquarkus.package.jar.type=uber-jar
 
     - name: Archive jars
       uses: actions/upload-artifact@v7
       with:
         name: jars
         path: target/international-*-SNAPSHOT-runner.jar
+
+    - name: Archive Playwright traces (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v7
+      with:
+        name: playwright-traces
+        path: target/playwright-traces/
+        if-no-files-found: ignore

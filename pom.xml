@@ -14,6 +14,8 @@
     <quarkus.platform.version>3.37.2</quarkus.platform.version>
     <surefire-plugin.version>3.5.6</surefire-plugin.version>
     <jacoco.version>0.8.15</jacoco.version>
+    <playwright.version>1.52.0</playwright.version>
+    <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
     <skipITs>true</skipITs>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
@@ -82,6 +84,12 @@
       <artifactId>quarkus-test-security</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>playwright</artifactId>
+      <version>${playwright.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -113,6 +121,11 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
         <configuration>
+          <!-- *E2ETest.java still ends in "Test.java" and would otherwise also match
+               Surefire's default include pattern; these are Failsafe-only (see below). -->
+          <excludes>
+            <exclude>**/*E2ETest.java</exclude>
+          </excludes>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
           </systemPropertyVariables>
@@ -128,10 +141,63 @@
               <goal>verify</goal>
             </goals>
             <configuration>
+              <argLine>${failsafeArgLine}</argLine>
               <systemPropertyVariables>
                 <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
               </systemPropertyVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>e2e-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <!-- Playwright e2e tests always run on `mvn verify`, independent of the
+                   skipITs property that gates the native-image ITs above. -->
+              <skipITs>false</skipITs>
+              <includes>
+                <include>**/*E2ETest.java</include>
+              </includes>
+              <argLine>${failsafeArgLine}</argLine>
+              <systemPropertyVariables>
+                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>install-playwright-browsers</id>
+            <!-- Bound to pre-integration-test so plain `mvn test`/`mvn package` (used for
+                 the fast unit-test loop) never touches Playwright at all; only `mvn verify`
+                 (which runs the e2e ITs below) downloads the browser. -->
+            <phase>pre-integration-test</phase>
+            <goals>
+              <!-- exec:exec (not exec:java) runs the CLI in its own OS process. Playwright's
+                   CLI calls System.exit() when done; exec:java runs in-process (same JVM as
+                   Maven) on modern JDKs, which silently kills the whole build right after
+                   this step, aborting every later phase (e2e tests, jacoco-check) while still
+                   reporting BUILD SUCCESS. -->
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${java.home}/bin/java</executable>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>-cp</argument>
+                <classpath/>
+                <argument>com.microsoft.playwright.CLI</argument>
+                <argument>install</argument>
+                <argument>chromium</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
@@ -147,9 +213,44 @@
               <goal>prepare-agent</goal>
             </goals>
             <configuration>
-              <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
-              <destFile>${project.build.directory}/jacoco-quarkus.exec</destFile>
+              <destFile>${project.build.directory}/jacoco-unit.exec</destFile>
               <append>true</append>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- Failsafe (the e2e tests) runs its own, separate @QuarkusTest JVM. Quarkus's
+                 own coverage dump on JVM shutdown (quarkus-jacoco) does not append across
+                 JVMs, so writing to the same destFile as the unit tests would silently
+                 overwrite their coverage data with only the tiny e2e-tests slice. Recording
+                 to a separate file and merging below (like the Maven/JaCoCo docs recommend
+                 for Surefire+Failsafe) avoids that. -->
+            <id>prepare-agent-integration</id>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+            <configuration>
+              <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+              <propertyName>failsafeArgLine</propertyName>
+              <append>true</append>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jacoco-merge</id>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>jacoco-unit.exec</include>
+                    <include>jacoco-it.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+              <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
             </configuration>
           </execution>
           <execution>
@@ -159,7 +260,7 @@
             </goals>
             <phase>post-integration-test</phase>
             <configuration>
-              <dataFile>${project.build.directory}/jacoco-quarkus.exec</dataFile>
+              <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
               <rules>
                 <rule>
                   <element>BUNDLE</element>

@@ -24,6 +24,17 @@ Starts the app with hot reload at http://localhost:8080. Dev UI at http://localh
 ./mvnw test -Dtest=EventUpcomingTest
 ```
 
+### Run tests including Playwright e2e tests
+```shell
+./mvnw verify
+```
+Runs the unit tests plus the browser-based e2e tests (`*E2ETest.java`, see Testing section below). The first run downloads a Chromium binary via the Playwright Maven plugin execution.
+
+### Run a single e2e test class
+```shell
+./mvnw verify -Dit.test=LoginE2ETest
+```
+
 ### Build über-jar
 ```shell
 ./mvnw package -Dquarkus.package.type=uber-jar
@@ -69,7 +80,8 @@ Resources manually call `validator.validate(entity)` and collect results into `S
 - `@TestSecurity(user = "admin", roles = {"admin"})` simulates an authenticated admin.
 - `EventFixture` and `VoluntaryFixture` in `src/test/java/tools/cevi/fixture/` are registered as `QuarkusTestAfterEachCallback` (via `src/test/resources/META-INF/services/`) to clean up test data after each test.
 - Tests use a file-based SQLite DB (not `:memory:`), as in-memory SQLite causes test failures with Quarkus.
-- JaCoCo enforces ≥80% line coverage (checked during `post-integration-test` phase).
+- JaCoCo enforces ≥80% line coverage (checked during `post-integration-test` phase) against `target/jacoco-merged.exec`, which merges the unit-test run (`jacoco-unit.exec`) with the e2e-test run (`jacoco-it.exec`, produced by Failsafe via `prepare-agent-integration`/`failsafeArgLine`). They're recorded to separate files and merged rather than sharing one file because Quarkus's own coverage dump on JVM shutdown (the `quarkus-jacoco` extension) does not append across JVM sessions — writing both test phases to the same file would silently let the second (much smaller) session overwrite the first's data. Local coverage runs also need a *fresh* `/tmp/international.db` (delete it first) — otherwise `DemoData`'s seed-on-empty-DB logic never re-executes and coverage reads artificially low.
+- **e2e tests**: real-browser tests live in `src/test/java/tools/cevi/e2e/`, named `*E2ETest.java` so Failsafe (not Surefire) picks them up — they only run on `./mvnw verify`, not `./mvnw test`. They extend `PlaywrightTestBase`, which boots the same `@QuarkusTest` HTTP server as the REST Assured tests and drives it with a real headless Chromium (Playwright Java, no Node.js/npm involved). Use this layer for behavior that can't be verified over plain HTTP, e.g. the jQuery/Summernote rich-text editor. Failed tests leave a trace under `target/playwright-traces/` (uploaded as a CI artifact on failure, viewable with the Playwright Trace Viewer).
 
 ### Key Configuration (`application.properties`)
 - Database: SQLite at `/tmp/international.db` (dev), overridden by `QUARKUS_DATASOURCE_JDBC_URL` in production.
