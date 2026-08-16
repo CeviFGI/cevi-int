@@ -19,6 +19,32 @@ Always read the entity model before writing data access code.
 
 The user is watching. You can ask for help, input or also things like visual verification
 
+## Tooling
+
+All build and test commands must be run via `tooling/docker.sh` — never call `mvn`, `./mvnw` or
+`java` directly. The wrapper runs everything inside a JDK 25 container — the same major version CI
+provisions and the level the build targets — so no local JDK, Maven or browser installation is
+needed (C-016, NFR-032).
+
+| Command | Effect |
+|---|---|
+| `tooling/docker.sh build` | `./mvnw package` |
+| `tooling/docker.sh test` | unit tests only |
+| `tooling/docker.sh verify` | unit tests + Playwright e2e tests + the 80 % coverage gate |
+| `tooling/docker.sh dev` | Quarkus dev mode on http://localhost:8080 (`--network host`) |
+| `tooling/docker.sh docker-image` | `package` + build the `quarkus/international-jvm` image |
+| `tooling/docker.sh mvn <args>` | arbitrary Maven goals |
+
+The toolchain image (`tooling/Dockerfile.maven`) is built on first use and carries the system
+libraries Playwright's Chromium needs. The container runs as the invoking host user, so everything
+it writes into `target/` stays owned by that user. `~/.m2` and the downloaded browser live in the
+named volume `cevi-int-tooling-home`, *not* in the host's `~/.m2` — the host settings.xml mirrors
+artifacts through an internal Nexus that is unreachable elsewhere. Reset with
+`docker volume rm cevi-int-tooling-home`; rebuild the image with `docker rmi cevi-int-tooling`.
+
+The plain `./mvnw ...` invocations below still work if a local JDK 25 is present, and are what CI
+runs — they are kept as the reference for what each wrapper command does.
+
 ## Commands
 
 ### Development
@@ -50,18 +76,17 @@ Runs the unit tests plus the browser-based e2e tests (`*E2ETest.java`, see Testi
 
 ### Build über-jar
 ```shell
-./mvnw package -Dquarkus.package.type=uber-jar
+./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
 ### Build Docker image
 ```shell
-./mvnw package
-sudo DOCKER_BUILDKIT=1 docker build -f src/main/docker/Dockerfile.jvm -t quarkus/international-jvm .
+tooling/docker.sh docker-image
 ```
 
 ### Run via Docker Compose (last published image)
 ```shell
-sudo docker-compose up
+docker compose up
 ```
 
 ## Architecture

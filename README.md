@@ -15,6 +15,25 @@ Running it in production: see [docs/deployment.md](docs/deployment.md).
 
 Note: komischerweise schlagen die Tests fehl wenn anstatt einer Datei eine ::memory: Datenbank verwendet wird.
 
+## Building without a local JDK (Docker tooling)
+
+Every command below can be run in a container instead, so the only prerequisites are Docker and
+git — no JDK, no Maven, no browser installation:
+
+```shell script
+tooling/docker.sh dev            # dev mode on http://localhost:8080
+tooling/docker.sh build          # ./mvnw package
+tooling/docker.sh test           # unit tests
+tooling/docker.sh verify         # unit tests + Playwright e2e tests + coverage gate
+tooling/docker.sh docker-image   # package + build the application image
+tooling/docker.sh mvn <args>     # any Maven goal
+```
+
+The toolchain image (`tooling/Dockerfile.maven`, JDK 25) is built on first use and
+includes the system libraries Playwright's Chromium needs. Containers run as the invoking user, so
+`target/` stays owned by you. Dependencies and the browser binary are cached in the Docker volume
+`cevi-int-tooling-home`; remove it with `docker volume rm cevi-int-tooling-home` to start clean.
+
 ## Running the application in dev mode
 
 You can run your application in dev mode using:
@@ -28,7 +47,7 @@ It also starts a dev UI under http://localhost:8080/q/dev/.
 
 The application can be packaged using:
 ```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
@@ -37,18 +56,17 @@ The application, packaged as an _über-jar_, is now runnable using `java -jar ta
 
 You can create and run a docker image using: 
 ```shell script
-./mvnw package
-sudo DOCKER_BUILDKIT=1  docker build -f src/main/docker/Dockerfile.jvm -t quarkus/international-jvm .
-sudo docker run -i --rm -p 8080:8080 -v /tmp:/data -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:sqlite:/data/int.sqlite?journal_mode=wal quarkus/international-jvm
+tooling/docker.sh docker-image
+docker run -i --rm -p 8080:8080 -v /tmp:/data -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:sqlite:/data/int.sqlite?journal_mode=wal quarkus/international-jvm
 ```
 
 ## Start the application based on the last published docker image
 
 ```shell script
-sudo docker-compose up
+docker compose up
 ```
 
-Visit http://localhost:9000 to see the page and http://localhost:9100 to access phpmyadmin to see the database.
+Visit http://localhost:9000 to see the page. The database is the SQLite file under `./data`.
 
 ## Configuration
 

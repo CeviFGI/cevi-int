@@ -93,7 +93,7 @@ international work, which shapes every goal below.
 
 ## 7. Context and Constraints
 
-- Runs on Quarkus (Java 21) with Qute templates, Panache/Hibernate ORM and Flyway migrations.
+- Runs on Quarkus (Java 25) with Qute templates, Panache/Hibernate ORM and Flyway migrations.
 - Stores data in a single file-based SQLite database mounted into the container.
 - Interface language and formatting locale are German/Swiss (`de-CH`).
 - Deployed as an OCI image published to `ghcr.io` and `registry.cevi.tools`, built by GitHub Actions.

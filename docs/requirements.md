@@ -1,7 +1,7 @@
 # Requirements: Cevi International Platform
 
 **Document status:** Draft for review
-**Date:** 2026-08-16 (revision 2 — security requirements added)
+**Date:** 2026-08-16 (revision 3 — container-based development tooling added)
 **Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-007`, `docs/entity_model.md`,
 security review of 2026-08-15
 
@@ -97,12 +97,15 @@ as the gap it is; scope and role model need confirmation.
 | NFR-029 | Session Lifetime               | An administrator session expires at most 30 minutes after the last request, limiting the usefulness of a captured session cookie.                              | Security        | Medium   | Implemented  |
 | NFR-030 | Managed Frontend Dependencies  | 0 frontend libraries are checked into the repository as binaries; all are resolved as build dependencies so the existing dependency scanner reports their vulnerabilities. | Security        | Medium   | Implemented  |
 | NFR-031 | Access Log Minimisation        | Client IP addresses are logged at level DEBUG only, so a production system running at INFO records 0 IP addresses in the application log.                      | Security        | Low      | Implemented  |
+| NFR-032 | Toolchain Parity Local and CI  | The container image used by the development tooling and the build pipeline provision the same JDK major version, so a contributor and the pipeline compile with 0 differing toolchain versions.                                  | Maintainability | Medium   | Implemented  |
+| NFR-033 | Host File Ownership            | Every file a tooling container writes into the working copy (`target/`, test reports, traces) is owned by the invoking host user — 0 root-owned artefacts that the IDE, git or a later run cannot delete.                        | Maintainability | Medium   | Implemented  |
+| NFR-034 | Warm Dependency Cache          | The tooling reuses the host Maven repository and the downloaded browser binary across invocations, so a repeated `verify` on an unchanged working copy downloads 0 dependencies and 0 browsers.                                  | Maintainability | Medium   | Implemented  |
 
 ## Constraints
 
 | ID    | Title                        | Constraint                                                                                                                    | Category    | Priority | Status      |
 |-------|------------------------------|---------------------------------------------------------------------------------------------------------------------------------|-------------|----------|-------------|
-| C-001 | Runtime Platform             | The application must run on Java 21 and the Quarkus 3.x platform.                                                               | Technical   | High     | Implemented |
+| C-001 | Runtime Platform             | The application must run on Java 25 and the Quarkus 3.x platform.                                                               | Technical   | High     | Implemented |
 | C-002 | Database Platform            | The application must use a single file-based SQLite database; no separate database server may be required.                      | Technical   | High     | Implemented |
 | C-003 | Schema Migration Tool        | All schema changes must be delivered as versioned Flyway scripts under `src/main/resources/db/migration`.                        | Technical   | High     | Implemented |
 | C-004 | Server-Side Rendering        | Pages must be rendered server-side with Qute; no single-page-application framework may be introduced.                           | Technical   | Medium   | Implemented |
@@ -117,6 +120,7 @@ as the gap it is; scope and role model need confirmation.
 | C-013 | REST Layer                   | HTTP endpoints must be built on Quarkus REST; the deprecated RESTEasy Classic stack must not be used, because the CSRF extension required by NFR-011 is only available for Quarkus REST. | Technical   | High     | Implemented |
 | C-014 | Container Hardening          | The container must run as a non-root user with all Linux capabilities dropped, `no-new-privileges` set, a read-only root filesystem, explicit CPU/memory limits, and a mount narrowed to the database directory. | Operational | Medium   | Implemented |
 | C-015 | Documented Production Deployment | Every production-only setting (secrets, rate limiting, TLS termination, backup, log level) must be documented in `docs/deployment.md` so that an operator can reproduce the deployment without reading application code. | Operational | High     | Implemented |
+| C-016 | Container-Based Development Tooling | Every local development command (compile, unit tests, `verify` incl. the Playwright e2e tests, dev mode, arbitrary Maven goals) must be executable through a single wrapper script `tooling/docker.sh` that runs it inside a container; a contributor must need only Docker and git — no locally installed JDK, Maven or browser. | Operational | Medium   | Implemented |
 
 ## Open Points for Confirmation
 

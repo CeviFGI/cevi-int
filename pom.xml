@@ -6,7 +6,6 @@
   <version>1.0.1</version>
   <properties>
     <compiler-plugin.version>3.15.0</compiler-plugin.version>
-    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -19,8 +18,7 @@
     <owasp-html-sanitizer.version>20260101.1</owasp-html-sanitizer.version>
     <webjar-jquery.version>3.7.1</webjar-jquery.version>
     <webjar-summernote.version>0.9.1</webjar-summernote.version>
-    <skipITs>true</skipITs>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -169,28 +167,14 @@
         <version>${surefire-plugin.version}</version>
         <executions>
           <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-            <configuration>
-              <argLine>${failsafeArgLine}</argLine>
-              <systemPropertyVariables>
-                <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-              </systemPropertyVariables>
-            </configuration>
-          </execution>
-          <execution>
             <id>e2e-tests</id>
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
             <configuration>
-              <!-- Playwright e2e tests always run on `mvn verify`, independent of the
-                   skipITs property that gates the native-image ITs above. -->
-              <skipITs>false</skipITs>
+              <!-- The Playwright e2e tests are the only integration tests; the default
+                   Failsafe includes (**/*IT.java) match nothing in this project. -->
               <includes>
                 <include>**/*E2ETest.java</include>
               </includes>
@@ -312,18 +296,4 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>native</id>
-      <activation>
-        <property>
-          <name>native</name>
-        </property>
-      </activation>
-      <properties>
-        <skipITs>false</skipITs>
-        <quarkus.package.type>native</quarkus.package.type>
-      </properties>
-    </profile>
-  </profiles>
 </project>
