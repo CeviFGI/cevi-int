@@ -2,6 +2,7 @@ package tools.cevi.infra;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -53,8 +54,13 @@ public class IndexResource {
         return Templates.datenschutzinformation();
     }
 
+    /**
+     * Written for operators. Naming the exact application and schema version to anyone who asks
+     * makes it cheap to look up which published weaknesses apply to the running system (BR-039).
+     */
     @Path("/version")
     @GET
+    @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance version() {
         return Templates.version(version, flyway.info().current().getVersion().toString());

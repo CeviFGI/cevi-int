@@ -13,12 +13,27 @@
     <li>Unterstützung beim Aufbau einer Partnerschaft/Brieffreundschaft Deiner Abteilung mit einem anderen Land</li>
 </ul>
 
-<form action="kontakt" method="post">
+<form action="/kontakt" method="post">
+    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     {#if invalidAntispamValue }
-        <p style="color: red">Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein.</p>
+        <p class="red">Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein.</p>
     {/if}
-    <textarea rows="15" cols="80" placeholder="Hier kannst Du deine Nachricht eingeben. Falls du eine Antwort wünscht mit deiner E-Mail-Adresse/Telefonnummer" name="message">{message}</textarea><br>
+    {#if validationMessages.size > 0 }
+        <p class="red">Fehler beim Absenden des Formulars:</p>
+        <ul>
+            {#for validationMessage in validationMessages}
+                <li class="red">{validationMessage.fieldName()}: {validationMessage.message()}</li>
+            {/for}
+        </ul>
+    {/if}
+    <textarea rows="15" cols="80" maxlength="5000" placeholder="Hier kannst Du deine Nachricht eingeben. Falls du eine Antwort wünscht mit deiner E-Mail-Adresse/Telefonnummer" name="message" required>{message}</textarea><br>
     Spamschutz <input name="spam" value="" /> (Geben Sie hier die Zahl 50 ein. Diese Massnahme schützt uns vor automatisiertem Spam.)<br />
+    <!-- Honeypot: hidden from anyone using a browser normally, so a filled value means the
+         submission was produced automatically (BR-032). -->
+    <div class="honeypot" aria-hidden="true">
+        <label for="website">Bitte dieses Feld leer lassen</label>
+        <input type="text" id="website" name="website" value="" tabindex="-1" autocomplete="off"/>
+    </div>
     <input type="submit" value="Senden">
 </form>
 {/include}

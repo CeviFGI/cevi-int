@@ -7,6 +7,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.Csrf;
 import tools.cevi.fixture.EventFixture;
 
 import java.net.URL;
@@ -43,7 +44,7 @@ public class EventEditTest {
                 .header("location", containsString("/auth/login"));
 
         // try to submit
-        given().contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", firstId)
                 .formParam("title", "test title")
                 .formParam("slug", firstId)
@@ -80,8 +81,7 @@ public class EventEditTest {
         long eventCount = Event.count();
         var uuid = UUID.randomUUID();
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("title", titleedited)
                 .formParam("slug", "")
@@ -110,8 +110,7 @@ public class EventEditTest {
         long eventCount = Event.count();
         var uuid = UUID.randomUUID();
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("title", titleedited)
                 .formParam("slug", "")
@@ -139,8 +138,7 @@ public class EventEditTest {
         long eventCount = Event.count();
         var uuid = UUID.randomUUID();
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("title", "other")
                 .formParam("slug", slug)
@@ -166,8 +164,7 @@ public class EventEditTest {
         long id = EventFixture.createEvent(title);
         EventFixture.createEvent(titleOther);
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("title", title)
                 .formParam("slug", "cleanup-edit-empty-slug-other-event-with-same-title-other")

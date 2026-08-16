@@ -1,7 +1,7 @@
 {#include base}
 <h2>Volontariat</h2>
 
-{#if inject:vertxRequest.getCookie('quarkus-credential') != null}
+{#if inject:currentUser.admin}
 <a href="/volontariat/add">Neues Volontariat eintragen</a>
 {/if}
 

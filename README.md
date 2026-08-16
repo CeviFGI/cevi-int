@@ -2,11 +2,16 @@
 
 Technology
 * [Quarkus](https://quarkus.io)
-  * [Resteasy](https://quarkus.io/guides/resteasy) (REST)
+  * [Quarkus REST](https://quarkus.io/guides/rest) (REST)
+  * [CSRF Prevention](https://quarkus.io/guides/security-csrf-prevention)
   * [Mailer](https://quarkus.io/guides/mailer-reference)
   * [Qute](https://quarkus.io/guides/qute)(Template engine)
   * [Panache](https://quarkus.io/guides/hibernate-orm-panache) (ORM)
 * [Flyway](https://quarkus.io/guides/flyway) (Database migration)
+* [OWASP Java HTML Sanitizer](https://github.com/OWASP/java-html-sanitizer) (rich text allow-list)
+* jQuery and [Summernote](https://summernote.org/) via WebJars (rich-text editor)
+
+Running it in production: see [docs/deployment.md](docs/deployment.md).
 
 Note: komischerweise schlagen die Tests fehl wenn anstatt einer Datei eine ::memory: Datenbank verwendet wird.
 

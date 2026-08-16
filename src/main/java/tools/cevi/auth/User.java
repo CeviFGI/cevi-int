@@ -41,10 +41,12 @@ public class User extends PanacheEntityBase {
 
     @Override
     public String toString() {
+        // The bcrypt hash is deliberately not part of this string: the codebase logs entities by
+        // concatenating them into a message, so anything printed here ends up in the log files.
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password='***'" +
                 ", role='" + role + '\'' +
                 '}';
     }

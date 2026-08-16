@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <title>International</title>
   <link rel="stylesheet" href="/css/site.css">
-  <link href="/css/summernote-0.8.18/summernote-lite.min.css" rel="stylesheet">
-  <script src="/js/jquery-3.4.1/jquery-3.4.1.slim.min.js"></script>
+  <!-- Served from the WebJars on the classpath. The URLs carry no version, so a dependency bump
+       in pom.xml needs no template change. -->
+  <link href="/webjars/summernote/dist/summernote-lite.min.css" rel="stylesheet">
+  <script src="/webjars/jquery/dist/jquery.slim.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -20,8 +22,13 @@
         <li><a href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}class="active"{/if}>FGI</a></li>
         <li><a href="/datenschutzinformation" {#if inject:vertxRequest.uri.startsWith("/datenschutzinformation")}class="active"{/if}>Datenschutzinformation</a></li>
         <li><a href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}class="active"{/if}>Kontakt</a></li>
-        {#if inject:vertxRequest.getCookie('quarkus-credential') != null}
-        <li><a href="/auth/logout">Ausloggen</a></li>
+        {#if inject:currentUser.signedIn}
+        <li>
+          <form action="/auth/logout" method="post" class="nav-form">
+            <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+            <button type="submit">Ausloggen</button>
+          </form>
+        </li>
         {/if}
       </ul>
     </nav>
@@ -32,6 +39,7 @@
   <footer>
     Unterstützt durch <a href="https://www.hosttech.ch/webhosting/cevihost/">Hosttech (Cevihost)</a>
   </footer>
-  <script src="/js/summernote-0.8.18/summernote-lite.min.js"></script>
+  <script src="/webjars/summernote/dist/summernote-lite.min.js"></script>
+  <script src="/js/summernote-init.js"></script>
 </body>
 </html>

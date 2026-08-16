@@ -6,6 +6,7 @@ import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
 import jakarta.annotation.security.RolesAllowed;
+import tools.cevi.infra.HtmlSanitizer;
 import tools.cevi.infra.ValidationMessage;
 
 import java.util.List;
@@ -53,34 +54,53 @@ public class VoluntaryResource {
         return Templates.form(id, voluntaryService.organization, voluntaryService.organizationLink, voluntaryService.location, voluntaryService.description, List.of());
     }
 
+    /**
+     * Shows the confirmation page. Deleting itself happens in {@link #confirmDelete(long)}: a
+     * GET must not change data, or a prefetching browser, a link preview or a plain link from
+     * another site is enough to remove an offer (BR-028).
+     */
     @GET
     @Path("delete")
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
+    public TemplateInstance delete(@QueryParam("id") long id) {
         VoluntaryService service = VoluntaryService.findById(id);
         if (service == null) {
             throw new NotFoundException("VoluntaryService with id " + id + " not found");
         }
-        if (confirmed != null && confirmed) {
-            return handleDelete(id);
-        } else {
-            return Templates.delete(id, service);
+        return Templates.delete(id, service);
+    }
+
+    @POST
+    @Path("delete")
+    @RolesAllowed("admin")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance confirmDelete(@FormParam("id") long id) {
+        VoluntaryService service = VoluntaryService.findById(id);
+        if (service == null) {
+            throw new NotFoundException("VoluntaryService with id " + id + " not found");
         }
+        return handleDelete(id);
     }
 
     @POST
     @RolesAllowed("admin")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance submit(@FormParam("id") long id, @FormParam("organization") String organization,
                                    @FormParam("organizationLink") String organizationLink,
                                    @FormParam("location") String location,
                                    @FormParam("description") String description) {
 
+        // Reduced here rather than in the templates: the description is rendered unescaped, so what
+        // is stored has to be safe regardless of how it got in (BR-029).
+        String safeDescription = HtmlSanitizer.sanitize(description);
+
         if (id == 0) {
-            return handleAdd(organization, organizationLink, location, description);
+            return handleAdd(organization, organizationLink, location, safeDescription);
         } else {
-            return handleEdit(id, organization, organizationLink, location, description);
+            return handleEdit(id, organization, organizationLink, location, safeDescription);
         }
     }
 

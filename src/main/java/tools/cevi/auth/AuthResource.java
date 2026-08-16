@@ -5,8 +5,10 @@ import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.identity.SecurityIdentity;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -48,8 +50,13 @@ public class AuthResource {
         }
     }
 
-    @GET
+    /**
+     * Signing out changes state, so it is a form submission and not a link: as a GET, any other
+     * site could sign an administrator out simply by referencing the address (BR-028).
+     */
+    @POST
     @Path("logout")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response logout(@CookieParam("quarkus-credential") Cookie cookie) {
         if (cookie != null) {
             return Response.seeOther(URI.create("/auth/loggedOut"))

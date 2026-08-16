@@ -7,6 +7,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.Csrf;
 
 import java.net.URL;
 
@@ -59,8 +60,8 @@ public class AuthResourceTest {
     @Test
     public void login_success() {
         given().contentType(ContentType.URLENC)
-                .formParam("j_username", "patrick")
-                .formParam("j_password", "patrick")
+                .formParam("j_username", "admin")
+                .formParam("j_password", "admin")
                 .when()
                 .post("/auth/j_security_check")
                 .then()
@@ -72,7 +73,7 @@ public class AuthResourceTest {
     @Test
     public void login_failed() {
         given().contentType(ContentType.URLENC)
-                .formParam("j_username", "patrick")
+                .formParam("j_username", "admin")
                 .formParam("j_password", "bla")
                 .when()
                 .post("/auth/j_security_check")
@@ -84,12 +85,12 @@ public class AuthResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void logout_when_logged_in() {
-        given()
+        Csrf.given()
                 .cookie("quarkus-credential")
                 .redirects()
                 .follow(false)
                 .when()
-                .get(logoutEndpoint)
+                .post(logoutEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", containsString("auth/loggedOut"));
@@ -97,11 +98,11 @@ public class AuthResourceTest {
 
     @Test
     public void logout_when_not_logged_in() {
-        given()
+        Csrf.given()
                 .redirects()
                 .follow(false)
                 .when()
-                .get(logoutEndpoint)
+                .post(logoutEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", is("http://localhost:8081/"));
@@ -124,7 +125,7 @@ public class AuthResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "patrick", roles = { "admin"})
+    @TestSecurity(user = "admin", roles = { "admin"})
     public void auth_redirect_to_home_if_logged_in() {
         given().contentType(ContentType.URLENC)
                 .redirects().follow(false)

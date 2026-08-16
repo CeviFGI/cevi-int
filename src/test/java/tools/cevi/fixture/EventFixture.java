@@ -40,8 +40,7 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
     }
 
     public static long createEventWithRest(URL eventEndpoint, String title, String slug) {
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("title", title)
                 .formParam("slug", slug)
                 .formParam("date", "17.02.2023")
@@ -58,6 +57,11 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
         Log.info("EventFixture created " + event);
         createdEvents.add(event.id);
         return event.id;
+    }
+
+    /** Registers an event created outside this fixture for the same after-each cleanup. */
+    public static void trackForCleanup(int id) {
+        createdEvents.add(id);
     }
 
     @Override

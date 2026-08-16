@@ -6,6 +6,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.Csrf;
 import tools.cevi.fixture.EventFixture;
 
 import java.net.URL;
@@ -74,14 +75,15 @@ public class EventDeleteTest{
         long id = EventFixture.createEvent(title);
         long eventCount = Event.count();
 
-        given()
-                .queryParam("id", id)
-                .queryParam("confirmed", true)
+        Csrf.given()
+                .formParam("id", id)
+                .redirects()
+                .follow(false)
                 .when()
-                .get(deleteEndpoint)
+                .post(deleteEndpoint)
                 .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body(containsString("Hier findest du eine Liste"));
+                .statusCode(HttpStatus.SC_SEE_OTHER)
+                .header("location", containsString("/anlaesse"));
 
         assertThat(Event.count(), equalTo(eventCount-1));
     }
@@ -91,14 +93,56 @@ public class EventDeleteTest{
     public void confirm_delete_non_existing() {
         long eventCount = Event.count();
 
+        Csrf.given()
+                .formParam("id", 10000000)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_NOT_FOUND)
+                .body(containsString("Nicht gefunden"));
+
+        assertThat(Event.count(), equalTo(eventCount));
+    }
+
+    /**
+     * A GET must not delete: a prefetching browser, a link preview or a plain link from another
+     * site would otherwise be enough to remove an event (BR-028, NFR-021).
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void get_with_confirmed_parameter_does_not_delete() {
+        String title = "CLEANUP get_with_confirmed_parameter_does_not_delete";
+
+        long id = EventFixture.createEvent(title);
+        long eventCount = Event.count();
+
         given()
-                .queryParam("id", 10000000)
+                .queryParam("id", id)
                 .queryParam("confirmed", true)
                 .when()
                 .get(deleteEndpoint)
                 .then()
-                .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(containsString("Nicht gefunden"));
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("Anlass löschen"));
+
+        assertThat(Event.count(), equalTo(eventCount));
+    }
+
+    /** Without a CSRF token the deletion is refused before it reaches the endpoint (NFR-011). */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void confirm_delete_without_csrf_token_is_rejected() {
+        String title = "CLEANUP confirm_delete_without_csrf_token_is_rejected";
+
+        long id = EventFixture.createEvent(title);
+        long eventCount = Event.count();
+
+        Csrf.givenWithoutToken()
+                .formParam("id", id)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         assertThat(Event.count(), equalTo(eventCount));
     }

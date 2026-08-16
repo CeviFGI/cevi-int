@@ -8,6 +8,11 @@
 
 <p>Möchten sie obenstehendes Volontariat wirklich löschen?</p>
 
-<a href="/volontariat">Nein</a><a class="margin-left" href="/volontariat/delete?id={id}&confirmed=true">Ja</a>
+<a href="/volontariat">Nein</a>
+<form action="/volontariat/delete" method="post" class="inline-form">
+    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+    <input type="hidden" name="id" value="{id}"/>
+    <button type="submit" class="margin-left">Ja</button>
+</form>
 
 {/include}

@@ -39,7 +39,7 @@ public class IndexResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "patrick", roles = { "admin"})
+    @TestSecurity(user = "admin", roles = { "admin"})
     public void index_forward_to_anlaesse() {
         given()
                 .redirects().follow(false)
@@ -51,8 +51,21 @@ public class IndexResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
     public void version_working() {
         given().when().get(versionEndpoint).then().statusCode(HttpStatus.SC_OK).body(containsString("Version:"));
+    }
+
+    /** The version page names application and schema version and is therefore not public (BR-039). */
+    @Test
+    public void version_requires_authentication() {
+        given()
+                .redirects().follow(false)
+                .when()
+                .get(versionEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
+                .header("location", containsString("/auth/login"));
     }
 
     @Test
@@ -67,7 +80,7 @@ public class IndexResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "patrick", roles = { "admin"})
+    @TestSecurity(user = "admin", roles = { "admin"})
     public void admin_redirect_to_home_if_logged_in() {
         given().contentType(ContentType.URLENC)
                 .redirects().follow(false)

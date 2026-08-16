@@ -1,7 +1,7 @@
 <div class="box">
     <p class="title">{it.organization}</p>
     <p>{it.description}</p>
-    {#if inject:vertxRequest.getCookie('quarkus-credential') != null && showActions}
+    {#if inject:currentUser.admin && showActions}
     <a href="/austausch/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/austausch/delete?id={it.id}">Löschen</a>
     {/if}
 </div>

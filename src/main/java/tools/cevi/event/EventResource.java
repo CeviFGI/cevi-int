@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import jakarta.annotation.security.RolesAllowed;
+import tools.cevi.infra.HtmlSanitizer;
 import tools.cevi.infra.Slug;
 import tools.cevi.infra.ValidationMessage;
 
@@ -71,34 +72,53 @@ public class EventResource {
         return Templates.detail(event);
     }
 
+    /**
+     * Shows the confirmation page. Deleting itself happens in {@link #confirmDelete(long)}: a
+     * GET must not change data, or a prefetching browser, a link preview or a plain link from
+     * another site is enough to remove an event (BR-028).
+     */
     @GET
     @Path("delete")
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
-    public Response delete(@QueryParam("id") long id, @QueryParam("confirmed") Boolean confirmed) {
+    public Response delete(@QueryParam("id") long id) {
         Event event = Event.findById(id);
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        if (confirmed != null && confirmed) {
-            return handleDelete(id);
-        } else {
-            return Response.status(Response.Status.OK).entity(Templates.delete(event).render()).build();
+        return Response.status(Response.Status.OK).entity(Templates.delete(event).render()).build();
+    }
+
+    @POST
+    @Path("delete")
+    @RolesAllowed("admin")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_HTML)
+    public Response confirmDelete(@FormParam("id") long id) {
+        Event event = Event.findById(id);
+        if (event == null) {
+            throw new NotFoundException("Event with id " + id + " not found");
         }
+        return handleDelete(id);
     }
 
     @POST
     @RolesAllowed("admin")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
     public Response submit(@FormParam("id") long id, @FormParam("title") String title,
                                    @FormParam("slug") String slug, @FormParam("date") String date,
                                    @FormParam("displayDate") String displayDate,
                                    @FormParam("location") String location, @FormParam("description") String description) {
 
+        // Reduced here rather than in the templates: the description is rendered unescaped, so what
+        // is stored has to be safe regardless of how it got in (BR-029).
+        String safeDescription = HtmlSanitizer.sanitize(description);
+
         if (id == 0) {
-            return handleAdd(title, slug, date, displayDate, location, description);
+            return handleAdd(title, slug, date, displayDate, location, safeDescription);
         } else {
-            return handleEdit(id, title, slug, date, displayDate, location, description);
+            return handleEdit(id, title, slug, date, displayDate, location, safeDescription);
         }
     }
 

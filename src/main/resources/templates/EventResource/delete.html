@@ -8,6 +8,11 @@
 
 <p>Möchten sie obenstehenden Anlass wirklich löschen?</p>
 
-<a href="/anlaesse">Nein</a><a class="margin-left" href="/anlaesse/delete?id={event.id}&confirmed=true">Ja</a>
+<a href="/anlaesse">Nein</a>
+<form action="/anlaesse/delete" method="post" class="inline-form">
+    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+    <input type="hidden" name="id" value="{event.id}"/>
+    <button type="submit" class="margin-left">Ja</button>
+</form>
 
 {/include}

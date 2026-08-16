@@ -1,18 +1,27 @@
 package tools.cevi.infra;
 
+import io.quarkus.arc.profile.UnlessBuildProfile;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.transaction.Transactional;
 
-import tools.cevi.auth.User;
 import tools.cevi.event.Event;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.time.LocalDate;
 
+/**
+ * Fills an empty database with sample content so that a developer sees a populated site on the
+ * first start.
+ * <p>
+ * Excluded from the prod profile: the condition is an empty database, which is exactly the state of
+ * a newly set up or restored production system. The administrator account is not created here but
+ * by {@code AdminAccountBootstrap}, from a credential the deployment supplies.
+ */
 @ApplicationScoped
+@UnlessBuildProfile("prod")
 @SuppressWarnings("unused")
 public class DemoData {
     @Transactional
@@ -27,8 +36,6 @@ public class DemoData {
 
             createVoluntaryService("Horyzon", "https://horyzon.ch/", "Kolumbien, Palästina",  "Dauer 2 Wochen oder 3-6 Monate. Siehe <a href=\"https://horyzon.ch/de/spenden-und-unterstuetzen/einsaetze-weltweit/volontariat/\">Weitere Informationen</a>");
             createVoluntaryService("Volunteers for Europe", "http://vfe.cvjm.de/", "Deutschland",  "Dauer 2 Wochen oder 3-6 Monate. Siehe Webseite von CVJM");
-
-            User.add("patrick", "patrick", "admin");
 
             Log.info("Generation finished");
         }

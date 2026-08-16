@@ -28,7 +28,7 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
         voluntaryService.organization = organization;
         voluntaryService.description = "some description";
         voluntaryService.location = "some location";
-        voluntaryService.organizationLink = "some link";
+        voluntaryService.organizationLink = "https://example.org/some-link";
         voluntaryService.persist();
         QuarkusTransaction.commit();
         createdVoluntryServices.add(voluntaryService.id);
@@ -37,7 +37,7 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
     }
 
     public static long createVoluntaryServiceWithRest(URL voluntaryServiceEndpoint, String organization) {
-        given().contentType(ContentType.URLENC).formParam("organization", organization)
+        Csrf.given().formParam("organization", organization)
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")

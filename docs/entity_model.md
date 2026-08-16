@@ -33,6 +33,11 @@ The event carries two dates on purpose: `date` is the human-readable period show
 ("15. - 24. Oktober 2023"), while `displayDate` is the single date the system compares against
 today to decide whether the event is still upcoming.
 
+**Constraints:** `description` holds HTML that is rendered unescaped on the public pages. It is
+therefore stored already reduced to the allow-list documented in
+[Rich Text Allow-List](#rich-text-allow-list); the stored value, not the submitted one, is the
+authority. The length limit applies after that reduction.
+
 ### VOLUNTARY_SERVICE
 
 A voluntary service opportunity abroad that an organisation offers and that the working group recommends.
@@ -46,7 +51,11 @@ A voluntary service opportunity abroad that an organisation offers and that the 
 | description      | Formatted description with duration and further links   | String    | 65535            | Not Null         |
 
 The database stores these columns as unbounded text; the lengths above are the limits the
-application should enforce, not constraints the schema declares today.
+application enforces before storing, not constraints the schema declares today.
+
+**Constraints:** `organizationLink` must start with `http://` or `https://`, so that the value can
+never turn into a script-executing link once the field is rendered as a hyperlink. `description` is
+subject to the same [Rich Text Allow-List](#rich-text-allow-list) as `EVENT.description`.
 
 ### EXCHANGE
 
@@ -71,10 +80,14 @@ A message a visitor sent to the international working group through the contact 
 | Attribute | Description                                       | Data Type | Length/Precision | Validation Rules      |
 |-----------|---------------------------------------------------|-----------|------------------|-----------------------|
 | id        | Unique identifier                                 | Long      | 19               | Primary Key, Sequence |
-| message   | Free-text message written by the visitor          | String    | 65535            | Not Null              |
+| message   | Free-text message written by the visitor          | String    | 5000             | Not Null              |
 
 The message is deliberately the only stored attribute: no sender data is requested, so a visitor
 who wants a reply includes their contact details in the message text itself.
+
+**Constraints:** the 5 000 character limit is validated before storage. It exists because the
+endpoint is anonymous: without it, a single request may write up to the HTTP body limit (10 MB) into
+the database file, and the file shares a filesystem with the host.
 
 ### USER
 
@@ -89,3 +102,28 @@ An account that may sign in and maintain the published content.
 
 The schema for this table still allows empty and duplicate user names; the rules above are the
 ones the sign-in mechanism relies on and should be made explicit in the schema.
+
+**Constraints:** `password` holds a bcrypt hash and never a readable password. The hash is treated
+as a secret in its own right: no rendering, logging or `toString()` of the entity may reproduce it.
+
+## Rich Text Allow-List
+
+`EVENT.description` and `VOLUNTARY_SERVICE.description` are the only attributes rendered to visitors
+without HTML escaping. Before either is stored, the submitted markup is reduced to this allow-list;
+anything else is dropped.
+
+| Group      | Allowed                                                                                          |
+|------------|--------------------------------------------------------------------------------------------------|
+| Structure  | `p`, `br`, `hr`, `div`, `span`, `blockquote`, `pre`, `h1`–`h6`                                     |
+| Emphasis   | `b`, `strong`, `i`, `em`, `u`, `s`, `strike`, `sub`, `sup`, `code`, `font` (`color`, `face`, `size`) |
+| Lists      | `ul`, `ol`, `li`                                                                                  |
+| Tables     | `table`, `thead`, `tbody`, `tfoot`, `tr`, `th`, `td`, `caption` (`colspan`, `rowspan`)             |
+| Links      | `a` with `href`, `title`, `target`                                                                |
+| Images     | `img` with `src`, `alt`, `title`, `width`, `height`                                               |
+| Styling    | `style` attributes, reduced to a safe set of CSS properties                                       |
+
+**Constraints:** `a href` accepts `http`, `https` and `mailto` only. `img src` accepts `http`,
+`https` and `data:image/…` — the latter because the editor embeds pasted pictures inline. Every
+event handler attribute (`onclick`, `onerror`, …), `script`, `iframe`, `object`, `embed`, `form` and
+every other URL scheme is removed. The reduction happens server-side: the editor's own filtering is
+a convenience, not a boundary.

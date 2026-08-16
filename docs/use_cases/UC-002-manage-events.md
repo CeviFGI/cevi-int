@@ -19,9 +19,11 @@
 2. The system presents an empty event form with today's date pre-filled as the display date.
 3. The administrator enters the title, the date text as it should be read by visitors, the location, the display date and a formatted description, and optionally a short name for the event address.
 4. The administrator submits the form.
-5. The system derives a short name from the title if none was entered.
-6. The system checks that all mandatory information is present and that the short name is not already used by another event.
-7. The system records the event and returns the administrator to the event list, where the new event is visible.
+5. The system confirms that the submission comes from a form it handed out to this administrator's own session.
+6. The system derives a short name from the title if none was entered.
+7. The system checks that all mandatory information is present and that the short name is not already used by another event.
+8. The system reduces the formatted description to the formatting it permits, discarding anything else.
+9. The system records the event and returns the administrator to the event list, where the new event is visible.
 
 ## Alternative Flows
 
@@ -32,12 +34,12 @@
 
 1. The system presents the form filled with the current values of that event.
 2. The administrator changes the values and submits the form.
-3. The system validates the entry as in step 6 and records the changed event.
+3. The system validates the entry as in steps 5 to 8 and records the changed event.
 4. Use case ends.
 
 ### A2: Incomplete or invalid entry
 
-**Trigger:** A mandatory value is missing, a value is too long, or the short name is already used by another event (step 6)
+**Trigger:** A mandatory value is missing, a value is too long, or the short name is already used by another event (step 7)
 **Flow:**
 
 1. The system rejects the entry, keeps the values the administrator typed and marks the fields that need correction.
@@ -48,10 +50,11 @@
 **Trigger:** The administrator chooses to delete an event (step 1)
 **Flow:**
 
-1. The system presents the event and asks the administrator to confirm the removal.
-2. The administrator confirms.
-3. The system removes the event and returns to the event list.
-4. Use case ends.
+1. The system presents the event and asks the administrator to confirm the removal on a confirmation form.
+2. The administrator confirms by submitting that form.
+3. The system confirms that the confirmation comes from a form it handed out to this administrator's own session.
+4. The system removes the event and returns to the event list.
+5. Use case ends.
 
 ### A4: Removal not confirmed
 
@@ -71,12 +74,20 @@
 
 ### A6: Event cannot be stored
 
-**Trigger:** The event cannot be recorded (step 7)
+**Trigger:** The event cannot be recorded (step 9)
 **Flow:**
 
 1. The system discards the incomplete change so that the previous state is preserved.
 2. The system presents the form again with the entered values.
 3. Use case continues at step 3.
+
+### A7: Submission does not come from the system's own form
+
+**Trigger:** A change arrives that the system cannot trace back to a form it handed out to this session (step 5)
+**Flow:**
+
+1. The system refuses the change without inspecting the submitted values.
+2. Use case ends.
 
 ## Postconditions
 
@@ -121,3 +132,11 @@ An event is only removed after the administrator has explicitly confirmed the re
 ### BR-011: An invalid display date is ignored
 
 If the supplied display date cannot be read as a date, the previously stored display date is kept; for a new event this means the entry is rejected as incomplete.
+
+### BR-028: Changes are accepted only from the system's own forms
+
+Every addition, change and removal must be traceable to a form the system handed out to the same signed-in session, and must be submitted as a form rather than by following a link. A request that merely carries a valid session, without that origin, is refused. This prevents a foreign website from performing changes in the name of an administrator who happens to be signed in.
+
+### BR-029: Descriptions keep only permitted formatting
+
+Before a description is stored, it is reduced to the formatting the platform permits — text emphasis, headings, lists, tables, links, images and colours. Everything else, in particular anything that could run as a program in a visitor's browser, is discarded. The reduction happens when the system receives the description; what the editor in the browser allows is a convenience for the administrator, not the boundary that is relied upon.

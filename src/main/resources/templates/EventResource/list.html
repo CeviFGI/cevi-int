@@ -1,7 +1,7 @@
 {#include base}
 <h2>Anlässe</h2>
 
-{#if inject:vertxRequest.getCookie('quarkus-credential') != null}
+{#if inject:currentUser.admin}
 <a href="/anlaesse/add">Neuen Anlass eintragen</a>
 {/if}
 

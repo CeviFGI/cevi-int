@@ -17,19 +17,13 @@
 {/if}
 
 <form action="/volontariat" method="post">
+    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
-    <strong>Organisation:</strong> <input type="text" name="organization" value="{organization}"><br>
-    <strong>Organisationslink:</strong> <input type="text" name="organizationLink" value="{organizationLink}"><br>
-    <strong>Ort:</strong> <input type="text" name="location" value="{location}"><br>
-    <strong>Beschreibung:</strong> <textarea id="summernote" name="description">{description}</textarea><br>
+    <strong>Organisation:</strong> <input type="text" maxlength="255" name="organization" value="{organization}" required><br>
+    <strong>Organisationslink:</strong> <input type="url" maxlength="255" name="organizationLink" value="{organizationLink}" placeholder="https://..." required><br>
+    <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
+    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="summernote" name="description" required>{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
-<script>
-    $(document).ready(function() {
-        $('#summernote').summernote({
-            height: 400
-        });
-    });
-</script>
 
 {/include}

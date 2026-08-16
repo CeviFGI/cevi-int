@@ -12,6 +12,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.Csrf;
 import tools.cevi.fixture.VoluntaryFixture;
 
 import static io.restassured.RestAssured.given;
@@ -92,7 +93,7 @@ public class VoluntaryResourceTest {
 
     @Test
     public void add_submit_no_auth() {
-        given().contentType(ContentType.URLENC).formParam("organization", "test org vol")
+        Csrf.given().formParam("organization", "test org vol")
                 .formParam("organizationLink", "http://test.ch")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
@@ -151,10 +152,10 @@ public class VoluntaryResourceTest {
         String title = "CLEANUP edit_submit_no_auth";
         long id = VoluntaryFixture.createVoluntaryService(title);
 
-        given().contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("organization", "test title")
-                .formParam("organizationLink", "12-19-2022")
+                .formParam("organizationLink", "https://example.org")
                 .formParam("location", "hier")
                 .formParam("description", "desc")
                 .when()
@@ -173,11 +174,10 @@ public class VoluntaryResourceTest {
         long voluntaryServiceCount = VoluntaryService.count();
         var uuid = UUID.randomUUID();
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("id", id)
                 .formParam("organization", "organization_" + uuid)
-                .formParam("organizationLink", "12-19-2022")
+                .formParam("organizationLink", "https://example.org")
                 .formParam("location", "hier")
                 .formParam("description", "desc")
                 .when()
@@ -231,6 +231,29 @@ public class VoluntaryResourceTest {
 
         long voluntaryServiceCount = VoluntaryService.count();
 
+        Csrf.given()
+                .formParam("id", id)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("Volontariat"));
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount-1));
+    }
+
+    /**
+     * A GET must not delete: a prefetching browser, a link preview or a plain link from another
+     * site would otherwise be enough to remove an offer (BR-028, NFR-021).
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void get_with_confirmed_parameter_does_not_delete() {
+        String title = "CLEANUP get_with_confirmed_parameter_does_not_delete";
+        long id = VoluntaryFixture.createVoluntaryService(title);
+
+        long voluntaryServiceCount = VoluntaryService.count();
+
         given()
                 .queryParam("id", id)
                 .queryParam("confirmed", true)
@@ -238,8 +261,47 @@ public class VoluntaryResourceTest {
                 .get(deleteEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString("Anlässe"));
+                .body(containsString("Volontariat löschen"));
 
-        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount-1));
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+    }
+
+    /** Without a CSRF token the change is refused before it reaches the endpoint (NFR-011). */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_submit_without_csrf_token_is_rejected() {
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.givenWithoutToken()
+                .formParam("organization", "CLEANUP add_submit_without_csrf_token_is_rejected")
+                .formParam("organizationLink", "https://example.org")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+    }
+
+    /** The organisation link has to be a web address so it can never become a script link. */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_submit_rejects_non_web_organization_link() {
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.given()
+                .formParam("organization", "CLEANUP add_submit_rejects_non_web_organization_link")
+                .formParam("organizationLink", "javascript:alert(1)")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("muss mit http:// oder https:// beginnen"));
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
     }
 }

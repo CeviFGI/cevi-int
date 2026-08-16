@@ -48,8 +48,8 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
 
     private void loginAsAdmin() {
         page.navigate(url("/auth/login"));
-        page.locator("input[name='j_username']").fill("patrick");
-        page.locator("input[name='j_password']").fill("patrick");
+        page.locator("input[name='j_username']").fill("admin");
+        page.locator("input[name='j_password']").fill("admin");
         page.locator("input[type='submit']").click();
         page.waitForURL("**/anlaesse");
     }

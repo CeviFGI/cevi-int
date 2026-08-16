@@ -7,6 +7,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import tools.cevi.fixture.Csrf;
 import tools.cevi.fixture.EventFixture;
 
 import java.net.URL;
@@ -40,7 +41,7 @@ public class EventAddTest {
                 .header("location", containsString("/auth/login"));
 
         // try to submit form
-        given().contentType(ContentType.URLENC).formParam("title", "test title")
+        Csrf.given().formParam("title", "test title")
                 .formParam("date", "12-19-2022")
                 .formParam("location", "Bern")
                 .formParam("description", "desc")
@@ -100,8 +101,7 @@ public class EventAddTest {
 
         EventFixture.createEventWithRest(eventEndpoint, title, "add_with_slug");
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("title", title)
                 .formParam("slug", "add_with_slug")
                 .formParam("date", "17.02.2023")
@@ -126,8 +126,7 @@ public class EventAddTest {
     public void add_with_too_long_title() {
         long eventCount = Event.count();
 
-        given()
-                .contentType(ContentType.URLENC)
+        Csrf.given()
                 .formParam("title", "abcde".repeat(60))
                 .formParam("slug", "add_with_too_long_title")
                 .formParam("date", "17.02.2023")

@@ -20,6 +20,25 @@ nav a.active {
   background-color: rgba(0, 0, 0, 0.08);
 }
 
+/* Signing out changes state and is therefore a form submission; the button is made to read as the
+   navigation link it replaces. */
+.nav-form {
+  display: inline;
+}
+
+.nav-form button {
+  background: none;
+  border: none;
+  color: rgb(33, 33, 33);
+  cursor: pointer;
+  font: inherit;
+  padding: 1em;
+}
+
+.nav-form button:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
 nav a:hover {
   background-color: rgba(0, 0, 0, 0.08);
 }

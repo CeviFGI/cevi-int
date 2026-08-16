@@ -23,10 +23,18 @@
 
 ### A1: Check the running version
 
-**Trigger:** An operator opens the version page (step 3)
+**Trigger:** An operator with an established administrator session opens the version page (step 3)
 **Flow:**
 
 1. The system presents the application version together with the version of the current database schema.
+2. Use case ends.
+
+### A4: Version page opened without an administrator session
+
+**Trigger:** Anyone without an established administrator session opens the version page (step 3)
+**Flow:**
+
+1. The system leads them to the sign-in page instead of naming the versions.
 2. Use case ends.
 
 ### A2: Unknown page requested
@@ -69,3 +77,7 @@ The data protection information is reachable from every page without signing in.
 ### BR-027: The version page names application and schema version
 
 The version page states both the version of the application and the version of the database schema in use, so an operator can tell whether a deployment and its migrations match.
+
+### BR-039: Version information is not public
+
+The version page is reachable only with an established administrator session. It is written for operators, and naming the exact versions to anyone who asks makes it easier to look up which published weaknesses apply to the running system.

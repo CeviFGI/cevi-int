@@ -18,6 +18,7 @@
 {/if}
 
 <form action="/anlaesse" method="post">
+    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
     <strong>Titel:</strong> <input type="text" maxlength="255" name="title" value="{title}" required><br>
     <strong>Slug:</strong> <input type="text" maxlength="252" name="slug" value="{slug}"> <img src="/img/question-mark.svg" style="height: 1em;" title="Der Slug wird für die Verlinkung verwendet. Er muss eindeutig sein. Ist dieser leer wird er automatisch aus dem Titel generiert."><br>
@@ -27,21 +28,5 @@
     <strong>Beschreibung:</strong> <textarea maxlength="65535" id="summernote" name="description" required>{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
-<script>
-    $(document).ready(function() {
-        $('#summernote').summernote({
-            height: 400,
-            toolbar: [
-                ["history", ["undo", "redo"]],
-                ["style", ["style"]],
-                ["font", ["bold", "italic", "underline", "fontname", "strikethrough", "superscript", "subscript", "clear"]],
-                ["color", [, "color"]],
-                ["paragraph", ["ul", "ol", "paragraph", "height"]],
-                ["table", ["table"]],
-                ["insert", ["link", "picture", "video"]],
-                ["view", ["codeview"]], ]
-        });
-    });
-</script>
 
 {/include}

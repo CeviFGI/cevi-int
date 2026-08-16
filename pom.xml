@@ -16,6 +16,9 @@
     <jacoco.version>0.8.15</jacoco.version>
     <playwright.version>1.62.0</playwright.version>
     <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
+    <owasp-html-sanitizer.version>20240325.1</owasp-html-sanitizer.version>
+    <webjar-jquery.version>3.7.1</webjar-jquery.version>
+    <webjar-summernote.version>0.9.1</webjar-summernote.version>
     <skipITs>true</skipITs>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
@@ -33,11 +36,41 @@
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-qute</artifactId>
+      <artifactId>quarkus-rest-qute</artifactId>
+    </dependency>
+    <!-- CSRF protection for the HTML forms. The extension is only available for Quarkus REST,
+         which is why the endpoints no longer run on the (deprecated) RESTEasy Classic stack. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-csrf</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <!-- Reduces the HTML coming from the rich-text editor to an allow-list before it is stored.
+         The descriptions are rendered unescaped, so this is the boundary, not the editor. -->
+    <dependency>
+      <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+      <artifactId>owasp-java-html-sanitizer</artifactId>
+      <version>${owasp-html-sanitizer.version}</version>
+    </dependency>
+    <!-- jQuery and Summernote come from WebJars instead of being checked in as binaries, so
+         Dependabot sees them through the existing Maven configuration. The locator extension
+         serves them under version-less URLs, so a version bump needs no template change. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-webjars-locator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>jquery</artifactId>
+      <version>${webjar-jquery.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>summernote</artifactId>
+      <version>${webjar-summernote.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

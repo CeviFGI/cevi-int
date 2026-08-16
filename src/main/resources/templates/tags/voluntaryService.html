@@ -2,7 +2,7 @@
     <p class="title">{it.organization}</p>
     <p>{it.location}</p>
     <p>{it.description.raw}</p>
-    {#if inject:vertxRequest.getCookie('quarkus-credential') != null && showActions}
+    {#if inject:currentUser.admin && showActions}
     <a href="/volontariat/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/volontariat/delete?id={it.id}">Löschen</a>
     {/if}
 </div>

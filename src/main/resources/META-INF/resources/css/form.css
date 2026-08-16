@@ -5,3 +5,21 @@ input {
 textarea {
     max-width: 100%;
 }
+
+/* Deleting is a form submission rather than a link, so the confirmation button has to sit next to
+   the "Nein" link as if it were one. */
+.inline-form {
+    display: inline;
+}
+
+/*
+ * Honeypot field: kept out of sight and out of the tab order, but not display:none - simple bots
+ * fill in every input they find, which is exactly what the check is looking for.
+ */
+.honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

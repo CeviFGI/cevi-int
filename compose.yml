@@ -1,10 +1,45 @@
+# Reference deployment. The production stack lives in the infrastructure repository; this file shows
+# the same shape so that both stay comparable. See docs/deployment.md.
+#
+# Before the first start, create the three secret files (they are ignored by git):
+#   mkdir -p secrets data
+#   openssl rand -base64 32 > secrets/http_session_key
+#   openssl rand -base64 24 > secrets/admin_password
+#   printf '%s' '<mail password>'  > secrets/mailer_password
 services:
     app:
       image: ghcr.io/patrickuhlmann/cevi-int/quarkus:main
+      # Only the database directory, not the whole working directory: the container has no business
+      # writing to anything that happens to sit next to the database file.
       volumes:
-        - ./:/data
+        - ./data:/data
       environment:
         - QUARKUS_DATASOURCE_JDBC_URL=jdbc:sqlite:/data/international.db?journal_mode=wal
+        - QUARKUS_PROFILE=prod
+      secrets:
+        - international_http_session_key
+        - international_admin_password
+        - international_mailer_password
       restart: on-failure
       ports:
         - "9000:8080"
+      read_only: true
+      tmpfs:
+        - /tmp
+      cap_drop:
+        - ALL
+      security_opt:
+        - no-new-privileges:true
+      deploy:
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: 300M
+
+secrets:
+  international_http_session_key:
+    file: ./secrets/http_session_key
+  international_admin_password:
+    file: ./secrets/admin_password
+  international_mailer_password:
+    file: ./secrets/mailer_password

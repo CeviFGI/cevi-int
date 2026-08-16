@@ -3,7 +3,10 @@ left to right direction
 
 actor "Besucher" as visitor
 actor "Administrator" as admin
+actor "Operator" as operator
 actor "Mail Service" as mail
+
+operator --|> admin
 
 rectangle "Cevi International" {
     usecase "UC-001\nBrowse Upcoming Events" as UC001
@@ -24,6 +27,15 @@ admin --> UC002
 admin --> UC004
 admin --> UC006
 
+operator --> UC007
+
 UC005 --> mail
+
+note bottom of UC007
+  Besucher: nur die Informationsseiten.
+  Die Versionsseite verlangt eine
+  Administratorsitzung (BR-039), weshalb
+  der Operator vom Administrator erbt.
+end note
 
 @enduml
