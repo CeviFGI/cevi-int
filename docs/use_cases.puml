@@ -1,0 +1,29 @@
+@startuml Use Cases Overview
+left to right direction
+
+actor "Besucher" as visitor
+actor "Administrator" as admin
+actor "Mail Service" as mail
+
+rectangle "Cevi International" {
+    usecase "UC-001\nBrowse Upcoming Events" as UC001
+    usecase "UC-002\nManage Events" as UC002
+    usecase "UC-003\nBrowse Voluntary Service Offers" as UC003
+    usecase "UC-004\nManage Voluntary Service Offers" as UC004
+    usecase "UC-005\nContact the International Working Group" as UC005
+    usecase "UC-006\nSign In as Administrator" as UC006
+    usecase "UC-007\nView Site Information" as UC007
+}
+
+visitor --> UC001
+visitor --> UC003
+visitor --> UC005
+visitor --> UC007
+
+admin --> UC002
+admin --> UC004
+admin --> UC006
+
+UC005 --> mail
+
+@enduml
