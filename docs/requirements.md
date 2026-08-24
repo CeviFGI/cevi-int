@@ -1,7 +1,8 @@
 # Requirements: Cevi International Platform
 
 **Document status:** Draft for review
-**Date:** 2026-08-16 (revision 3 — container-based development tooling added)
+**Date:** 2026-08-24 (revision 4 — rich-text editor replacement: formatting scope, dependency
+maintenance, licence and page-weight requirements added)
 **Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-007`, `docs/entity_model.md`,
 security review of 2026-08-15
 
@@ -48,6 +49,7 @@ here so the requirement is testable and are listed for confirmation in
 | FR-030 | Manage User Accounts           | As an operator, I want to create further administrator accounts and let administrators change their own password from within the application so that access does not depend on direct database edits.                | Medium   | Open         |
 | FR-031 | Bootstrap Initial Administrator| As an operator, I want the first administrator account created from a deployment secret when the user table is empty so that a fresh or restored production database never carries publicly known credentials.        | High     | Implemented  |
 | FR-032 | Reject Automated Submissions   | As an administrator, I want the contact form to discard submissions that fill a field no human can see so that simple spam bots do not reach the working group even though the arithmetic question is public.         | Medium   | Verified     |
+| FR-033 | Format Description in the Browser | As an administrator, I want to format a description in the browser with headings, bold, italic, underlined and struck-through text, superscript and subscript, font family and size, text colour, ordered and unordered lists, paragraph alignment, line height, tables, links, inline pictures and a source-code view so that I can lay out an announcement without writing HTML by hand. | High     | Implemented  |
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -57,6 +59,13 @@ exists in the user interface, but no application code reads or writes it and no 
 it (`docs/entity_model.md`). Either FR-029 is taken into scope and a use case written, or the table
 and fragment are removed. This must be resolved by the product owner; the requirement is recorded
 rather than dropped so the decision is not lost.
+
+**Note on FR-033 — why it is written down now.** The formatting the editor offers had never been
+recorded as a requirement; it existed only as a toolbar configuration. It is stated here because it
+is the acceptance criterion for exchanging the editor component (NFR-035): a replacement that drops
+tables, colours or the source view would silently reduce what administrators can publish. The list
+matches what the stored-value allow-list accepts (`docs/entity_model.md`, NFR-010) — offering a
+button whose result the sanitiser discards is a defect, not a feature.
 
 **Note on FR-030.** The only documented way an administrator account comes into existence today is
 the demo seed (`admin`/`admin`). No use case covers account management. The requirement is stated
@@ -100,6 +109,20 @@ as the gap it is; scope and role model need confirmation.
 | NFR-032 | Toolchain Parity Local and CI  | The container image used by the development tooling and the build pipeline provision the same JDK major version, so a contributor and the pipeline compile with 0 differing toolchain versions.                                  | Maintainability | Medium   | Implemented  |
 | NFR-033 | Host File Ownership            | Every file a tooling container writes into the working copy (`target/`, test reports, traces) is owned by the invoking host user — 0 root-owned artefacts that the IDE, git or a later run cannot delete.                        | Maintainability | Medium   | Implemented  |
 | NFR-034 | Warm Dependency Cache          | The tooling reuses the host Maven repository and the downloaded browser binary across invocations, so a repeated `verify` on an unchanged working copy downloads 0 dependencies and 0 browsers.                                  | Maintainability | Medium   | Implemented  |
+| NFR-035 | Frontend Dependency Maintenance | Every frontend library delivered to the browser has an upstream release not older than 12 months at the time of a release build, so that a reported vulnerability can be answered by upgrading instead of by patching a dead component locally. | Security        | High     | Open         |
+| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Open         |
+
+**Note on NFR-035 — the requirement the current editor fails.** Summernote 0.9.1 is the newest
+release and dates from October 2024; the jQuery 4 incompatibility reported against it in February
+2026 is still open (`docs/jquery4_evaluation.md`). The component therefore cannot satisfy NFR-035
+and is to be replaced by a maintained, dependency-free editor, which also removes jQuery from the
+application. NFR-035 is stated as a standing rule rather than as a one-off migration task so that
+the next component going quiet is caught by the same check.
+
+**Note on NFR-036 — why it appears with the editor exchange.** Today the editor is loaded from
+`base.qute.html` on every page, so every visitor downloads it although only two administrator pages
+use it. A maintained editor is larger than the current one; loading it where it is used keeps the
+public pages faster than they are today instead of slower.
 
 ## Constraints
 
@@ -121,6 +144,14 @@ as the gap it is; scope and role model need confirmation.
 | C-014 | Container Hardening          | The container must run as a non-root user with all Linux capabilities dropped, `no-new-privileges` set, a read-only root filesystem, explicit CPU/memory limits, and a mount narrowed to the database directory. | Operational | Medium   | Implemented |
 | C-015 | Documented Production Deployment | Every production-only setting (secrets, rate limiting, TLS termination, backup, log level) must be documented in `docs/deployment.md` so that an operator can reproduce the deployment without reading application code. | Operational | High     | Implemented |
 | C-016 | Container-Based Development Tooling | Every local development command (compile, unit tests, `verify` incl. the Playwright e2e tests, dev mode, arbitrary Maven goals) must be executable through a single wrapper script `tooling/docker.sh` that runs it inside a container; a contributor must need only Docker and git — no locally installed JDK, Maven or browser. | Operational | Medium   | Implemented |
+| C-017 | No Frontend Build Step       | Frontend libraries must be consumable as prebuilt browser bundles resolved as Maven dependencies; the build must not require Node.js, npm or a JavaScript bundler. | Technical   | High     | Implemented |
+| C-018 | Permissive Frontend Licences | Every frontend library delivered to a visitor's browser must be under a permissive licence (MIT, BSD or Apache-2.0); copyleft-licensed components must not be shipped, so that publishing the application never depends on satisfying copyleft obligations. | Regulatory  | High     | Implemented |
+
+**Note on C-017, C-018 — what they rule out.** Both were applied implicitly and are recorded now
+because they decide the editor replacement: C-017 excludes CKEditor 5 and TipTap, which are
+distributed as ES modules meant for a bundler, and C-018 excludes TinyMCE, which has been GPLv2+
+since version 7 and refuses to start self-hosted unless the application declares GPL use. C-018 is
+narrower than C-009, which only demands that a component be free of charge.
 
 ## Open Points for Confirmation
 

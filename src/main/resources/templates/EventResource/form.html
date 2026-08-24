@@ -1,4 +1,10 @@
 {#include base}
+{#head}
+<!-- Served from the WebJar on the classpath. The URL carries no version, so a dependency bump in
+     pom.xml needs no template change. -->
+<link href="/webjars/jodit/es2021/jodit.min.css" rel="stylesheet">
+{/head}
+
 
 {#if id }
 <h2>Anlass bearbeiten</h2>
@@ -25,8 +31,13 @@
     <strong>Datum:</strong> <input type="text" maxlength="255" name="date" value="{date}" required><br>
     <strong>Displaydate:</strong> <input type="date" name="displayDate" value="{displayDate}" required> <img src="/img/question-mark.svg" style="height: 1em;" title="Das Displaydate wird verwendet um alte Anlässe auszublenden (wird bis und an diesem Datum angezeigt) und der Sortierung."><br>
     <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
-    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="summernote" name="description" required>{description}</textarea><br>
+    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="description-editor" name="description" required>{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
+
+{#scripts}
+<script src="/webjars/jodit/es2021/jodit.min.js"></script>
+<script src="/js/editor-init.js"></script>
+{/scripts}
 
 {/include}

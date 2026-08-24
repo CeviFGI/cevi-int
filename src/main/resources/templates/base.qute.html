@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <title>International</title>
   <link rel="stylesheet" href="/css/site.css">
-  <!-- Served from the WebJars on the classpath. The URLs carry no version, so a dependency bump
-       in pom.xml needs no template change. -->
-  <link href="/webjars/summernote/dist/summernote-lite.min.css" rel="stylesheet">
-  <script src="/webjars/jquery/dist/jquery.slim.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Pages that need more than the site stylesheet fill this in. The rich-text editor is the
+       only user today: it is loaded by the two administrator form pages and by nothing else, so a
+       visitor never downloads it (NFR-036). -->
+  {#insert head}{/}
 </head>
 <body>
   <header>
@@ -39,7 +39,6 @@
   <footer>
     Unterstützt durch <a href="https://www.hosttech.ch/webhosting/cevihost/">Hosttech (Cevihost)</a>
   </footer>
-  <script src="/webjars/summernote/dist/summernote-lite.min.js"></script>
-  <script src="/js/summernote-init.js"></script>
+  {#insert scripts}{/}
 </body>
 </html>

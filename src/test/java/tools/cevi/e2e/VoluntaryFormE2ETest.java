@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Exercises the Summernote/jQuery rich-text editor on the "add voluntary service" form —
+ * Exercises the Jodit rich-text editor on the "add voluntary service" form —
  * behaviour the existing REST Assured tests can't cover since it's purely client-side JS.
  * Quarkus only indexes {@code @QuarkusTest} on the concrete class, not on an inherited base class.
  */
@@ -32,8 +32,8 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
         page.locator("input[name='organizationLink']").fill("https://example.org");
         page.locator("input[name='location']").fill("Bern");
 
-        // Summernote replaces the textarea with a rich-text contenteditable div.
-        page.locator(".note-editable").click();
+        // The editor hides the textarea and edits in a contenteditable div next to it.
+        page.locator(".jodit-wysiwyg").click();
         page.keyboard().type("Freiwilligenarbeit in Bern");
 
         page.locator("input[type='submit']").click();

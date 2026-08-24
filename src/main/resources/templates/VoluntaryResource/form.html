@@ -1,4 +1,10 @@
 {#include base}
+{#head}
+<!-- Served from the WebJar on the classpath. The URL carries no version, so a dependency bump in
+     pom.xml needs no template change. -->
+<link href="/webjars/jodit/es2021/jodit.min.css" rel="stylesheet">
+{/head}
+
 {#if id }
 <h2>Volontariat bearbeiten</h2>
 {#else}
@@ -22,8 +28,13 @@
     <strong>Organisation:</strong> <input type="text" maxlength="255" name="organization" value="{organization}" required><br>
     <strong>Organisationslink:</strong> <input type="url" maxlength="255" name="organizationLink" value="{organizationLink}" placeholder="https://..." required><br>
     <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
-    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="summernote" name="description" required>{description}</textarea><br>
+    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="description-editor" name="description" required>{description}</textarea><br>
     <input type="submit" value="Senden">
 </form>
+
+{#scripts}
+<script src="/webjars/jodit/es2021/jodit.min.js"></script>
+<script src="/js/editor-init.js"></script>
+{/scripts}
 
 {/include}

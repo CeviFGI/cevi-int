@@ -9,7 +9,7 @@ Technology
   * [Panache](https://quarkus.io/guides/hibernate-orm-panache) (ORM)
 * [Flyway](https://quarkus.io/guides/flyway) (Database migration)
 * [OWASP Java HTML Sanitizer](https://github.com/OWASP/java-html-sanitizer) (rich text allow-list)
-* jQuery and [Summernote](https://summernote.org/) via WebJars (rich-text editor)
+* [Jodit](https://xdsoft.net/jodit/) via WebJars (rich-text editor, no jQuery)
 
 Running it in production: see [docs/deployment.md](docs/deployment.md).
 
