@@ -2,7 +2,7 @@
 
 **Document status:** Draft for review
 **Date:** 2026-08-13
-**Derived from:** `docs/use_cases.puml`, `docs/use_cases/UC-001` … `UC-007`, `docs/entity_model.md`
+**Derived from:** `docs/use_cases.puml`, `docs/use_cases/UC-001` … `UC-008`, `docs/entity_model.md`
 
 ## 1. Purpose
 
@@ -62,6 +62,7 @@ international work, which shapes every goal below.
 | Contact the working group by form, with spam protection and e-mail notification | UC-005 |
 | Sign in and out as administrator                                  | UC-006 |
 | Information pages (working group presentation, data protection) and a version page | UC-007 |
+| Enter the platform through a start page that says what it offers                   | UC-008 |
 
 ### Out of scope (deliberately not offered)
 

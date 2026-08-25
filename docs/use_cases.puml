@@ -16,12 +16,14 @@ rectangle "Cevi International" {
     usecase "UC-005\nContact the International Working Group" as UC005
     usecase "UC-006\nSign In as Administrator" as UC006
     usecase "UC-007\nView Site Information" as UC007
+    usecase "UC-008\nEnter the Platform" as UC008
 }
 
 visitor --> UC001
 visitor --> UC003
 visitor --> UC005
 visitor --> UC007
+visitor --> UC008
 
 admin --> UC002
 admin --> UC004
@@ -31,11 +33,22 @@ operator --> UC007
 
 UC005 --> mail
 
+UC008 ..> UC001 : <<include>>
+UC008 ..> UC003 : <<include>>
+
 note bottom of UC007
   Besucher: nur die Informationsseiten.
   Die Versionsseite verlangt eine
   Administratorsitzung (BR-039), weshalb
   der Operator vom Administrator erbt.
+end note
+
+note bottom of UC008
+  Die Startseite fasst zusammen, statt
+  weiterzuleiten (FR-034). Sie zeigt
+  Ausschnitte aus UC-001 und UC-003;
+  beide bleiben eigenstaendig unter
+  ihrer eigenen Adresse erreichbar.
 end note
 
 @enduml

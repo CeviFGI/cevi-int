@@ -3,7 +3,7 @@
 **Document status:** Draft for review
 **Date:** 2026-08-25 (revision 5 — visual redesign: design system, brand conformity, entry page,
 scannable lists, form usability, responsiveness and accessibility made testable)
-**Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-007`, `docs/entity_model.md`,
+**Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-008`, `docs/entity_model.md`,
 security review of 2026-08-15, `docs/ux_concept.md` and `docs/redesign_plan.md` of 2026-08-25,
 Cevi Schweiz Corporate Design Manual (2020)
 
@@ -85,6 +85,11 @@ delivered, so its status was wrong rather than its content. The redesign deliver
 the start page content of its own; FR-023 is therefore restated as what actually matters — that the
 event list stays one step away and keeps its own stable address `/anlaesse`. No external link
 breaks: `/anlaesse` is unchanged and the redirect is replaced, not moved.
+
+**Note on FR-034 — covered by its own use case.** Entering the platform became a flow of its own
+once the start page stopped forwarding, so it is specified as UC-008 *Enter the Platform* rather
+than folded into UC-007. UC-007 keeps the information pages; its BR-025, which made the event list
+the entry point of the site, is replaced accordingly.
 
 **Note on FR-034 … FR-039 — why presentation is written as requirements.** The platform's audience
 is 15–30 and arrives on a phone through a shared link (`docs/vision.md` §3), and the feedback that

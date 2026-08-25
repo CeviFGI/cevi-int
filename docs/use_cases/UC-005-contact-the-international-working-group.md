@@ -6,7 +6,8 @@
 **Use Case Name:** Contact the International Working Group
 **Primary Actor:** Besucher
 **Goal:** A visitor asks the international working group for advice or support and reaches a real person without needing an account.
-**Status:** Implemented
+**Status:** Approved
+**Revised:** 2026-08-25 for requirements revision 5 (FR-037). Every input gains a visible label and an explanation of why it is asked, and a rejected submission names the fault at the field that caused it. No rule about what is accepted changes — the spam protection answer, the hidden field and the absence of sender fields are exactly as before.
 
 ## Preconditions
 
@@ -15,7 +16,7 @@
 ## Main Success Scenario
 
 1. The visitor opens the contact page.
-2. The system presents the kinds of support the working group offers, a free-text field for the message and a simple spam protection question.
+2. The system presents the kinds of support the working group offers, a labelled free-text field for the message, an explanation of why no sender details are asked for, and a labelled spam protection question.
 3. The visitor writes the message, including a way to be reached if a reply is wanted, and answers the spam protection question.
 4. The visitor submits the form.
 5. The system checks the answer to the spam protection question and that the field no human can see was left untouched.
@@ -31,8 +32,9 @@
 **Trigger:** The spam protection field is empty or does not contain the expected answer (step 5)
 **Flow:**
 
-1. The system presents the form again with the written message preserved and explains which answer is expected.
-2. Use case continues at step 3.
+1. The system presents the form again with the written message preserved, marks the spam protection field as faulty and explains at that field which answer is expected.
+2. The system additionally states at the top of the form that it was not sent, and offers a direct way to the faulty field.
+3. Use case continues at step 3.
 
 ### A2: Message cannot be recorded
 
@@ -55,8 +57,9 @@
 **Trigger:** The message is empty or exceeds the permitted length (step 6)
 **Flow:**
 
-1. The system presents the form again with the written message preserved and names the limit that was exceeded.
-2. Use case continues at step 3.
+1. The system presents the form again with the written message preserved, marks the message field as faulty and names at that field what is missing or which limit was exceeded.
+2. The system additionally states at the top of the form that it was not sent, and offers a direct way to the faulty field.
+3. Use case continues at step 3.
 
 ### A5: The hidden field was filled in
 
@@ -106,3 +109,7 @@ A message is accepted only up to 5000 characters. The endpoint is open to everyo
 ### BR-034: Message contents stay out of the operating records
 
 The working group receives the message; the operating records of the platform note only that a message was recorded and under which reference. Message contents are personal data, and the operating records have a wider circle of readers and a different retention than the platform's own storage.
+
+### BR-045: Every input is labelled and every fault is named at its field
+
+Each input of the form carries a visible label that stays readable while the field is being filled in, and an explanation of why the field is asked for. When a submission is rejected, the fault is named directly at the field that caused it, and a summary at the top of the form states that nothing was sent and leads to that field. A placeholder is not a label: it disappears exactly when the visitor needs it, and a fault named far from its cause forces the visitor to search for it.
