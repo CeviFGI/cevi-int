@@ -1,18 +1,27 @@
 {#include base}
+<a class="backlink" href="/volontariat"><span aria-hidden="true">←</span> Alle Angebote</a>
 
 <h1>Volontariat löschen</h1>
 
-<p><a href="/volontariat">zurück zur Übersicht</a></p>
+<article class="card card--preview">
+    <div class="card__band card__band--v{service.id.accentVariant}">
+        <p class="card__band-kicker">Volontariat</p>
+        <p class="card__band-date">{service.location}</p>
+    </div>
+    <div class="card__body">
+        <h2 class="card__title">{service.organization}</h2>
+    </div>
+</article>
 
-{#voluntaryService service showActions=false}{/voluntaryService}
+<p class="confirm-question">Soll dieses Volontariat wirklich gelöscht werden? Das lässt sich nicht
+   rückgängig machen.</p>
 
-<p>Möchten sie obenstehendes Volontariat wirklich löschen?</p>
-
-<a href="/volontariat">Nein</a>
-<form action="/volontariat/delete" method="post" class="inline-form">
-    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-    <input type="hidden" name="id" value="{id}"/>
-    <button type="submit" class="margin-left">Ja</button>
-</form>
-
+<div class="cluster">
+    <a class="btn btn--secondary" href="/volontariat">Abbrechen</a>
+    <form action="/volontariat/delete" method="post" class="inline-form">
+        <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+        <input type="hidden" name="id" value="{id}"/>
+        <button class="btn btn--danger" type="submit">Endgültig löschen</button>
+    </form>
+</div>
 {/include}

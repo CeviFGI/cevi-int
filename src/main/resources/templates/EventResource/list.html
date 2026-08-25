@@ -1,14 +1,30 @@
 {#include base}
-<h1>Anlässe</h1>
+<div class="page-head">
+    <p class="eyebrow">{events.size} {#if events.size == 1}Anlass{#else}Anlässe{/if}</p>
+    <h1>Anlässe</h1>
+    <p class="lead">Internationale Anlässe im YMCA/YWCA-Netz, die noch vor dir liegen — der nächste zuoberst.</p>
+</div>
 
 {#if inject:currentUser.admin}
-<a href="/anlaesse/add">Neuen Anlass eintragen</a>
+<div class="admin-bar">
+    <span class="admin-bar__who">Angemeldet als Administrator</span>
+    <a class="btn btn--primary" href="/anlaesse/add">Neuen Anlass eintragen</a>
+</div>
 {/if}
 
-<p>Hier findest du eine Liste der nächsten anstehenden internationalen Anlässe aufsteigend sortiert nach Datum.</p>
-
-{#for event in events}
-  {#event event showActions=true}{/event}
-{/for}
-
+{#if events.isEmpty}
+{!A1 of UC-001: an empty list is a normal state here, but it must not look like an
+abandoned site — it says so and offers the way onward (BR-049).!}
+<div class="empty">
+    <h2>Gerade ist nichts ausgeschrieben</h2>
+    <p>Das heisst selten, dass nichts läuft — schreib uns, wir wissen meistens mehr.</p>
+    <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
+</div>
+{#else}
+<div class="grid">
+    {#for event in events}
+    {#event event showActions=true}{/event}
+    {/for}
+</div>
+{/if}
 {/include}

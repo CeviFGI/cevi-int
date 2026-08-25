@@ -23,12 +23,17 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
     }
 
     public static long createVoluntaryService(String organization, LocalDate displayDate) {
+        return createVoluntaryService(organization, "some description", "https://example.org/some-link");
+    }
+
+    /** For tests that care about the description or about where the offer links to. */
+    public static long createVoluntaryService(String organization, String description, String organizationLink) {
         QuarkusTransaction.begin();
         VoluntaryService voluntaryService = new VoluntaryService();
         voluntaryService.organization = organization;
-        voluntaryService.description = "some description";
+        voluntaryService.description = description;
         voluntaryService.location = "some location";
-        voluntaryService.organizationLink = "https://example.org/some-link";
+        voluntaryService.organizationLink = organizationLink;
         voluntaryService.persist();
         QuarkusTransaction.commit();
         createdVoluntryServices.add(voluntaryService.id);

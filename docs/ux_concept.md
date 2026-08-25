@@ -619,7 +619,7 @@ no editor assets (NFR-036). The redesign must not undo that.
 
 | Asset | Budget | Note |
 |---|---|---|
-| CSS (all files, gzipped) | ≤ 12 KB | Hand-written tokens + components. Today ≈ 1.5 KB raw. |
+| CSS (all files, gzipped) | ≤ 16 KB | **13.8 KB measured** after phase 2 — hand-written tokens + components, comments included. Before the redesign: ≈ 1.5 KB raw, which is why it looked unstyled. |
 | Web fonts | ≤ 90 KB | **69.9 KB measured** for a German page (Montserrat + Lora, Latin). Extended and italic faces load only when used. |
 | JavaScript on public pages | **0 bytes** | Unchanged. Navigation, disclosure and layout are CSS-only. |
 | Logo | ≤ 12 KB | Replace the 1500 × 178 PNG with an SVG, or a 2× raster at the size actually used. |

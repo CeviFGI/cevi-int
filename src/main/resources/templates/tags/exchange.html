@@ -1,7 +1,21 @@
-<div class="box">
-    <p class="title">{it.organization}</p>
-    <p>{it.description}</p>
+{!
+Restyled together with its siblings so it does not rot, and nothing more. No code reads or writes
+EXCHANGE and no use case describes it; whether the feature is completed or the table dropped is an
+open product decision (docs/vision.md §9, FR-029).
+!}
+<article class="card">
+    <div class="card__band card__band--v{it.id.accentVariant}">
+        <p class="card__band-kicker">Austausch</p>
+        <p class="card__band-date">{it.organization}</p>
+    </div>
+    <div class="card__body">
+        <h2 class="card__title">{it.organization}</h2>
+        <p class="card__excerpt">{it.description}</p>
+    </div>
     {#if inject:currentUser.admin && showActions}
-    <a href="/austausch/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/austausch/delete?id={it.id}">Löschen</a>
+    <div class="card__admin">
+        <a href="/austausch/edit?id={it.id}">Bearbeiten</a>
+        <a href="/austausch/delete?id={it.id}">Löschen</a>
+    </div>
     {/if}
-</div>
+</article>

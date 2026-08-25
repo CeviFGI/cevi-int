@@ -33,15 +33,50 @@ public class EventUpcomingTest {
                 .get(eventEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString(events.get(0).description))
+                .body(containsString(events.get(0).title))
                 .body(not(containsString("Neuen Anlass eintragen")))
                 .body(not(containsString("Bearbeiten")));
+    }
+
+    /**
+     * BR-040: the list is for comparing, the event's own page is for reading. Rendering every
+     * description in full is what made the list unusable on a phone, so the excerpt has to be
+     * there and the tail of the text has to be absent.
+     */
+    @Test
+    public void list_shows_an_excerpt_and_the_event_page_the_whole_text() {
+        String title = "CLEANUP list_shows_an_excerpt";
+        String tail = "SCHLUSSDESTEXTES";
+        String description = "<p>" + "Wort ".repeat(60) + tail + "</p>";
+        long id = EventFixture.createEvent(title, LocalDate.now().plusDays(10), description);
+        String slug = ((Event) Event.findById(id)).slug;
+
+        given().when().get(eventEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(title))
+                .body(containsString("Wort"))
+                .body(not(containsString(tail)));
+
+        given().queryParam("slug", slug)
+                .when().get(eventEndpoint + "/detail").then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(tail));
+    }
+
+    /** BR-041: how long an event stays announced is derived from the display date it already has. */
+    @Test
+    public void list_states_how_much_time_an_event_has_left() {
+        EventFixture.createEvent("CLEANUP countdown_in_list", LocalDate.now().plusDays(3));
+
+        given().when().get(eventEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("Noch 3 Tage"));
     }
 
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_link_when_logged_in() {
-        List<Event> events = Event.listAll();
+        List<Event> events = Event.upcomingEvents();
         assertThat(events, is(not(empty())));
         given()
                 .cookie("quarkus-credential")
@@ -49,7 +84,7 @@ public class EventUpcomingTest {
                 .get(eventEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString(events.get(0).description))
+                .body(containsString(events.get(0).title))
                 .body(containsString("Neuen Anlass eintragen"))
                 .body(containsString("Bearbeiten"));
     }

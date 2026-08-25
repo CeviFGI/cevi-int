@@ -24,6 +24,11 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
     }
 
     public static long createEvent(String title, LocalDate displayDate) {
+        return createEvent(title, displayDate, "some description");
+    }
+
+    /** For tests that care what the description looks like — its length, or its markup. */
+    public static long createEvent(String title, LocalDate displayDate, String description) {
         QuarkusTransaction.begin();
         Event event = new Event();
         event.title = title;
@@ -31,7 +36,7 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
         event.date = "some date";
         event.displayDate = displayDate;
         event.location = "some location";
-        event.description = "some description";
+        event.description = description;
         event.persist();
         QuarkusTransaction.commit();
         createdEvents.add(event.id);

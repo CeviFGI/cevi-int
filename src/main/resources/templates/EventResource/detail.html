@@ -1,9 +1,40 @@
 {#include base}
+<a class="backlink" href="/anlaesse"><span aria-hidden="true">←</span> Alle Anlässe</a>
 
-<h1>Anlassdetail</h1>
+<div class="card__band detail-band card__band--v{event.slug.accentVariant}">
+    <p class="card__band-kicker">Anlass</p>
+    <p class="card__band-date">{event.date}</p>
+</div>
 
-<p><a href="/anlaesse">zurück zur Übersicht</a></p>
+<h1>{event.title}</h1>
+<div class="detail-head">
+    <p class="meta meta--place">{event.location}</p>
+    {#let remaining=event.displayDate.countdown}
+    {#if remaining}
+    <span class="chip {#if !event.displayDate.countdownUrgent}chip--quiet{/if}">{remaining}</span>
+    {/if}
+    {/let}
+</div>
 
-{#event event showActions=false}{/event}
+<hr>
 
+{!The one place administrator-authored HTML is rendered unescaped. It was reduced to the
+allow-list when it was stored (NFR-010); prose.css styles everything that list permits.!}
+<div class="prose">{event.description.raw}</div>
+
+{#if inject:currentUser.admin}
+<div class="admin-bar admin-bar--detached">
+    <span class="admin-bar__who">Angemeldet als Administrator</span>
+    <a class="btn btn--ghost" href="/anlaesse/edit?id={event.id}">Bearbeiten</a>
+    <a class="btn btn--ghost" href="/anlaesse/delete?id={event.id}">Löschen</a>
+</div>
+{/if}
+
+<div class="teaser">
+    <div>
+        <h2>Fragen dazu?</h2>
+        <p>Wir haben fast immer jemanden, der schon dort war.</p>
+    </div>
+    <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
+</div>
 {/include}

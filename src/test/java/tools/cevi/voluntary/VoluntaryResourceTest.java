@@ -38,6 +38,45 @@ public class VoluntaryResourceTest {
     @TestHTTPResource("delete")
     URL deleteEndpoint;
 
+    /**
+     * FR-010 and BR-043. The field was captured and validated from the beginning, but no template
+     * ever rendered it, so an offer told the visitor an opportunity existed and not where to
+     * pursue it. This is the regression test that was missing while the requirement stood at
+     * "Verified".
+     */
+    @Test
+    public void an_offer_leads_to_the_organisation_running_it() {
+        String organization = "CLEANUP offer_links_to_organisation";
+        String link = "https://ymca-spitak.example.org/volunteering";
+        VoluntaryFixture.createVoluntaryService(organization, "Sechs Monate im Jugendzentrum.", link);
+
+        given()
+                .when()
+                .get(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(link))
+                // A new tab must not be able to reach back into this page through window.opener.
+                .body(containsString("rel=\"noopener noreferrer\""));
+    }
+
+    /** BR-044: the overview compares offers; the whole text is opened in place, not elsewhere. */
+    @Test
+    public void a_long_offer_is_shortened_but_its_full_text_stays_reachable() {
+        String organization = "CLEANUP offer_is_shortened";
+        String tail = "SCHLUSSDESANGEBOTS";
+        String description = "<p>" + "Wort ".repeat(60) + tail + "</p>";
+        VoluntaryFixture.createVoluntaryService(organization, description, "https://example.org/x");
+
+        given()
+                .when()
+                .get(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("Ganzen Text lesen"))
+                .body(containsString(tail));
+    }
+
     @Test
     public void list_no_auth() {
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
@@ -47,7 +86,7 @@ public class VoluntaryResourceTest {
                 .get(voluntaryEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString(voluntaryServices.get(0).description))
+                .body(containsString(voluntaryServices.get(0).organization))
                 .body(not(containsString("Neues Volontariat eintragen<")))
                 .body(not(containsString("Bearbeiten")));
     }
@@ -63,7 +102,7 @@ public class VoluntaryResourceTest {
                 .get(voluntaryEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString(voluntaryServices.get(0).description))
+                .body(containsString(voluntaryServices.get(0).organization))
                 .body(containsString("Neues Volontariat eintragen"))
                 .body(containsString("Bearbeiten"));
     }

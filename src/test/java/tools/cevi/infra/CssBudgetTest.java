@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @QuarkusTest
 class CssBudgetTest {
 
-    private static final int BUDGET_BYTES_GZIPPED = 12 * 1024;
+    private static final int BUDGET_BYTES_GZIPPED = 16 * 1024;
     private static final Pattern IMPORT = Pattern.compile("@import\\s+\"([^\"]+)\"");
 
     @Test

@@ -1,13 +1,29 @@
 {#include base}
-<h1>Volontariat</h1>
+<div class="page-head">
+    <p class="eyebrow">{services.size} {#if services.size == 1}Angebot{#else}Angebote{/if}</p>
+    <h1>Volontariat</h1>
+    <p class="lead">Länger bleiben statt nur besuchen — Organisationen, die wir kennen und empfehlen.
+       Bewerben kannst du dich jeweils direkt bei der Organisation.</p>
+</div>
 
 {#if inject:currentUser.admin}
-<a href="/volontariat/add">Neues Volontariat eintragen</a>
+<div class="admin-bar">
+    <span class="admin-bar__who">Angemeldet als Administrator</span>
+    <a class="btn btn--primary" href="/volontariat/add">Neues Volontariat eintragen</a>
+</div>
 {/if}
 
-<p>Hier findest du eine Übersicht über mögliche Volontariate.</p>
-
-{#for service in services}
-{#voluntaryService service showActions=true}{/voluntaryService}
-{/for}
+{#if services.isEmpty}
+<div class="empty">
+    <h2>Zurzeit ist kein Volontariat ausgeschrieben</h2>
+    <p>Wir kennen trotzdem meistens jemanden, der jemanden kennt — frag bei uns nach.</p>
+    <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
+</div>
+{#else}
+<div class="grid">
+    {#for service in services}
+    {#voluntaryService service showActions=true}{/voluntaryService}
+    {/for}
+</div>
+{/if}
 {/include}

@@ -1,8 +1,35 @@
-<div class="box">
-    <p class="title">{it.organization}</p>
-    <p>{it.location}</p>
-    <p>{it.description.raw}</p>
+{!
+An offer in a list (BR-043, BR-044). An offer has no page of its own, so the control leading to the
+organisation is the card's own action and the card itself is not a link. Because there is nowhere
+to send the visitor for the rest of the text, it opens in place instead.
+!}
+<article class="card">
+    <div class="card__band card__band--v{it.id.accentVariant}">
+        <p class="card__band-kicker">Volontariat</p>
+        <p class="card__band-date">{it.location}</p>
+    </div>
+    <div class="card__body">
+        <h2 class="card__title">{it.organization}</h2>
+        <p class="card__excerpt">{it.description.excerpt}</p>
+        {#if it.description.shortened}
+        <details class="disclosure">
+            <summary>Ganzen Text lesen</summary>
+            <div class="prose">{it.description.raw}</div>
+        </details>
+        {/if}
+        <div class="card__actions">
+            {!FR-010: the offer names the organisation and leads to it. rel keeps the new
+            tab from reaching back into this page.!}
+            <a class="btn btn--primary" href="{it.organizationLink}" target="_blank" rel="noopener noreferrer">
+                Zur Organisation<span aria-hidden="true"> ↗</span>
+                <span class="visually-hidden">(öffnet in einem neuen Tab)</span>
+            </a>
+        </div>
+    </div>
     {#if inject:currentUser.admin && showActions}
-    <a href="/volontariat/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/volontariat/delete?id={it.id}">Löschen</a>
+    <div class="card__admin">
+        <a href="/volontariat/edit?id={it.id}">Bearbeiten</a>
+        <a href="/volontariat/delete?id={it.id}">Löschen</a>
+    </div>
     {/if}
-</div>
+</article>

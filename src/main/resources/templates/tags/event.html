@@ -1,10 +1,31 @@
-<div class="box">
-    <p class="title"><a href="/anlaesse/detail?slug={it.slug}">{it.title}</a></p>
-    <p class="date">{it.date}</p>
-    <p>{it.location}</p>
-    <p>{it.description.raw}</p>
+{!
+An event in a list (BR-040, BR-041, BR-042). The whole card is the target; the title carries the
+link and the "Details" pill is the affordance, not a second link. The full description is on the
+event's own page, never here.
+!}
+<article class="card">
+    <div class="card__band card__band--v{it.slug.accentVariant}">
+        <p class="card__band-kicker">Anlass</p>
+        <p class="card__band-date">{it.date}</p>
+    </div>
+    <div class="card__body">
+        <h2 class="card__title"><a href="/anlaesse/detail?slug={it.slug}">{it.title}</a></h2>
+        <p class="meta meta--place">{it.location}</p>
+        <p class="card__excerpt">{it.description.excerpt}</p>
+        <div class="card__actions">
+            <span class="btn btn--primary card__cta" aria-hidden="true">Details</span>
+            {#let remaining=it.displayDate.countdown}
+            {#if remaining}
+            <span class="chip {#if !it.displayDate.countdownUrgent}chip--quiet{/if}">{remaining}</span>
+            {/if}
+            {/let}
+        </div>
+    </div>
     {#if inject:currentUser.admin && showActions}
-    <p>Display Date: {it.displayDate}</p>
-    <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a><a class="margin-left" href="/anlaesse/delete?id={it.id}">Löschen</a>
+    <div class="card__admin">
+        <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a>
+        <a href="/anlaesse/delete?id={it.id}">Löschen</a>
+        <span class="card__admin-note">sichtbar bis {it.displayDate}</span>
+    </div>
     {/if}
-</div>
+</article>

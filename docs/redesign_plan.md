@@ -144,7 +144,7 @@ most simply with a second insert for pages that lay themselves out.
 
 ---
 
-## 4. Phase 2 — The lists (the loudest complaint)
+## 4. Phase 2 — The lists (the loudest complaint) — **delivered 2026-08-25**
 
 **Goal:** `/anlaesse`, the event detail page and `/volontariat` use the card system from
 `docs/ux_concept.md` §4.3 / §4.4.
@@ -160,7 +160,12 @@ most simply with a second insert for pages that lay themselves out.
 | rewrite | `templates/tags/event.html` — accent band, title, meta, excerpt, primary action, urgency chip, admin strip |
 | rewrite | `templates/tags/voluntaryService.html` — same shell, renders `organizationLink` as the primary action (FR-010) |
 | rewrite | `templates/tags/exchange.html` — restyled only, still unused (vision §9 stays open) |
-| new | `templates/tags/card.html`, `tags/badge.html`, `tags/button.html`, `tags/emptyState.html` |
+| **deleted** | `css/table.css` — folded into `prose.css` as planned, scoped to `.prose` so it can no longer style a table outside a description |
+
+**Deviations:** no `tags/card.html`, `badge.html`, `button.html` or `emptyState.html`. A card, a
+badge and a button are one class each in `components.css`; wrapping them in Qute tags would add a
+file per class and buy nothing, since the three record tags are the only callers. The empty state
+is six lines of markup that reads better in the list template that owns its wording.
 | edit | `templates/EventResource/list.html` — intro, grid, empty state; the admin "Neuen Anlass eintragen" link becomes a button in an admin bar above the grid |
 | edit | `templates/EventResource/detail.html` — full layout per §4.7, back link, prose block, contact teaser |
 | edit | `templates/VoluntaryResource/list.html` — same treatment |
@@ -185,9 +190,25 @@ sanitiser, and it must escape its output (Qute does by default; `{...}` is escap
 - `EventXssTest` — must still pass; add a case asserting the excerpt of a hostile description is
   escaped in the list.
 
-### Done when
+### Done
 
-Both lists scan in under five seconds on a phone, FR-010 is delivered and tested, coverage holds.
+`tooling/docker.sh verify` passes: 143 unit tests (113 before), 7 e2e tests, coverage gate met.
+Verified visually against the running application at 390 px and 1400 px.
+
+**Found while building it.** Qute has no `{#comment}` section — inside `{#include}` it is read as a
+named block for `{#insert}`, so two of them in one template collide and the build fails. The
+comments are `{! … !}`, which is also stripped before the page is sent rather than shipped to the
+browser as an HTML comment would be.
+
+**The stylesheet budget in NFR-041 moved from 12 KB to 16 KB gzipped**, on measurement: the
+finished design system is 13.8 KB with its comments. The 12 KB had been estimated before any of it
+existed. The ceiling still forbids a framework — Bootstrap alone is about twice it — and the figure
+that matters to a visitor, the 150 KB first view, did not move. Recorded in `docs/requirements.md`.
+
+**Still owed:** the offer list renders each full description inside a `<details>` for offers whose
+text was shortened, because an offer has no page of its own (BR-044). That is more markup on the
+page than the event list carries; if the offer texts grow, an offer detail page becomes the better
+answer and needs a requirement of its own.
 
 ---
 

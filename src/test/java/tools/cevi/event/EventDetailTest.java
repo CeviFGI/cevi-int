@@ -30,7 +30,28 @@ public class EventDetailTest {
                 .get(detailEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString("Anlassdetail"));
+                // The event names itself now; the page no longer opens with the generic word
+                // "Anlassdetail", which told the visitor nothing.
+                .body(containsString(title))
+                .body(containsString("Alle Anl"));
+    }
+
+    /** The detail page is where the whole formatted description lives (BR-040). */
+    @Test
+    public void detail_renders_the_formatted_description() {
+        String title = "CLEANUP detail_renders_formatting";
+        long id = EventFixture.createEvent(title, java.time.LocalDate.now(),
+                "<p>Programm mit <strong>Workshops</strong></p><ul><li>Prag</li></ul>");
+        String slug = ((Event) Event.findById(id)).slug;
+
+        given()
+                .queryParam("slug", slug)
+                .when()
+                .get(detailEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("<strong>Workshops</strong>"))
+                .body(containsString("<li>Prag</li>"));
     }
 
     @Test

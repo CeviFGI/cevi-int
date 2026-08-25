@@ -1,18 +1,33 @@
 {#include base}
+<a class="backlink" href="/anlaesse"><span aria-hidden="true">←</span> Alle Anlässe</a>
 
 <h1>Anlass löschen</h1>
 
-<p><a href="/anlaesse">zurück zur Übersicht</a></p>
+{!A compact preview rather than the list card: on a confirmation page the visitor has to
+recognise the record, not be invited to navigate away from it.!}
+<article class="card card--preview">
+    <div class="card__band card__band--v{event.slug.accentVariant}">
+        <p class="card__band-kicker">Anlass</p>
+        <p class="card__band-date">{event.date}</p>
+    </div>
+    <div class="card__body">
+        <h2 class="card__title">{event.title}</h2>
+        <p class="meta meta--place">{event.location}</p>
+    </div>
+</article>
 
-{#event event showActions=false}{/event}
+<p class="confirm-question">Soll dieser Anlass wirklich gelöscht werden? Das lässt sich nicht
+   rückgängig machen.</p>
 
-<p>Möchten sie obenstehenden Anlass wirklich löschen?</p>
-
-<a href="/anlaesse">Nein</a>
-<form action="/anlaesse/delete" method="post" class="inline-form">
-    <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-    <input type="hidden" name="id" value="{event.id}"/>
-    <button type="submit" class="margin-left">Ja</button>
-</form>
-
+{!The quiet cancel comes first and the destructive control is outlined rather than filled:
+reachable, but never the inviting option. Deleting stays a POST with a CSRF token (NFR-021,
+NFR-011).!}
+<div class="cluster">
+    <a class="btn btn--secondary" href="/anlaesse">Abbrechen</a>
+    <form action="/anlaesse/delete" method="post" class="inline-form">
+        <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+        <input type="hidden" name="id" value="{event.id}"/>
+        <button class="btn btn--danger" type="submit">Endgültig löschen</button>
+    </form>
+</div>
 {/include}

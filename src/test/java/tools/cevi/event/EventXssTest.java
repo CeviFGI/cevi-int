@@ -62,6 +62,29 @@ class EventXssTest {
         assertThat(stored.description, containsString("Weitere Informationen"));
     }
 
+    /**
+     * The list no longer renders the description, it renders an excerpt of it — a second path from
+     * a stored description to a page, and one that strips tags itself. Stripping is not escaping,
+     * so the excerpt has to arrive escaped as well.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void the_excerpt_in_the_list_is_escaped() {
+        String title = "CLEANUP the_excerpt_in_the_list_is_escaped";
+
+        submitDescription(title, "excerpt_is_escaped",
+                "<p>Programm &lt;script&gt;alert('xss')&lt;/script&gt; und mehr</p>");
+
+        Event stored = Event.findBySlug("excerpt_is_escaped");
+        EventFixture.trackForCleanup(stored.id);
+
+        given().when().get(eventEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                // The excerpt decodes the references, so the rendering has to encode them again
+                .body(not(containsString("<script>alert('xss')</script>")))
+                .body(containsString("Programm"));
+    }
+
     private void submitDescription(String title, String slug, String description) {
         Csrf.given()
                 .formParam("title", title)
