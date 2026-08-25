@@ -1,0 +1,222 @@
+/*
+ * Reusable pieces. Phase 1 delivers the ones every page needs; the card body and its accent band
+ * are filled with content in phase 2.
+ */
+
+/* --- Buttons ----------------------------------------------------------------------------- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-0);
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease),
+                color var(--dur-fast) var(--ease),
+                border-color var(--dur-fast) var(--ease);
+}
+
+.btn--primary { background: var(--cevi-red); color: #fff; }
+.btn--primary:hover { background: var(--cevi-red-strong); color: #fff; }
+
+.btn--secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn--secondary:hover { background: var(--ink); color: #fff; }
+
+.btn--ghost { background: var(--surface); color: var(--cevi-blue); border-color: var(--border); }
+.btn--ghost:hover { border-color: var(--cevi-blue); color: var(--cevi-blue-strong); }
+
+/*
+ * Destructive actions are outlined, not filled: reachable, but never the most inviting thing on
+ * the page. The quiet cancel is placed before them.
+ */
+.btn--danger { background: transparent; color: var(--cevi-red); border-color: var(--cevi-red); }
+.btn--danger:hover { background: var(--cevi-red); color: #fff; }
+
+.btn--block { width: 100%; }
+
+/* --- Labels and markers ------------------------------------------------------------------ */
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    line-height: 1;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--cevi-red);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: var(--cevi-red-tint);
+    color: var(--cevi-red-strong);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.chip--quiet { background: var(--surface-sunken); color: var(--ink-muted); }
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+}
+
+/* --- Cards ------------------------------------------------------------------------------- */
+
+.card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+    transition: box-shadow var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+}
+.card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+
+.card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    flex: 1;
+}
+
+.card__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-2);
+}
+
+/*
+ * Maintenance controls (BR-042). Below a hairline, quieter than the visitor's control — and with a
+ * stacking context of their own, because in phase 2 the card title becomes a stretched link that
+ * would otherwise swallow every click meant for these.
+ */
+.card__admin {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-sunken);
+    border-top: 1px dashed var(--border);
+    position: relative;
+    z-index: 1;
+}
+.card__admin a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--tap-target);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+    text-decoration: none;
+}
+.card__admin a:hover { color: var(--cevi-red); }
+
+/* --- Administrator bar ------------------------------------------------------------------- */
+
+.admin-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    background: var(--cevi-blue-tint);
+    border: 1px dashed #B9B9DC;
+    border-radius: var(--radius-md);
+}
+.admin-bar__who {
+    margin-right: auto;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cevi-blue-strong);
+}
+
+/* --- Panels and states ------------------------------------------------------------------- */
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-5);
+}
+.panel--narrow { max-width: 26rem; margin-inline: auto; }
+
+.empty {
+    text-align: center;
+    padding: var(--space-7) var(--space-4);
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+}
+.empty > h2, .empty > h3 { margin-bottom: var(--space-2); }
+.empty > p { color: var(--ink-muted); margin-bottom: var(--space-4); }
+
+.backlink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-0);
+    text-decoration: none;
+}
+.backlink:hover { text-decoration: underline; }
+
+/* --- Definition list ---------------------------------------------------------------------- */
+
+/* Used by the version page, which is read by operators and needs no decoration beyond legibility */
+dl.panel { display: grid; gap: var(--space-2) var(--space-4); }
+dl.panel dt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+}
+dl.panel dd { margin: 0 0 var(--space-3); }
+dl.panel dd:last-child { margin-bottom: 0; }
+@media (min-width: 600px) {
+    dl.panel { grid-template-columns: auto 1fr; align-items: baseline; }
+    dl.panel dd { margin-bottom: 0; }
+}

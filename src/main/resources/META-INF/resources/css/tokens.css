@@ -1,0 +1,92 @@
+/*
+ * Design tokens — the single source of colour, type, space, shape and motion (NFR-037).
+ *
+ * Nothing outside this file declares a colour or a font size. A component stylesheet that needs a
+ * new value adds a token here first; that is what keeps the interface from drifting back into the
+ * one-off hex values it was assembled from before.
+ *
+ * The three brand colours are the official definitions from the Cevi Schweiz Corporate Design
+ * Manual (2020), page 25 — Pantone 032 / 072 / Black C (C-019, NFR-044). Everything else is a tint
+ * of one of them or a warm neutral on the same axis as Cevi-Schwarz.
+ *
+ * Contrast against --surface, measured: ink 17.9:1, ink-muted 6.9:1, blue 10.3:1, red 6.0:1.
+ * Blue therefore carries text and red carries actions — red reaches only 3.1:1 on --ink and is
+ * never used for text on a dark ground (NFR-014).
+ */
+:root {
+    /* Brand */
+    --cevi-red:           #C41333;
+    --cevi-red-strong:    #9E0F29;
+    --cevi-red-tint:      #FBEAEE;
+    --cevi-blue:          #323394;
+    --cevi-blue-strong:   #26276F;
+    --cevi-blue-tint:     #ECECF7;
+
+    /* Neutrals, warm axis derived from Cevi-Schwarz */
+    --ink:                #141412;
+    --ink-muted:          #5A5A56;
+    --border:             #E4E2DC;
+    --border-strong:      #C9C6BF;
+    --surface:            #FFFFFF;
+    --surface-sunken:     #F6F5F2;
+    --surface-inverse:    #1B1B26;
+    --surface-inverse-2:  #262633;
+    --on-inverse:         #C6C5D2;
+    --border-inverse:     #34344A;
+
+    /* Feedback */
+    --error:              #B3122C;
+    --error-surface:      #FDF0F2;
+    --error-border:       #F0C4CC;
+    --success:            #1E6B4F;
+    --success-surface:    #E9F5F0;
+
+    /* Type */
+    --font-display: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-body:    "Lora", Georgia, "Times New Roman", serif;
+
+    /* Fluid scale — the floor of --step--1 is 14px at a 320px viewport, the minimum NFR-013 sets */
+    --step--1: clamp(0.875rem, 0.85rem + 0.15vw, 0.95rem);
+    --step-0:  clamp(1rem,     0.96rem + 0.20vw, 1.125rem);
+    --step-1:  clamp(1.25rem,  1.15rem + 0.50vw, 1.5rem);
+    --step-2:  clamp(1.5rem,   1.30rem + 1.00vw, 2rem);
+    --step-3:  clamp(1.875rem, 1.50rem + 1.90vw, 2.75rem);
+    --step-4:  clamp(2.25rem,  1.60rem + 3.20vw, 4rem);
+
+    --leading-tight: 1.15;
+    --leading-body:  1.65;
+    --tracking-tight: -0.02em;
+    --tracking-wide:   0.10em;
+
+    /* Space — one 4px-based scale for every gap, padding and margin */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 2rem;
+    --space-6: 3rem;
+    --space-7: 4rem;
+    --space-8: 6rem;
+
+    /* Shape */
+    --radius-sm:   8px;
+    --radius-md:  16px;
+    --radius-lg:  20px;
+    --radius-full: 999px;
+
+    /* Every interactive element is at least this big on a touch screen (NFR-038) */
+    --tap-target: 2.75rem;
+
+    /* Elevation — never more than two levels on one screen */
+    --shadow-1: 0 1px 2px rgb(20 20 18 / .06), 0 1px 3px rgb(20 20 18 / .06);
+    --shadow-2: 0 2px 4px rgb(20 20 18 / .05), 0 12px 28px rgb(20 20 18 / .10);
+
+    /* Motion — decorative only; disabled wholesale in base.css when the visitor asks (NFR-040) */
+    --ease:      cubic-bezier(.2, .8, .2, 1);
+    --dur-fast:  120ms;
+    --dur-base:  220ms;
+
+    /* Layout */
+    --container: min(100% - 2 * var(--space-4), 1120px);
+    --measure:   68ch;
+}

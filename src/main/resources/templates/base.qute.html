@@ -2,43 +2,104 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>International</title>
-  <link rel="stylesheet" href="/css/site.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cevi International</title>
+
+  <!-- The two faces every German page needs. The extended and italic faces are declared in
+       base.css but fetched only when rendered text actually uses them (NFR-041). -->
+  <link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/lora-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="/css/site.css">
+
   <!-- Pages that need more than the site stylesheet fill this in. The rich-text editor is the
        only user today: it is loaded by the two administrator form pages and by nothing else, so a
        visitor never downloads it (NFR-036). -->
   {#insert head}{/}
 </head>
 <body>
-  <header>
-    <input class="side-menu" type="checkbox" id="side-menu"/>
-    <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
-    <a href="/"><img src="/logo.png" height="50px" class="logo" /></a>
-    <nav>
-      <ul>
-        <li><a href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}class="active"{/if}>Anlässe</a></li>
-        <li><a href="/volontariat" {#if inject:vertxRequest.uri.startsWith("/volontariat")}class="active"{/if}>Volontariat</a></li>
-        <li><a href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}class="active"{/if}>FGI</a></li>
-        <li><a href="/datenschutzinformation" {#if inject:vertxRequest.uri.startsWith("/datenschutzinformation")}class="active"{/if}>Datenschutzinformation</a></li>
-        <li><a href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}class="active"{/if}>Kontakt</a></li>
-        {#if inject:currentUser.signedIn}
-        <li>
-          <form action="/auth/logout" method="post" class="nav-form">
-            <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-            <button type="submit">Ausloggen</button>
-          </form>
-        </li>
-        {/if}
-      </ul>
-    </nav>
-  </header>
-  <main>
-      {#insert}Kein Inhalt{/}
-  </main>
-  <footer>
-    Unterstützt durch <a href="https://www.hosttech.ch/webhosting/cevihost/">Hosttech (Cevihost)</a>
-  </footer>
+  <!-- First focusable element of every page (WCAG 2.4.1, NFR-043) -->
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <div class="page">
+    <header class="site-header">
+      <!-- The drawer is a checkbox, so navigation needs no JavaScript at all (C-021) -->
+      <input class="site-nav__toggle" type="checkbox" id="site-nav-toggle">
+      <div class="site-header__inner">
+        <div class="site-header__bar">
+          <a class="site-header__brand" href="/">
+            <img class="site-header__logo" src="/logo.png" width="1500" height="178"
+                 alt="Cevi International — zur Startseite">
+          </a>
+          <label class="site-nav__button" for="site-nav-toggle">
+            <span class="site-nav__burger"></span>
+            <span class="visually-hidden">Menü öffnen und schliessen</span>
+          </label>
+        </div>
+
+        <nav class="site-nav__panel" aria-label="Hauptnavigation">
+          <ul class="site-nav__list">
+            <li><a class="site-nav__link" href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}aria-current="page"{/if}>Anlässe</a></li>
+            <li><a class="site-nav__link" href="/volontariat" {#if inject:vertxRequest.uri.startsWith("/volontariat")}aria-current="page"{/if}>Volontariat</a></li>
+            <li><a class="site-nav__link" href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}aria-current="page"{/if}>FGI</a></li>
+            <li><a class="site-nav__link" href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}aria-current="page"{/if}>Kontakt</a></li>
+            {#if inject:currentUser.signedIn}
+            <li>
+              <form action="/auth/logout" method="post" class="site-nav__form">
+                <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
+                <button class="site-nav__link" type="submit">Ausloggen</button>
+              </form>
+            </li>
+            {/if}
+            <!-- Reachable from every page (BR-026, C-011); on desktop from the footer instead -->
+            <li><a class="site-nav__link site-nav__link--minor" href="/datenschutzinformation" {#if inject:vertxRequest.uri.startsWith("/datenschutzinformation")}aria-current="page"{/if}>Datenschutzinformation</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-main" id="inhalt">
+      <div class="container">
+        {#insert}Kein Inhalt{/}
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__cols">
+          <div>
+            <h2>Cevi International</h2>
+            <p>Die Fachgruppe International des Cevi Schweiz sammelt, was im weltweiten
+               YMCA/YWCA-Netz offen steht — Anlässe, Volontariate und Kontakte.</p>
+          </div>
+          <div>
+            <h2>Entdecken</h2>
+            <ul>
+              <li><a href="/anlaesse">Anlässe</a></li>
+              <li><a href="/volontariat">Volontariat</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>Über uns</h2>
+            <ul>
+              <li><a href="/fgi">FGI</a></li>
+              <li><a href="/kontakt">Kontakt</a></li>
+              <li><a href="/datenschutzinformation">Datenschutzinformation</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="site-footer__base">
+          <span>Unterstützt durch <a href="https://www.hosttech.ch/webhosting/cevihost/">Hosttech (Cevihost)</a></span>
+          <span class="site-footer__marks" aria-hidden="true">
+            <svg width="12" height="11" viewBox="0 0 12 11" focusable="false"><polygon points="6,0 12,11 0,11" fill="#C41333"/></svg>
+            <svg width="12" height="11" viewBox="0 0 12 11" focusable="false"><polygon points="6,0 12,11 0,11" fill="#323394"/></svg>
+            <svg width="12" height="11" viewBox="0 0 12 11" focusable="false"><polygon points="6,0 12,11 0,11" fill="#4A4A63"/></svg>
+          </span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
   {#insert scripts}{/}
 </body>
 </html>

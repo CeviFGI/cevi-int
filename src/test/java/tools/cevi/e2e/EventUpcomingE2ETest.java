@@ -1,5 +1,6 @@
 package tools.cevi.e2e;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import io.quarkus.test.junit.QuarkusTest;
@@ -31,20 +32,42 @@ public class EventUpcomingE2ETest extends PlaywrightTestBase {
         assertThat(consoleErrors, empty());
     }
 
+    /**
+     * The drawer is a checkbox and a label, with no JavaScript behind it (C-021). This asserts what
+     * a visitor sees rather than the checkbox state: the navigation has to actually appear and
+     * disappear, which a checked checkbox alone would not prove if the stylesheet stopped
+     * reacting to it.
+     */
     @Test
-    public void hamburger_menu_toggles_navigation() {
-        // nav.css only shows the hamburger below the 768px breakpoint; above that the nav is
-        // permanently visible instead.
+    public void menu_button_opens_and_closes_the_navigation() {
+        // nav.css lays the navigation out as a row from 900px; below that it is a drawer.
         page.setViewportSize(375, 667);
         page.navigate(url("/anlaesse"));
 
-        var sideMenu = page.locator("input#side-menu");
-        assertThat(sideMenu.isChecked(), is(false));
+        // "Kontakt" also appears in the footer, which is always visible — the locator has to be
+        // scoped to the navigation landmark or it would answer about the wrong link.
+        var contactLink = page.getByLabel("Hauptnavigation")
+                .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Kontakt"));
+        var menuButton = page.locator("label.site-nav__button");
 
-        page.locator("label.hamb").click();
-        assertThat(sideMenu.isChecked(), is(true));
+        assertThat(contactLink.isVisible(), is(false));
 
-        page.locator("label.hamb").click();
-        assertThat(sideMenu.isChecked(), is(false));
+        menuButton.click();
+        assertThat(contactLink.isVisible(), is(true));
+
+        menuButton.click();
+        assertThat(contactLink.isVisible(), is(false));
+    }
+
+    /** From 900px the navigation is a row and needs no menu button at all. */
+    @Test
+    public void navigation_is_always_visible_on_a_wide_screen() {
+        page.setViewportSize(1280, 800);
+        page.navigate(url("/anlaesse"));
+
+        assertThat(page.getByLabel("Hauptnavigation")
+                .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Kontakt"))
+                .isVisible(), is(true));
+        assertThat(page.locator("label.site-nav__button").isVisible(), is(false));
     }
 }

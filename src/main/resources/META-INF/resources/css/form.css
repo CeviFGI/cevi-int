@@ -1,20 +1,102 @@
-input {
-    margin-top: 0.5em;
+/*
+ * Form controls. Phase 1 gives the existing forms a shape; phase 3 restructures the contact form
+ * and the administrator forms around it.
+ */
+
+.field { margin-bottom: var(--space-5); }
+
+.field > label {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-0);
+    line-height: 1.3;
+    margin-bottom: var(--space-2);
 }
 
-textarea {
-    max-width: 100%;
+.field__required { color: var(--cevi-red); }
+
+.field__help {
+    display: block;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-muted);
+    margin-top: var(--space-2);
 }
 
-/* Deleting is a form submission rather than a link, so the confirmation button has to sit next to
-   the "Nein" link as if it were one. */
-.inline-form {
-    display: inline;
+.field input[type="text"],
+.field input[type="url"],
+.field input[type="date"],
+.field input[type="password"],
+.field textarea {
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: var(--space-3);
+    background: var(--surface);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    transition: border-color var(--dur-fast) var(--ease);
+}
+.field input:hover, .field textarea:hover { border-color: var(--border-strong); }
+
+.field textarea {
+    min-height: 12rem;
+    line-height: var(--leading-body);
+    resize: vertical;
+}
+
+.field input.field__input--narrow { width: 7.5rem; }
+
+/* --- Errors ------------------------------------------------------------------------------ */
+
+.field.is-error input,
+.field.is-error textarea {
+    border-color: var(--error);
+    border-left-width: 4px;
+}
+
+.field__error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--error);
 }
 
 /*
- * Honeypot field: kept out of sight and out of the tab order, but not display:none - simple bots
- * fill in every input they find, which is exactly what the check is looking for.
+ * The summary is what a screen reader announces first, so it stays — but it now links to the field
+ * that caused the fault instead of only naming it (BR-045).
+ */
+.error-summary {
+    background: var(--error-surface);
+    border: 1.5px solid var(--error-border);
+    border-left: 4px solid var(--error);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-5);
+}
+.error-summary > p {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    color: var(--error);
+    margin-bottom: var(--space-2);
+}
+.error-summary ul { margin: 0; padding-left: var(--space-4); }
+.error-summary a { color: var(--error); }
+
+/* --- Honeypot ---------------------------------------------------------------------------- */
+
+/*
+ * Kept out of sight and out of the tab order, but NOT display:none — simple bots fill in every
+ * input they find, which is exactly what the check is looking for (BR-032).
  */
 .honeypot {
     position: absolute;
@@ -23,3 +105,6 @@ textarea {
     height: 1px;
     overflow: hidden;
 }
+
+/* Deleting is a form submission, so its button has to sit beside the cancel link as if it were one */
+.inline-form { display: inline; }

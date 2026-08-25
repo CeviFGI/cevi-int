@@ -1,142 +1,236 @@
 /*
- * Show a horizontal menu if the screen is at least 768px wide. Show a hamburger menu if smaller
- * The hamburger menu is implemented with a checkbox.
+ * Header and navigation.
+ *
+ * The drawer is still a checkbox and a label, exactly as before: it needs no JavaScript, which is
+ * what keeps `script-src 'self'` free of exceptions and public pages free of script (C-021,
+ * NFR-024). Only its appearance changes — 56px rows instead of inline text, and a red edge marker
+ * on the current page instead of the grey background block, which was the most dated element of
+ * the old header.
+ *
+ * Expected markup:
+ *
+ *   header.site-header
+ *     input.site-nav__toggle            (the checkbox, off-screen)
+ *     div.site-header__inner
+ *       div.site-header__bar            brand + menu button
+ *       nav.site-nav__panel             the list
+ *
+ * The checkbox sits outside the inner wrapper so that ~ reaches the panel from it.
  */
-nav {
-    display: none;
+
+.site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
-nav ul li {
-    display: inline;
+.site-header__inner {
+    width: var(--container);
+    margin-inline: auto;
 }
 
-nav a {
-  color: rgb(33, 33, 33);
-  text-decoration: none;
-  padding: 1em;
+.site-header__bar {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
 }
 
-nav a.active {
-  background-color: rgba(0, 0, 0, 0.08);
+.site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    text-decoration: none;
 }
 
-/* Signing out changes state and is therefore a form submission; the button is made to read as the
-   navigation link it replaces. */
-.nav-form {
-  display: inline;
+/*
+ * The logo is a wide lockup (about 8.4:1). At the desktop height it would not fit beside the menu
+ * button on a 360px screen, so it is smaller there. Phase 6 replaces the asset itself; the width
+ * and height attributes in the markup reserve its box so the header does not jump while it loads.
+ */
+.site-header__logo {
+    height: 28px;
+    width: auto;
+}
+@media (min-width: 600px) {
+    .site-header__logo { height: 40px; }
 }
 
-.nav-form button {
-  background: none;
-  border: none;
-  color: rgb(33, 33, 33);
-  cursor: pointer;
-  font: inherit;
-  padding: 1em;
-}
+/* --- Menu button ------------------------------------------------------------------------- */
 
-.nav-form button:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-}
-
-nav a:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-}
-
-.hamb {
-    cursor: pointer;
-    float: right;
-    padding: 0.5em;
-}
-
-/* construct the hamburger symbol as one line
-   and with ::before and ::after another one above and below */
-.hamb-line {
-    background: black;
-    display: block;
-    height: 2px;
-    position: relative;
-    width: 24px;
-
-}
-
-.hamb-line::before,
-.hamb-line::after{
-    background: black;
-    content: '';
-    display: block;
-    height: 100%;
+/*
+ * Off-screen rather than display:none — a hidden checkbox cannot be focused, and the drawer would
+ * stop working for anyone using the keyboard.
+ */
+.site-nav__toggle {
     position: absolute;
-    transition: all .2s ease-out;
-    width: 100%;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
 }
 
-.hamb-line::before {
-    top: 5px;
+.site-nav__button {
+    width: var(--tap-target);
+    height: var(--tap-target);
+    display: grid;
+    place-items: center;
+    flex: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
 }
-.hamb-line::after {
-    top: -5px;
+.site-nav__button:hover { background: var(--surface-sunken); }
+
+/* The label carries the ring, because the checkbox that receives focus is off-screen */
+.site-nav__toggle:focus-visible ~ .site-header__inner .site-nav__button {
+    outline: 3px solid var(--cevi-blue);
+    outline-offset: 2px;
 }
 
-.side-menu {
-    display: none;
-}
-
-/* transform the hamburger icon to a cross if checked */
-.side-menu:checked ~ .hamb .hamb-line {
-    background: transparent;
-}
-
-.side-menu:checked ~ .hamb .hamb-line::before {
-    transform: rotate(-45deg);
-    top: 0;
-}
-
-.side-menu:checked ~ .hamb .hamb-line::after {
-    transform: rotate(45deg);
-    top: 0;
-}
-
-/* show the menu as overlay if checked */
-.side-menu:checked ~ nav {
+.site-nav__burger,
+.site-nav__burger::before,
+.site-nav__burger::after {
     display: block;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 56px;
-    left: 0px;
-    background: white;
-    padding: 1em;
-    border: 1px solid black;
-    margin: 0.5em;
-    max-width: calc(100% - 1em - 2em - 1px);
-    max-height: calc(100% - 1em - 2em - 56px);
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink);
+}
+.site-nav__burger { position: relative; }
+.site-nav__burger::before,
+.site-nav__burger::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    transition: transform var(--dur-fast) var(--ease), top var(--dur-fast) var(--ease);
+}
+.site-nav__burger::before { top: -7px; }
+.site-nav__burger::after  { top: 7px; }
+
+/* Open: the bars fold into a cross */
+.site-nav__toggle:checked ~ .site-header__inner .site-nav__burger { background: transparent; }
+.site-nav__toggle:checked ~ .site-header__inner .site-nav__burger::before { top: 0; transform: rotate(45deg); }
+.site-nav__toggle:checked ~ .site-header__inner .site-nav__burger::after  { top: 0; transform: rotate(-45deg); }
+
+/* --- Drawer (phone) ---------------------------------------------------------------------- */
+
+.site-nav__panel { display: none; }
+
+.site-nav__toggle:checked ~ .site-header__inner .site-nav__panel {
+    display: block;
+    border-top: 1px solid var(--border);
+    padding-bottom: var(--space-5);
 }
 
-.side-menu:checked ~ nav ul {
-    list-style-type: none;
+.site-nav__list {
+    list-style: none;
+    margin: 0;
     padding: 0;
 }
 
-.side-menu:checked ~ nav ul li {
-    display: block;
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    margin: 0rem;
+.site-nav__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 56px;
+    padding: var(--space-2) var(--space-1);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    color: var(--ink);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+.site-nav__link:hover { color: var(--cevi-red); }
+.site-nav__link[aria-current] {
+    color: var(--cevi-red);
+    box-shadow: inset 3px 0 0 var(--cevi-red);
+    padding-left: var(--space-3);
 }
 
-.side-menu:checked ~ nav ul li a {
-    display: block;
-    padding: 1em;
-    margin: 0;
+/*
+ * Secondary rows, shown in the drawer only. The data protection link is one of them: it has to be
+ * reachable from every page (BR-026, C-011), and on desktop it is — from the footer, which is where
+ * it belongs rather than competing with the content links.
+ */
+.site-nav__link--minor {
+    font-weight: 600;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+    min-height: var(--tap-target);
+    border-bottom: 0;
 }
 
-@media (min-width: 768px) {
-    nav {
-        display: block
+/* Signing out changes state, so it is a form submission; it must still read as a menu row. */
+.site-nav__form { margin: 0; }
+
+/* --- Row (desktop) ----------------------------------------------------------------------- */
+
+@media (min-width: 900px) {
+    .site-header__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-5);
     }
 
-    .hamb {
-        display: none;
+    .site-header__bar { min-height: 72px; }
+
+    .site-nav__button { display: none; }
+
+    /* The panel is a row item now, whatever the checkbox says */
+    .site-nav__panel,
+    .site-nav__toggle:checked ~ .site-header__inner .site-nav__panel {
+        display: block;
+        border-top: 0;
+        padding-bottom: 0;
     }
+
+    .site-nav__list {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .site-nav__link {
+        position: relative;
+        justify-content: center;
+        width: auto;
+        min-height: var(--tap-target);
+        padding: var(--space-3);
+        border-bottom: 0;
+        font-weight: 600;
+        font-size: var(--step-0);
+    }
+    .site-nav__link[aria-current] {
+        box-shadow: none;
+        padding-left: var(--space-3);
+    }
+    /* The active marker is a scaled underline, so hovering never reflows the row */
+    .site-nav__link::after {
+        content: "";
+        position: absolute;
+        left: var(--space-3);
+        right: var(--space-3);
+        bottom: var(--space-2);
+        height: 3px;
+        border-radius: 2px;
+        background: var(--cevi-red);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--dur-fast) var(--ease);
+    }
+    .site-nav__link:hover::after,
+    .site-nav__link[aria-current]::after { transform: scaleX(1); }
+
+    .site-nav__link--minor { display: none; }
 }

@@ -1,0 +1,62 @@
+/*
+ * Replaces the single credit line. The data protection link lives here as well as in the drawer,
+ * because it must be reachable from every page (BR-026, C-011).
+ */
+.site-footer {
+    background: var(--surface-inverse);
+    color: var(--on-inverse);
+    padding-block: var(--space-6) var(--space-4);
+}
+
+.site-footer__cols {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: 1fr;
+}
+@media (min-width: 600px) {
+    .site-footer__cols { grid-template-columns: 1.4fr 1fr 1fr; }
+}
+
+.site-footer h2 {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: var(--space-3);
+}
+
+.site-footer p {
+    font-size: var(--step--1);
+    line-height: var(--leading-body);
+}
+
+.site-footer ul { list-style: none; margin: 0; padding: 0; }
+
+.site-footer li a {
+    display: block;
+    min-height: var(--tap-target);
+    padding-block: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    color: var(--on-inverse);
+    text-decoration: none;
+}
+.site-footer li a:hover { color: #fff; text-decoration: underline; }
+
+.site-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-inverse);
+    font-size: var(--step--1);
+}
+.site-footer__base a { color: var(--on-inverse); }
+.site-footer__base a:hover { color: #fff; }
+
+.site-footer__marks { display: flex; gap: var(--space-2); }

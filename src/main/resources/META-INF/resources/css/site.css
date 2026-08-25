@@ -1,45 +1,16 @@
+/*
+ * Import hub. Order matters: tokens define the custom properties every later file reads, base sets
+ * the element defaults, and the component files layer on top of the layout.
+ *
+ * Everything here is served from this application's own origin — no CSS framework, no CDN
+ * (C-020, NFR-042). Budget: 12 KB gzipped for the whole bundle (NFR-041).
+ */
+@import "tokens.css";
+@import "base.css";
+@import "layout.css";
 @import "nav.css";
-@import "elements.css";
+@import "footer.css";
+@import "components.css";
 @import "form.css";
-@import "colors.css";
-@import "spacing.css";
 @import "table.css";
-
-body {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-    border-bottom: 1px solid black;
-    display: flex;
-    align-items: center;
-    flex-wrap: no-wrap;
-}
-
-/* prevent image to overflow on small screens */
-.logo {
-    max-width: 100%;
-    object-fit: contain;
-}
-
-main {
-  flex: 1;
-  max-width: 800px;
-  padding: 30px 15px 30px 15px;
-}
-
-footer {
-  border-top: 0.1rem solid #e8e8e8;
-  padding: 30px 15px 30px 15px;
-}
-
-/* ensure wrapping is possible on large screens */
-@media (min-width: 768px) {
-    header {
-        flex-wrap: wrap;
-    }
-}
+@import "transitional.css";

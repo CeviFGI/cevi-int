@@ -1,0 +1,72 @@
+/*
+ * Page frame and the containers content sits in.
+ *
+ * Replaces the previous `main { max-width: 800px }`, which had no margin rule and therefore left
+ * every page pinned to the left edge of a wide screen.
+ */
+
+/*
+ * dvh, not vh: on a phone the collapsing address bar makes 100vh taller than the visible area,
+ * which pushes the footer below the fold and leaves a gap when the bar retracts.
+ */
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+.page-main { flex: 1; }
+
+.container {
+    width: var(--container);
+    margin-inline: auto;
+}
+
+/* Prose is capped independently of the container: 68ch stays readable, 1120px does not. */
+.measure { max-width: var(--measure); }
+
+.page-main { padding-block: var(--space-5) var(--space-7); }
+
+.section { padding-block: var(--space-6); }
+
+.page-head { padding-block: var(--space-6) var(--space-5); }
+.page-head > h1 { margin-block: var(--space-3) var(--space-3); }
+.page-head > .lead {
+    font-size: var(--step-0);
+    color: #3A3A36;
+    max-width: var(--measure);
+}
+
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+.section-head > a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step-0);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.section-head > a:hover { text-decoration: underline; }
+
+/*
+ * The card grid needs no breakpoints: auto-fill with a 300px floor gives one column below ~660px,
+ * two below ~1000px and three above, and it adapts to the container rather than to the viewport.
+ */
+.grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.stack > * + * { margin-top: var(--space-4); }
+
+.cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+}

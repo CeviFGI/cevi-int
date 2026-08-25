@@ -1,19 +1,27 @@
+/*
+ * Tables occur only inside administrator-authored descriptions, which the sanitiser's allow-list
+ * permits. Phase 2 moves this into prose.css together with the rest of that allow-list; until then
+ * it at least stops rendering as browser-default markup inside a designed page.
+ */
+.prose-table {
+    overflow-x: auto;
+    margin-bottom: var(--space-4);
+}
+
 table {
-    margin-top: 1em;
-	border-collapse: collapse;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--step--1);
 }
 
-table td {
-	padding: 1em;
+th, td {
+    border: 1px solid var(--border);
+    padding: var(--space-3);
+    text-align: left;
 }
 
-table thead td {
-	background-color: SteelBlue;
-	color: white;
-	font-weight: bold;
-	border: 1px solid lightgrey;
-}
-
-table tbody td {
-	border: 1px solid lightgrey;
+th, thead td {
+    background: var(--surface-sunken);
+    font-family: var(--font-display);
+    font-weight: 700;
 }

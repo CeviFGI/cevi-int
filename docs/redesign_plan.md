@@ -52,7 +52,7 @@ case is implemented before its spec exists. §9 lists exactly which ones.
 
 ---
 
-## 3. Phase 1 — Design system foundation
+## 3. Phase 1 — Design system foundation — **delivered 2026-08-25**
 
 **Goal:** every token from `docs/ux_concept.md` §3 exists, the page frame (header, nav, footer,
 container, typography) is rebuilt, and every existing page inherits the new look without any page
@@ -75,7 +75,24 @@ template being restructured yet.
 | **done** | `src/main/resources/META-INF/resources/fonts/` — six subset `woff2` files plus `OFL-Montserrat.txt` and `OFL-Lora.txt` (see `docs/ux_concept.md` §3.2) |
 | new | `src/main/resources/META-INF/resources/img/triangle.svg` — the motif, as one inline-able symbol |
 | edit | `src/main/resources/templates/base.qute.html` — skip link, semantic landmarks, font preloads, restructured header/footer, `{#insert head}`/`{#insert scripts}` preserved unchanged |
-| new | `src/main/resources/templates/tags/siteHeader.html`, `tags/siteFooter.html` |
+| new | `css/transitional.css` — see below |
+
+**Deviations from the plan as written, and why:**
+
+- **No `tags/siteHeader.html` / `tags/siteFooter.html`.** `base.qute.html` is their only consumer;
+  two tag files for one caller buys indirection and nothing else. Both live in the base template.
+- **`css/transitional.css` was added.** The plan had `colors.css`, `spacing.css` and `elements.css`
+  deleted in this phase, but `.box`, `.red` and `.margin-left` are still used by the page templates
+  that phases 2 and 3 rewrite — deleting the rules now would have left those pages unstyled for two
+  phases. The three files are gone; their classes are re-expressed in tokens in one clearly marked
+  file that names the phase which removes each rule.
+- **`site.css` stays an `@import` hub.** Individual `<link>` elements would fetch in one wave
+  instead of two, but they put the file list into the markup. One extra round trip for a bundle
+  this small is the cheaper trade.
+- **Page titles were promoted from `<h2>` to `<h1>` in this phase.** Every page opened at `h2` with
+  no `h1` at all, and the data protection page mixed `h2` and `h3` for sections at the same level.
+  It is a one-line change per template, it is not a restructuring, and leaving it until phase 4
+  would have meant writing `PageStructureTest` against a state known to be wrong.
 
 ### Notes on the font files — already in place
 
@@ -103,15 +120,27 @@ to a third party, which C-011 and the data protection statement do not cover.
 
 - `SecurityHeadersTest` — unchanged, must still pass (CSP untouched).
 - `EditorAssetsTest` — unchanged, must still pass (`base.qute.html` still loads no editor asset).
-- new `CssBudgetTest` — sums the served stylesheet bytes and fails above the NFR-041 budget.
-- new `StaticAssetTest` — every font and image referenced from the CSS resolves with HTTP 200.
-- Every existing `@QuarkusTest` must pass untouched; if a REST-Assured assertion breaks on markup,
-  the assertion is checking presentation and gets rewritten to check content.
+- new `CssBudgetTest` — follows the `@import` list of `site.css`, sums the gzipped bytes and fails
+  above the NFR-041 budget; also asserts that only `tokens.css` declares `:root` variables (NFR-037).
+- new `StaticAssetTest` — every asset named by a stylesheet resolves with HTTP 200, the baseline
+  font pair stays inside its budget, and both OFL licences are served.
+- new `PageStructureTest` — one `h1` per public page, no skipped heading level, the skip link
+  before the navigation, and the data protection link present on every page (NFR-043, BR-026).
+- Two existing tests broke, both on presentation rather than behaviour, and both were rewritten to
+  assert content: `IndexResourceTest.version_working` matched the literal string `"Version:"`, and
+  the navigation e2e test drove the drawer through the old checkbox id `#side-menu`. The latter now
+  asserts what a visitor sees — that the navigation appears and disappears — instead of the state
+  of a checkbox, and it gained a case for the desktop row.
 
-### Done when
+### Done
 
-Every existing page renders in the new frame, no page has been restructured, all tests green,
-`tooling/docker.sh verify` passes with coverage ≥ 80 %.
+Every page renders in the new frame; no page content was restructured. `tooling/docker.sh verify`
+passes: 113 unit tests, 7 e2e tests, coverage gate met. Verified visually against the running
+application at 390 px and 1400 px.
+
+**Still owed by later phases, noticed here:** `base.qute.html` wraps the content insert in
+`.container`, which phase 4 will have to open up for the full-bleed sections of the start page —
+most simply with a second insert for pages that lay themselves out.
 
 ---
 

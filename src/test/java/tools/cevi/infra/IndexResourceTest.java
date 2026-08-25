@@ -53,7 +53,13 @@ public class IndexResourceTest {
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void version_working() {
-        given().when().get(versionEndpoint).then().statusCode(HttpStatus.SC_OK).body(containsString("Version:"));
+        given().when().get(versionEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                // The page names both the application and the schema version (BR-027). The two
+                // German labels are content, not markup, so this survives the page being relaid
+                // out — which the previous assertion on the literal "Version:" did not.
+                .body(containsString("Anwendung"))
+                .body(containsString("Datenbankschema"));
     }
 
     /** The version page names application and schema version and is therefore not public (BR-039). */
