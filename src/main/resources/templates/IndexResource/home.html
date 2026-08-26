@@ -1,0 +1,97 @@
+{#include base}
+{!
+The one page that lays itself out: it opens with no .page-column, so the hero and the inverse offer
+band span the full width while everything inside them stays on the container (UC-008).
+!}
+<section class="hero">
+    <div class="container">
+        <p class="eyebrow">
+            <svg width="12" height="11" viewBox="0 0 12 11" aria-hidden="true" focusable="false">
+                <polygon points="6,0 12,11 0,11" fill="currentColor"/>
+            </svg>
+            Cevi International
+        </p>
+        <h1 class="hero__title">Raus aus der Schweiz.<br>Rein in die Welt.</h1>
+        <p class="hero__lead">Anlässe, Volontariate und Kontakte im weltweiten YMCA/YWCA-Netz —
+           gesammelt von der Fachgruppe International des Cevi Schweiz.</p>
+        <div class="cluster">
+            <a class="btn btn--primary" href="/anlaesse">Anlässe ansehen</a>
+            <a class="btn btn--secondary" href="/kontakt">Schreib uns</a>
+        </div>
+    </div>
+</section>
+
+{#if inject:currentUser.admin}
+{!A4 of UC-008: the maintenance functions are offered, as a separate and quieter group than
+anything meant for a visitor (FR-038, BR-042).!}
+<div class="container">
+    <div class="admin-bar">
+        <span class="admin-bar__who">Angemeldet als Administrator</span>
+        <a class="btn btn--ghost" href="/anlaesse/add">Neuer Anlass</a>
+        <a class="btn btn--ghost" href="/volontariat/add">Neues Volontariat</a>
+        <a class="btn btn--ghost" href="/version">Version</a>
+    </div>
+</div>
+{/if}
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2>Die nächsten Anlässe</h2>
+            <a href="/anlaesse">Alle Anlässe <span aria-hidden="true">→</span></a>
+        </div>
+        {#if events.isEmpty}
+        {!A1 of UC-008: an empty section explains itself rather than leaving a hole on the first
+        screen, which is what tells a visitor a site has been abandoned (BR-049).!}
+        <div class="empty">
+            <h3>Gerade ist nichts ausgeschrieben</h3>
+            <p>Das heisst selten, dass nichts läuft — schreib uns, wir wissen meistens mehr.</p>
+            <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
+        </div>
+        {#else}
+        {!The same card as /anlaesse, without the maintenance strip: this is an extract, and
+        maintaining an entry happens in the list it belongs to (BR-048).!}
+        <div class="grid">
+            {#for event in events}
+            {#event event showActions=false}{/event}
+            {/for}
+        </div>
+        {/if}
+    </div>
+</section>
+
+<section class="section section--inverse">
+    <div class="container">
+        <div class="section-head">
+            <h2>Länger bleiben: Volontariat</h2>
+            <a href="/volontariat">Alle Angebote <span aria-hidden="true">→</span></a>
+        </div>
+        {#if services.isEmpty}
+        <div class="empty empty--inverse">
+            <h3>Noch kein Angebot erfasst</h3>
+            <p>Volontariate finden wir laufend — sag uns, wohin es gehen soll.</p>
+            <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
+        </div>
+        {#else}
+        <div class="grid">
+            {#for service in services}
+            {#voluntaryService service showActions=false}{/voluntaryService}
+            {/for}
+        </div>
+        {/if}
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="teaser">
+            <div>
+                <h2>Du weisst noch nicht, was passt?</h2>
+                <p>Schreib uns, was dich interessiert — wir beraten dich und kennen meist jemanden,
+                   der schon dort war.</p>
+            </div>
+            <a class="btn btn--primary" href="/kontakt">Kontakt aufnehmen</a>
+        </div>
+    </div>
+</section>
+{/include}

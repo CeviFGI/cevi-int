@@ -1,0 +1,152 @@
+/*
+ * The pieces that exist on one page each: the start page's hero and inverse band, and the channel
+ * cards of the information page. Everything a second page also needs lives in components.css.
+ */
+
+/* --- Hero ---------------------------------------------------------------------------------- */
+
+/*
+ * No photograph — decided in docs/ux_concept.md §3.4. The hero is carried by type on a field of
+ * the two brand colours, with the triangle motif as a texture over it.
+ */
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--space-7) var(--space-8);
+    background:
+        radial-gradient(60rem 30rem at 12% -20%, var(--cevi-red-tint) 0%, transparent 60%),
+        radial-gradient(50rem 28rem at 92% 8%, var(--cevi-blue-tint) 0%, transparent 62%),
+        var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='42'%3E%3Cpolygon points='24,6 44,38 4,38' fill='none' stroke='%23141412' stroke-opacity='0.05' stroke-width='1.5'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+.hero > .container { position: relative; }
+
+.hero .eyebrow { margin-bottom: var(--space-4); }
+
+.hero__title {
+    font-size: var(--step-4);
+    font-weight: 800;
+    margin-bottom: var(--space-4);
+}
+
+.hero__lead {
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: #3A3A36;
+    margin-bottom: var(--space-5);
+}
+
+/* --- Inverse section ----------------------------------------------------------------------- */
+
+/*
+ * The one dark band on the site apart from the footer. The cards inside it keep their light
+ * surface: inverting them too would mean a second set of card rules for one section, and white on
+ * dark is what makes them read as objects lying on the band.
+ */
+.section--inverse {
+    background: var(--surface-inverse);
+    color: var(--on-inverse);
+    padding-block: var(--space-7);
+}
+/* Scoped to the section's own heading: a card lying on the band brings its own colours */
+.section--inverse .section-head > h2 { color: #fff; }
+.section--inverse .section-head > a { color: #fff; }
+
+.section--inverse .empty {
+    background: var(--surface-inverse-2);
+    border-color: var(--border-inverse);
+}
+.section--inverse .empty > h3 { color: #fff; }
+.section--inverse .empty > p { color: var(--on-inverse); }
+
+/* --- Channel cards (information page) ------------------------------------------------------- */
+
+.chip-index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+}
+.chip-index > .chip {
+    min-height: var(--tap-target);
+    text-decoration: none;
+    /* The quiet chip's own fill is the page background, so on this page it needs a border to read */
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+}
+.chip-index > .chip:hover {
+    border-color: var(--cevi-blue);
+    color: var(--cevi-blue-strong);
+}
+
+/*
+ * Columns rather than a grid: the groups differ in height by a factor of nine, and a grid would
+ * align them into rows and leave holes under the short ones. Column flow packs them.
+ */
+.channels {
+    columns: 20rem;
+    column-gap: var(--space-4);
+}
+
+.channel {
+    break-inside: avoid;
+    margin-bottom: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+}
+
+.channel > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: var(--tap-target);
+    cursor: pointer;
+    list-style: none;
+}
+.channel > summary::-webkit-details-marker { display: none; }
+.channel > summary::after {
+    content: "▾";
+    color: var(--ink-muted);
+    transition: transform var(--dur-fast) var(--ease);
+}
+.channel[open] > summary::after { transform: rotate(180deg); }
+
+.channel > summary > h2 {
+    font-size: var(--step-1);
+    margin: 0;
+}
+
+.channel__links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+    margin-top: var(--space-3);
+}
+.channel__links > li + li { border-top: 1px solid var(--border); }
+.channel__links a {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding-block: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    line-height: 1.35;
+    text-decoration: none;
+}
+.channel__links a:hover { text-decoration: underline; }

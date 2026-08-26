@@ -21,10 +21,19 @@
     margin-inline: auto;
 }
 
+/*
+ * What an ordinary page opens with: the container plus the rhythm that separates it from header
+ * and footer. The start page skips it — its sections carry their own padding and span the full
+ * width, which is why the container is not in base.qute.html.
+ */
+.page-column {
+    width: var(--container);
+    margin-inline: auto;
+    padding-block: var(--space-5) var(--space-7);
+}
+
 /* Prose is capped independently of the container: 68ch stays readable, 1120px does not. */
 .measure { max-width: var(--measure); }
-
-.page-main { padding-block: var(--space-5) var(--space-7); }
 
 .section { padding-block: var(--space-6); }
 
@@ -38,9 +47,10 @@
 
 .section-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-2) var(--space-4);
     margin-bottom: var(--space-4);
 }
 .section-head > a {

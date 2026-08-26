@@ -3,7 +3,7 @@
  * the element defaults, and the component files layer on top of the layout.
  *
  * Everything here is served from this application's own origin — no CSS framework, no CDN
- * (C-020, NFR-042). Budget: 12 KB gzipped for the whole bundle (NFR-041).
+ * (C-020, NFR-042). Budget: 24 KB gzipped for the whole bundle (NFR-041).
  */
 @import "tokens.css";
 @import "base.css";
@@ -13,4 +13,5 @@
 @import "components.css";
 @import "form.css";
 @import "prose.css";
+@import "pages.css";
 @import "transitional.css";

@@ -21,11 +21,11 @@ public class LoginE2ETest extends PlaywrightTestBase {
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
         page.locator(".form-actions button[type='submit']").click();
-        // The login POST is followed by a server-side redirect chain (/ -> /anlaesse);
-        // wait for it to fully settle before inspecting the rendered page.
-        page.waitForURL("**/anlaesse");
+        // Signing in lands on the start page (quarkus.http.auth.form.landing-page). Until the
+        // start page had content of its own that was a redirect onwards to /anlaesse.
+        page.waitForURL(url("/"));
 
-        assertThat(page.url(), endsWith("/anlaesse"));
+        assertThat(page.url(), endsWith("/"));
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ausloggen")).isVisible(), is(true));
     }
 
@@ -39,7 +39,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
         page.locator(".form-actions button[type='submit']").click();
-        page.waitForURL("**/anlaesse");
+        page.waitForURL(url("/"));
 
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ausloggen")).click();
         page.waitForURL("**/auth/loggedOut");

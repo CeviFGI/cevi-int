@@ -70,7 +70,8 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
         page.locator(".form-actions button[type='submit']").click();
-        page.waitForURL("**/anlaesse");
+        // Signing in lands on the start page, not on the event list — see UC-008 A4.
+        page.waitForURL(url("/"));
     }
 
     @AfterEach

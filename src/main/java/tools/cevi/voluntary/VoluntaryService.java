@@ -1,6 +1,9 @@
 package tools.cevi.voluntary;
 
+import java.util.List;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.panache.common.Sort;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +37,14 @@ public class VoluntaryService extends PanacheEntityBase {
     @NotBlank
     @Size(max = 65535)
     public String description;
+
+    /**
+     * The most recently recorded offers, for the extract on the start page (BR-048). An offer
+     * carries no date of its own, so the id is the only order the entity model offers.
+     */
+    public static List<VoluntaryService> newest(int limit) {
+        return findAll(Sort.by("id", Sort.Direction.Descending)).page(0, limit).list();
+    }
 
     @Override
     public String toString() {

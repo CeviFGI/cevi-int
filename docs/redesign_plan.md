@@ -304,38 +304,92 @@ in phase 2. It is not a reason to add a framework; it is a reason to decide befo
 
 ---
 
-## 6. Phase 4 — Start page and information pages
+## 6. Phase 4 — Start page and information pages — **delivered 2026-08-26**
 
-**Goal:** `/` becomes a page (FR-023 amended, FR-034), and the two information pages get structure.
+**Goal:** `/` becomes a page (FR-023 amended, FR-034, UC-008), and the two information pages get
+structure.
 
 ### Files
 
 | Action | Path |
 |---|---|
-| edit | `src/main/java/tools/cevi/infra/IndexResource.java` — `index()` returns a template instead of `Response.seeOther("/anlaesse")`; injects the three nearest events and two offers |
+| edit | `src/main/java/tools/cevi/infra/IndexResource.java` — `index()` returns a template instead of `Response.seeOther("/anlaesse")`; passes the three nearest events and two offers |
 | new | `templates/IndexResource/home.html` — hero, event teaser, inverse offer section, contact band |
-| edit | `src/main/java/tools/cevi/event/Event.java` — add a `upcoming(int limit)` query beside the existing one |
-| edit | `src/main/java/tools/cevi/voluntary/VoluntaryService.java` — add a limited query |
-| edit | `templates/IndexResource/fgi.html` — grouped channel cards, `<details>` on phone |
-| edit | `templates/IndexResource/datenschutzinformation.html` — article layout, `--measure` |
-| edit | `css/pages.css` — hero, inverse section, teaser band, channel cards |
+| edit | `src/main/java/tools/cevi/event/Event.java` — `upcomingEvents(int limit)` beside the existing query |
+| edit | `src/main/java/tools/cevi/voluntary/VoluntaryService.java` — `newest(int limit)` |
+| rewrite | `templates/IndexResource/fgi.html` — a card per channel, a chip index, native `<details>` |
+| rewrite | `templates/IndexResource/datenschutzinformation.html` — article layout on `.prose` |
+| new | `css/pages.css` — hero, inverse section, channel columns, chip index |
+| edit | `templates/base.qute.html` — `main` holds the insert; the container moves into the pages |
+| edit | `css/layout.css` — `.page-column`, the container plus the page rhythm |
+| edit | all 17 other page templates — each opens with `<div class="page-column">` |
+
+**Deviations from the plan as written, and why:**
+
+- **The container moved out of `base.qute.html` into the pages.** Phase 1 left this owed and
+  suggested "a second insert for pages that lay themselves out". Qute does not allow that: an
+  `{#insert}` inside another `{#insert}`'s default body is a parser error — the inner `{/}` closes
+  the outer section. Two sibling inserts would have left an empty container in the markup of the
+  one page that skips it. So `main` now holds the insert and nothing else, ordinary pages open with
+  `.page-column`, and the start page brings a container per section. It is one line per template
+  and it removes the special case for good.
+- **The cards on the inverse band keep their light surface.** The concept sketched them inverted.
+  A second set of card rules for one section is not worth it, and white cards read as objects lying
+  on the band. What the section does need is `.card { color: var(--ink) }` — see below.
+- **The channel groups are laid out in columns, not in the card grid.** The groups differ in height
+  by a factor of nine (Blogs has one link, Webseiten nine); a grid aligns them into rows and leaves
+  holes under the short ones. `columns: 20rem` with `break-inside: avoid` packs them.
+- **All channel groups start open, and a chip index sits above them.** The concept asked for
+  `<details>` collapsed on a phone and open for the first two. There is no CSS-only way to open a
+  `<details>` at one width and close it at another, and starting collapsed would have made the page
+  worse on a desktop. The chip index answers what FR-039 is actually for — reaching one channel
+  without scrolling past fifty links — at every width, and the groups stay collapsible.
+- **The two duplicate `Instagram` blocks were merged.** The old page listed the channel twice, which
+  is the kind of thing "grouped by channel" is supposed to make impossible.
 
 ### Migration risk — the changed entry point
 
-`/` currently answers `303 See Other`. Anything relying on that changes behaviour:
+`/` no longer answers `303 See Other`. Everything that relied on it:
 
-- `IndexResourceTest` asserts the redirect — it is rewritten to assert the page.
-- `IndexResource.admin()` redirects to `/` when already signed in; it now lands on the start page
-  rather than the event list. That is the intended behaviour, but it is an explicit check.
+- `IndexResourceTest` asserted the redirect — rewritten to assert the page.
+- `IndexResource.admin()` redirects to `/` when already signed in, and
+  `quarkus.http.auth.form.landing-page` is `/`. **Signing in therefore now lands on the start page
+  rather than on the event list.** That is what UC-008 A4 describes, and the start page shows the
+  maintenance group to an administrator. Three e2e tests waited for `**/anlaesse` after signing in
+  and had to be told the new destination — the only place the change bit.
 - External links to `https://international.cevi.tools/` now land on the start page. `/anlaesse`
   keeps working unchanged, so **no external link breaks** — this is an addition, not a move.
 
+### Found while building it
+
+**A card lying on the inverse band lost its title.** `.section--inverse h2 { color: #fff }` also hit
+the `h2` inside every card on that band, so the organisation name rendered white on white — invisible
+in the markup, invisible in every REST-Assured assertion, and obvious the moment the page was
+screenshotted. Fixed twice over: the rule is scoped to the section's own heading, and `.card` now
+states its text colour instead of inheriting it, so a card is safe wherever it is placed.
+
 ### Tests
 
-- rewrite `IndexResourceTest` — `/` returns 200 with the hero and the teasers; `/anlaesse` still
-  returns the full list.
-- new case — with an empty database the start page renders the empty state, not an empty grid.
-- new `StartPageE2ETest` — hero visible above the fold at 360 × 640; both teaser links navigate.
+- rewritten `IndexResourceTest` — `/` answers 200 with the hero and both teasers; `/anlaesse` and
+  `/volontariat` still answer under their own addresses; the information page groups its sources by
+  channel and carries the index.
+- new case — with an empty database both sections render their empty state rather than an empty
+  grid (A1/A2 of UC-008, BR-049). The demo data is removed and put back around the assertion,
+  because the branch under test is exactly "the database holds nothing".
+- new `StartPageE2ETest` — the headline sits above the fold at 360 × 640, both teaser links
+  navigate, and the full-width sections do not push the page sideways (NFR-013, checked here early
+  because a bleeding band is the one shape that breaks it).
+- `PageStructureTest` — `/` added to every route it checks.
+
+### Done
+
+`tooling/docker.sh verify` passes: 161 unit tests (154 before), 14 e2e tests (11 before), coverage
+gate met. Verified visually at 390 px and 1400 px.
+
+**The stylesheet budget was raised from 16 KB to 24 KB gzipped**, on the product owner's decision
+that the figure is not worth optimising against at this scale. Measured after this phase: 16.5 KB.
+The ceiling keeps its purpose — it still forbids a CSS framework, and the 150 KB first view has not
+moved. Recorded in `docs/requirements.md` and `docs/ux_concept.md` §7.
 
 ---
 
@@ -406,10 +460,10 @@ Written with `/use-case-spec` after the requirement changes are accepted, before
 
 | Phase | Content | Relative size | Shippable alone |
 |---|---|---|---|
-| 1 | Design system, frame, fonts | Large | Yes — the whole site already looks different |
-| 2 | Event and offer cards, prose | Large | Yes — addresses the loudest complaint |
-| 3 | Forms and status pages | Medium | Yes — addresses the second complaint |
-| 4 | Start page, information pages | Medium | Yes |
+| 1 | Design system, frame, fonts | Large | Yes — delivered |
+| 2 | Event and offer cards, prose | Large | Yes — delivered |
+| 3 | Forms and status pages | Medium | Yes — delivered |
+| 4 | Start page, information pages | Medium | Yes — delivered |
 | 5 | Responsive/a11y/budget tests | Medium | Yes — no visible change, locks quality |
 | 6 | Cleanup, assets, docs | Small | Yes |
 

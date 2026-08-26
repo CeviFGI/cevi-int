@@ -86,11 +86,16 @@
 
 /* --- Cards ------------------------------------------------------------------------------- */
 
+/*
+ * The colour is stated, not inherited: a card also lies on the inverse band of the start page,
+ * where the section sets a light text colour for its own headings.
+ */
 .card {
     display: flex;
     flex-direction: column;
     position: relative;
     background: var(--surface);
+    color: var(--ink);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-1);

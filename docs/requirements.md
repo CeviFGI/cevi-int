@@ -146,7 +146,7 @@ as the gap it is; scope and role model need confirmation.
 | NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Open         |
 | NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Open         |
 | NFR-040 | Reduced Motion                 | When the browser reports `prefers-reduced-motion: reduce`, 100 % of transitions and animations are disabled; 0 animations are required to understand or operate the interface. | Usability       | Medium   | Open         |
-| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 16 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript; the complete first view stays below 150 KB. | Performance     | High     | Open         |
+| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript; the complete first view stays below 150 KB. | Performance     | High     | Open         |
 | NFR-042 | No Third-Party Asset Requests  | A public page issues 0 requests to hosts other than the application's own origin — fonts, styles, scripts and images are served from it; this keeps the Content-Security-Policy of NFR-024 free of external sources and sends 0 visitor IP addresses to third parties. | Security        | High     | Open         |
 | NFR-043 | Consistent Page Structure      | 100 % of pages render exactly one `h1`, a heading order with no skipped level, a skip link as the first focusable element, and the data protection link reachable without scrolling the navigation. | Usability       | Medium   | Open         |
 | NFR-044 | Brand Conformity               | 100 % of brand colours and typefaces in the interface are those defined by the Cevi Schweiz Corporate Design Manual (2020): Cevi-Rot `#C41333`, Cevi-Blau `#323394`, Cevi-Schwarz `#141412`, Montserrat for titles and interface text, Lora for body copy; 0 further brand hues are introduced. | Usability       | Medium   | Open         |
@@ -184,6 +184,15 @@ the transfer. The ceiling keeps its purpose either way: Bootstrap alone is rough
 NFR-041 still forbids a framework (C-020) and still leaves room for phases 3 and 4. The figure that
 did not move is the one that matters to a visitor on mobile data — the complete first view stays
 under 150 KB.
+
+**Note on NFR-041 — the stylesheet ceiling was raised again, from 16 KB to 24 KB, after phase 4.**
+The 16 KB was set when phases 3 and 4 were still unwritten; the finished interface — design system,
+frame, cards, prose, forms, status pages, start page and information pages — measures 16.5 KB
+gzipped with its comments. The product owner decided that the stylesheet's own size is not a figure
+worth optimising against at this scale, and 24 KB leaves the dark scheme of NFR-045 and the phase-5
+work room without another revision. What the ceiling is actually for is unchanged: it still forbids
+a CSS framework (C-020) — Bootstrap alone is about 27 KB gzipped before a single override — and the
+figure that matters to a visitor on mobile data, the 150 KB first view, has not moved.
 
 **Note on NFR-041 — measured against the delivered font files.** The two typefaces were subset and
 placed in the repository while this revision was written. Split by `unicode-range`, a German page

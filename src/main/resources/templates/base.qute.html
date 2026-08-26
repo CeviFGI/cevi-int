@@ -58,10 +58,11 @@
       </div>
     </header>
 
+    <!-- A page brings its own outer element: almost all of them one .page-column, the start page
+         a sequence of full-width sections. Putting the container here instead would mean the one
+         page that lays itself out could never break out of it. -->
     <main class="page-main" id="inhalt">
-      <div class="container">
-        {#insert}Kein Inhalt{/}
-      </div>
+      {#insert}Kein Inhalt{/}
     </main>
 
     <footer class="site-footer">
