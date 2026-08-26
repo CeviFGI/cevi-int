@@ -40,7 +40,9 @@ public class AuthResourceTest {
                 .get(loginEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(containsString("Benutzer:"));
+                .body(containsString("<label for=\"j_username\">"))
+                .body(containsString("<label for=\"j_password\">"))
+                .body(containsString("autocomplete=\"current-password\""));
     }
 
     @Test

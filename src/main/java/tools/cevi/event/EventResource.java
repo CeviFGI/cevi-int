@@ -7,7 +7,7 @@ import io.quarkus.qute.TemplateInstance;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +21,7 @@ import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.HtmlSanitizer;
 import tools.cevi.infra.Slug;
 import tools.cevi.infra.ValidationMessage;
+import tools.cevi.infra.ValidationMessages;
 
 @Path("anlaesse")
 public class EventResource {
@@ -30,7 +31,7 @@ public class EventResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance list(List<Event> events);
-        public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, Set<ValidationMessage> validationMessages);
+        public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(Event event);
         public static native TemplateInstance detail(Event event);
     }
@@ -46,7 +47,7 @@ public class EventResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance add() {
-        return Templates.form(0, "", "", "", LocalDate.now().toString(), "", "", Set.of());
+        return Templates.form(0, "", "", "", LocalDate.now().toString(), "", "", ValidationMessages.none());
     }
 
     @GET
@@ -58,7 +59,7 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        return Templates.form(id, event.title, event.slug, event.date, event.displayDate.toString(), event.location, event.description, Set.of());
+        return Templates.form(id, event.title, event.slug, event.date, event.displayDate.toString(), event.location, event.description, ValidationMessages.none());
     }
 
     @GET
@@ -137,14 +138,14 @@ public class EventResource {
         event.location = location;
         event.description = description;
 
-        Set<ValidationMessage> violations = new HashSet<>();
+        Set<ValidationMessage> violations = new LinkedHashSet<>();
 
         var eventBySlug = Event.findBySlug(slug);
         if (eventBySlug != null) {
             violations.add(ValidationMessage.of("slug", "Es existiert bereits ein anderer Eintrag mit demselben Slug"));
         }
 
-        violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toSet()));
+        violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toCollection(LinkedHashSet::new)));
         if (violations.isEmpty()) {
             try {
                 QuarkusTransaction.begin();
@@ -158,7 +159,7 @@ public class EventResource {
             }
         }
         Log.info("Violations encountered while adding: " + violations);
-        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(0, title, slug, date, displayDate, location, description, violations).render()).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(0, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
     }
 
     private String generateUniqueSlug(long id, String title) {
@@ -187,7 +188,7 @@ public class EventResource {
         }
 
         Event event = null;
-        Set<ValidationMessage> violations = new HashSet<>();
+        Set<ValidationMessage> violations = new LinkedHashSet<>();
         try {
             QuarkusTransaction.begin();
 
@@ -206,7 +207,7 @@ public class EventResource {
             event.location = location;
             event.description = description;
 
-            violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toSet()));
+            violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toCollection(LinkedHashSet::new)));
             if (violations.isEmpty()) {
                 event.persist();
                 QuarkusTransaction.commit();
@@ -220,7 +221,7 @@ public class EventResource {
             QuarkusTransaction.rollback();
         }
         Log.info("Violations encountered while updating: " + violations);
-        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, violations).render()).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
     }
 
     private Response handleDelete(long id) {

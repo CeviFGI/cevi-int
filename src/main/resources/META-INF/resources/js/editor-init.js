@@ -12,7 +12,7 @@
 // or a link to an upload endpoint that does not exist here, so offering them would only produce
 // content that silently vanishes on save.
 document.addEventListener('DOMContentLoaded', function () {
-    var textarea = document.getElementById('description-editor');
+    var textarea = document.getElementById('description');
     if (textarea === null) {
         return;
     }

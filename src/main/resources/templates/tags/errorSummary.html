@@ -1,0 +1,18 @@
+{!
+The block a screen reader announces first after a rejected submission (BR-045, FR-037). It says
+that nothing was sent, and every entry links at the control that caused the fault instead of only
+naming it — the field name alone leaves the visitor to find it.
+
+autofocus rather than a script: the attribute applies to any element carrying a tabindex, so the
+summary takes focus on load without an exception to the Content-Security-Policy (NFR-024, C-021).
+!}
+{#if it.any}
+<div class="error-summary" role="alert" tabindex="-1" autofocus>
+    <p>{title ?: 'Das Formular wurde nicht gesendet.'}</p>
+    <ul>
+        {#for violation in it.all}
+        <li><a href="#{violation.fieldName}">{violation.label}</a>: {violation.message}</li>
+        {/for}
+    </ul>
+</div>
+{/if}

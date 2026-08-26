@@ -20,7 +20,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
-        page.locator("input[type='submit']").click();
+        page.locator(".form-actions button[type='submit']").click();
         // The login POST is followed by a server-side redirect chain (/ -> /anlaesse);
         // wait for it to fully settle before inspecting the rendered page.
         page.waitForURL("**/anlaesse");
@@ -38,7 +38,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
         page.navigate(url("/auth/login"));
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
-        page.locator("input[type='submit']").click();
+        page.locator(".form-actions button[type='submit']").click();
         page.waitForURL("**/anlaesse");
 
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ausloggen")).click();
@@ -56,7 +56,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("wrong-password");
-        page.locator("input[type='submit']").click();
+        page.locator(".form-actions button[type='submit']").click();
         page.waitForURL("**/auth/error");
 
         assertThat(page.url(), containsString("/auth/error"));

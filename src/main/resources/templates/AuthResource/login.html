@@ -1,9 +1,25 @@
 {#include base}
-<h1>Login</h1>
+{!Sign-in is a detour, never a destination: one card, two fields, nothing else competing with them
+(UC-006). The autocomplete hints are what let a password manager fill it in at all.!}
+<form class="panel panel--narrow form-card" action="/auth/j_security_check" method="post">
+    <h1>Anmelden</h1>
+    <p class="form-note">Die Anmeldung ist nur für die Betreuung der Inhalte nötig. Alles, was du
+       lesen möchtest, ist ohne Konto zugänglich.</p>
 
-<form action="/auth/j_security_check" method="post">
-    <strong>Benutzer:</strong> <input type="text" name="j_username"><br>
-    <strong>Passwort:</strong> <input type="password" name="j_password"><br>
-    <input type="submit" value="Senden">
+    <div class="field">
+        <label for="j_username">Benutzername</label>
+        <input type="text" id="j_username" name="j_username" autocomplete="username"
+               autocapitalize="none" spellcheck="false" required>
+    </div>
+
+    <div class="field">
+        <label for="j_password">Passwort</label>
+        <input type="password" id="j_password" name="j_password" autocomplete="current-password"
+               required>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn--primary btn--block" type="submit">Anmelden</button>
+    </div>
 </form>
 {/include}

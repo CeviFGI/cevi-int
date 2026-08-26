@@ -62,6 +62,6 @@ public class EventDetailTest {
                 .get(detailEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(containsString("Nicht gefunden"));
+                .body(containsString("Diese Seite gibt es nicht"));
     }
 }

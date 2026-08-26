@@ -19,6 +19,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tools.cevi.infra.ValidationMessage;
+import tools.cevi.infra.ValidationMessages;
 
 @Path("kontakt")
 public class ContactResource {
@@ -33,14 +34,14 @@ public class ContactResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance form(String message, boolean invalidAntispamValue, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance form(String message, ValidationMessages validationMessages);
         public static native TemplateInstance submitted();
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance form() {
-        return Templates.form("", false, List.of());
+        return Templates.form("", ValidationMessages.none());
     }
 
     @POST
@@ -56,8 +57,11 @@ public class ContactResource {
             return Templates.submitted();
         }
 
+        // A wrong answer is a fault of the spam field like any other, so it is carried the same
+        // way and the form can name it where it happened rather than in a banner (BR-045).
         if (spam == null || !spam.equals("50")) {
-            return Templates.form(message, true, List.of());
+            return Templates.form(message, ValidationMessages.of(List.of(
+                    ValidationMessage.of("spam", "Bitte trage die Zahl 50 ein."))));
         }
 
         ContactFormEntry entry = new ContactFormEntry();
@@ -66,7 +70,7 @@ public class ContactResource {
         List<ValidationMessage> violations = validator.validate(entry).stream()
                 .map(ValidationMessage::of).toList();
         if (!violations.isEmpty()) {
-            return Templates.form(message, false, violations);
+            return Templates.form(message, ValidationMessages.of(violations));
         }
 
         try {

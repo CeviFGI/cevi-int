@@ -1,6 +1,17 @@
 {#include base}
-<h1>Unbekannter Fehler</h1>
-
-<p>Es ist ein unbekanner Fehler aufgetreten. Bitte versuche es später nocheinmal.</p>
-<p>ErrorId: {errorId}</p>
+<div class="panel status status--warn">
+    <svg class="status__mark" viewBox="0 0 12 11" aria-hidden="true" focusable="false">
+        <polygon points="6,0 12,11 0,11" fill="currentColor"/>
+    </svg>
+    <h1>Da ist etwas schiefgelaufen</h1>
+    <p>Der Fehler liegt bei uns, nicht bei dir. Versuch es später nochmals — und wenn es dringend
+       ist, schick uns diese Kennung mit:</p>
+    {!Copyable rather than prose: it is the only thing that connects what the visitor saw to what
+    the operating records show.!}
+    <p><code class="code-chip">{errorId}</code></p>
+    <div class="cluster">
+        <a class="btn btn--primary" href="/anlaesse">Zu den Anlässen</a>
+        <a class="btn btn--ghost" href="/kontakt">Schreib uns</a>
+    </div>
+</div>
 {/include}

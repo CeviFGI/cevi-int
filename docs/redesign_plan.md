@@ -212,7 +212,7 @@ answer and needs a requirement of its own.
 
 ---
 
-## 5. Phase 3 — Forms and status pages
+## 5. Phase 3 — Forms and status pages — **delivered 2026-08-26**
 
 **Goal:** the contact form (the second named complaint), the sign-in page, the two administrator
 forms, the delete confirmations and the error/status pages.
@@ -221,34 +221,86 @@ forms, the delete confirmations and the error/status pages.
 
 | Action | Path |
 |---|---|
-| edit | `templates/ContactResource/form.html` — labelled fields, "Womit wir helfen" chip grid, reframed spam question with `inputmode="numeric"`, per-field errors, linked error summary, honeypot **unchanged** |
-| edit | `templates/ContactResource/submitted.html` — success card with two ways onward |
-| edit | `templates/AuthResource/login.html` — centred card, labels, `autocomplete` hints |
-| edit | `templates/AuthResource/error.html`, `loggedOut.html` — status cards |
-| edit | `templates/EventResource/form.html`, `VoluntaryResource/form.html` — two-column desktop layout, helper text replacing the `title` tooltips on `question-mark.svg`, styled Jodit container. **The `{#head}`/`{#scripts}` editor blocks are moved as-is; NFR-036 must not regress.** |
-| edit | `templates/EventResource/delete.html`, `VoluntaryResource/delete.html` — destructive treatment, quiet cancel first |
-| edit | `templates/error404.html`, `error500.html` — triangle, plain German, way back, copyable `errorId` |
-| edit | `templates/IndexResource/version.html` — small definition card |
-| edit | `src/main/java/tools/cevi/contact/ContactResource.java`, `event/EventResource.java`, `voluntary/VoluntaryResource.java` — pass validation messages in a shape the template can bind per field (today they arrive as a flat `Set<ValidationMessage>`; the field name is already carried, so this is a template-side grouping, not a model change) |
+| new | `src/main/java/tools/cevi/infra/ValidationMessages.java` — the faults of one submission, addressable per field |
+| edit | `src/main/java/tools/cevi/infra/ValidationMessage.java` — gains `label()`, the name the form gave the field |
+| new | `templates/tags/errorSummary.html` — the summary block, shared by the three forms |
+| rewrite | `templates/ContactResource/form.html` — labelled fields, "Womit wir helfen können" card grid, reframed spam question with `inputmode="numeric"`, per-field errors, linked error summary, honeypot **unchanged** |
+| rewrite | `templates/ContactResource/submitted.html` — success card with two ways onward |
+| rewrite | `templates/AuthResource/login.html` — centred card, labels, `autocomplete` hints |
+| rewrite | `templates/AuthResource/error.html`, `loggedOut.html` — status cards |
+| rewrite | `templates/EventResource/form.html`, `VoluntaryResource/form.html` — two-column desktop layout, helper text replacing the `title` tooltips, styled Jodit container; the `{#head}`/`{#scripts}` editor blocks moved as-is |
+| **done in phase 2** | `templates/EventResource/delete.html`, `VoluntaryResource/delete.html` — the destructive treatment was already built with the card system |
+| rewrite | `templates/error404.html`, `error500.html` — triangle, plain German, way back, copyable `errorId` |
+| edit | `templates/IndexResource/version.html` — page head above the definition card |
+| edit | `css/form.css`, `css/components.css` — form shell, two-column split, Jodit container, help grid, status card, `code-chip` |
+| edit | `css/tokens.css` — `--font-mono`, the only family the design system was still missing |
+| delete | `img/question-mark.svg`, `img/sources.txt` — the tooltip icon this phase replaced with permanent helper text |
+| edit | `src/main/java/tools/cevi/{contact,event,voluntary}/*Resource.java` — pass `ValidationMessages` |
 
-### Invariants that must survive this phase — each already has a test
+**Deviations from the plan as written, and why:**
+
+- **The per-field binding is a small value type, not a template-side grouping.** The plan expected
+  the templates to do the grouping. A Qute template asking "is *this* control faulty" would need a
+  loop and a comparison per control — logic in the least testable place in the application.
+  `ValidationMessages` carries exactly the same `ValidationMessage` values, only addressable, and
+  it has a unit test. Nothing about the model changed.
+- **`tags/errorSummary.html` exists**, against the phase-2 precedent of not making a tag per class.
+  Three templates render it and it carries an invariant (every entry links at its control, the
+  block takes focus). One caller would not have justified it; three do.
+- **The description textarea is now `id="description"`,** not `description-editor`. Every control
+  is addressed by its field name, which is what lets the error summary link at any of them with
+  one rule instead of a special case. `editor-init.js` follows in one line.
+- **Submit controls are `<button>` rather than `<input type="submit">`,** so they carry the `.btn`
+  component like every other action on the site. The e2e tests address the form's own control now,
+  because the header carries a submit button of its own once signed in — signing out is a POST.
+- **`.red` and `.margin-left` are gone from `css/transitional.css`** as scheduled; only `.box`
+  remains, and phase 6 removes the file.
+
+### Found while building it
+
+**The two error pages were never served as pages.** `@Produces(MediaType.TEXT_HTML)` on an
+`ExceptionMapper` is not read — a mapper is not a resource method — so both the 404 and the 500
+answer went out with no `Content-Type` at all and every browser rendered the page's own markup as
+text. The existing test asserted the body string, which passed either way; it only became visible
+when the redesigned page was screenshotted in a real browser. Fixed by setting the media type on
+the response, with an assertion on the content type beside the existing one.
+
+### Tests
+
+- new `ValidationMessagesTest` — a clean form, a field without a fault beside one with, collection
+  order kept, only the first fault per field, the German label and its fallback.
+- extended `ContactResourceTest` — every control carries a `<label for=…>`; the summary links at
+  `#spam` / `#message`; a rejected field is marked `aria-invalid`; the typed message comes back;
+  the honeypot stays in the markup.
+- new `ContactFormE2ETest` — fill, submit, confirm; a rejected submission keeps the text, holds the
+  focus on the summary and lands on the field when the summary link is followed; the honeypot is
+  off-screen but neither `display:none` nor `visibility:hidden` (BR-032).
+- new case in `VoluntaryFormE2ETest` — the editor initialises inside the restyled container, and
+  the rule that restyles it still beats `jodit.min.css`, which is linked after the site stylesheet.
+- extended `NotFoundExceptionMapperTest` — the error page is answered as `text/html`.
+- `EditorAssetsTest`, `SecurityHeadersTest`, `CssBudgetTest`, `PageStructureTest` — unchanged, all
+  still pass. The CSRF and deletion invariants listed below kept their tests untouched.
+
+### Invariants that had to survive this phase — each already had a test
 
 | Invariant | Guard |
 |---|---|
 | Every state-changing form carries a CSRF token | `Csrf.givenWithoutToken()` cases in `ContactResourceTest`, `EventAddTest`, `EventDeleteTest`, `AuthResourceTest` |
 | Deletion is a `POST`, never a `GET` | `EventDeleteTest` (NFR-021) |
-| The honeypot stays off-screen, not `display:none` | `ContactResourceTest` (FR-032) — add an assertion on the class's computed style in the e2e layer |
+| The honeypot stays off-screen, not `display:none` | `ContactResourceTest` and now `ContactFormE2ETest` (FR-032) |
 | The spam value stays 50 | `ContactResourceTest` (NFR-009) |
 | Rejected forms return the visitor's input | `EventEditTest`, `ContactResourceTest` (FR-008) |
 | Editor assets load on the two form pages only | `EditorAssetsTest` (NFR-036) |
 
-### Tests
+### Done
 
-- extend `ContactResourceTest` — every control has a `<label for=…>`; a rejected submission marks
-  the field with `aria-invalid`.
-- new `VoluntaryFormE2ETest` case — the editor still initialises inside the restyled container.
-- new `ContactFormE2ETest` — fill, submit, confirm; and a rejected submission keeps the typed text
-  and focuses the error summary.
+`tooling/docker.sh verify` passes: 154 unit tests (143 before), 11 e2e tests (7 before), coverage
+gate met. Verified visually against the running application at 390 px and 1400 px.
+
+**Still owed:** the stylesheet bundle is at 14.9 KB of the 16 KB in NFR-041. Phase 4 adds
+`css/pages.css` for the start page, and 1.5 KB is not much room — either the hero and the channel
+cards are built from what already exists, or the budget is measured again and restated, as it was
+in phase 2. It is not a reason to add a framework; it is a reason to decide before writing.
 
 ---
 

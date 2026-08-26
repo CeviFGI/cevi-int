@@ -44,6 +44,7 @@
     /* Type */
     --font-display: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-body:    "Lora", Georgia, "Times New Roman", serif;
+    --font-mono:    ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
     /* Fluid scale — the floor of --step--1 is 14px at a 320px viewport, the minimum NFR-013 sets */
     --step--1: clamp(0.875rem, 0.85rem + 0.15vw, 0.95rem);

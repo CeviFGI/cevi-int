@@ -399,3 +399,57 @@ dl.panel dd:last-child { margin-bottom: 0; }
 }
 
 .admin-bar--detached { margin-top: var(--space-6); }
+
+/* --- Help grid ----------------------------------------------------------------------------- */
+
+/* Six bullet points nobody reads, as six cards that can be scanned (contact page) */
+.help-grid {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    margin-block: var(--space-4) var(--space-6);
+}
+.help-grid > li {
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--cevi-red);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    line-height: 1.4;
+}
+
+/* --- Status pages -------------------------------------------------------------------------- */
+
+/* Confirmation, sign-in failure, sign-out and the two error pages share one shape */
+.status {
+    max-width: 34rem;
+    margin-inline: auto;
+    margin-block: var(--space-6);
+    text-align: center;
+}
+.status > h1 { font-size: var(--step-2); margin-bottom: var(--space-3); }
+.status > p { color: var(--ink-muted); margin-bottom: var(--space-5); }
+.status .cluster { justify-content: center; }
+
+.status__mark {
+    width: 3rem;
+    height: auto;
+    margin: 0 auto var(--space-4);
+}
+.status--ok .status__mark { color: var(--success); }
+.status--warn .status__mark { color: var(--cevi-red); }
+
+/* The one string that connects what the visitor saw to what the operating records hold */
+.code-chip {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    user-select: all;
+}

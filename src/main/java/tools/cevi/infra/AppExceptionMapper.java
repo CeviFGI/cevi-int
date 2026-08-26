@@ -4,7 +4,6 @@ import io.quarkus.logging.Log;
 import io.quarkus.qute.Template;
 import java.util.UUID;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -21,8 +20,8 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
     @Context
     private UriInfo uriInfo;
 
+    /** See {@link NotFoundExceptionMapper#toResponse} for why the media type is set explicitly. */
     @Override
-    @Produces(MediaType.TEXT_HTML)
     public Response toResponse(Exception exception) {
         String errorId = UUID.randomUUID().toString();
 
@@ -34,10 +33,16 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
             int status = webApplicationException.getResponse().getStatus();
             Log.warnf("HTTPStatus[%d], errorId[%s], Url[%s], Message[%s]",
                     status, errorId, uriInfo.getRequestUri(), exception.toString());
-            return Response.status(status).entity(error500.data("errorId", errorId)).build();
+            return Response.status(status)
+                    .type(MediaType.TEXT_HTML_TYPE)
+                    .entity(error500.data("errorId", errorId))
+                    .build();
         }
 
         Log.error("HTTPStatus[500], errorId[" + errorId + "], Url[" + uriInfo.getRequestUri() + "], Message[" + exception + "], Stack Trace ", exception);
-        return Response.status(500).entity(error500.data("errorId", errorId)).build();
+        return Response.status(500)
+                .type(MediaType.TEXT_HTML_TYPE)
+                .entity(error500.data("errorId", errorId))
+                .build();
     }
 }

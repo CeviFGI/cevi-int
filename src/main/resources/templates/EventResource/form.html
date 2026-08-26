@@ -1,10 +1,11 @@
 {#include base}
 {#head}
 <!-- Served from the WebJar on the classpath. The URL carries no version, so a dependency bump in
-     pom.xml needs no template change. -->
+     pom.xml needs no template change. Loaded here and on the offer form only (NFR-036). -->
 <link href="/webjars/jodit/es2021/jodit.min.css" rel="stylesheet">
 {/head}
 
+<a class="backlink" href="/anlaesse"><span aria-hidden="true">←</span> Alle Anlässe</a>
 
 {#if id }
 <h1>Anlass bearbeiten</h1>
@@ -12,27 +13,88 @@
 <h1>Neuen Anlass anlegen</h1>
 {/if}
 
-<p><a href="/anlaesse">zurück zur Übersicht</a></p>
-
-{#if validationMessages.size > 0 }
-    <p class="red">Fehler beim ausfüllen des Formulars:</p>
-    <ul>
-        {#for validationMessage in validationMessages}
-            <li class="red">{validationMessage.fieldName()}: {validationMessage.message()}</li>
-        {/for}
-    </ul>
-{/if}
-
-<form action="/anlaesse" method="post">
+<form class="panel form-card form-card--wide" action="/anlaesse" method="post">
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
-    <strong>Titel:</strong> <input type="text" maxlength="255" name="title" value="{title}" required><br>
-    <strong>Slug:</strong> <input type="text" maxlength="252" name="slug" value="{slug}"> <img src="/img/question-mark.svg" style="height: 1em;" title="Der Slug wird für die Verlinkung verwendet. Er muss eindeutig sein. Ist dieser leer wird er automatisch aus dem Titel generiert."><br>
-    <strong>Datum:</strong> <input type="text" maxlength="255" name="date" value="{date}" required><br>
-    <strong>Displaydate:</strong> <input type="date" name="displayDate" value="{displayDate}" required> <img src="/img/question-mark.svg" style="height: 1em;" title="Das Displaydate wird verwendet um alte Anlässe auszublenden (wird bis und an diesem Datum angezeigt) und der Sortierung."><br>
-    <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
-    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="description-editor" name="description" required>{description}</textarea><br>
-    <input type="submit" value="Senden">
+
+    {#errorSummary validationMessages title="Der Anlass wurde nicht gespeichert." /}
+
+    <div class="form-split">
+        <div>
+            {#let error=validationMessages.messageFor('title')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="title">Titel <span class="field__required">*</span></label>
+                <input type="text" id="title" name="title" maxlength="255" value="{title}" required
+                       {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('slug')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" name="slug" maxlength="252" value="{slug}"
+                       aria-describedby="slug-help" {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                {!Permanent text, not a title tooltip: a tooltip is invisible on a touch device,
+                which is where this form is filled in as often as not.!}
+                <span class="field__help" id="slug-help">Teil der Adresse dieses Anlasses und
+                      deshalb einmalig. Leer lassen, dann wird er aus dem Titel gebildet.</span>
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('date')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="date">Datum <span class="field__required">*</span></label>
+                <input type="text" id="date" name="date" maxlength="255" value="{date}" required
+                       aria-describedby="date-help" {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                <span class="field__help" id="date-help">Frei formulierbar, genau so wie es auf der
+                      Karte steht — etwa «12. bis 15. August 2026».</span>
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('displayDate')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="displayDate">Anzeigedatum <span class="field__required">*</span></label>
+                <input type="date" id="displayDate" name="displayDate" value="{displayDate}" required
+                       aria-describedby="displayDate-help" {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                <span class="field__help" id="displayDate-help">Bis und mit diesem Tag steht der
+                      Anlass in der Liste; danach verschwindet er. Er bestimmt auch die
+                      Reihenfolge.</span>
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('location')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="location">Ort <span class="field__required">*</span></label>
+                <input type="text" id="location" name="location" maxlength="255" value="{location}"
+                       required {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+            </div>
+            {/let}
+        </div>
+
+        <div>
+            {#let error=validationMessages.messageFor('description')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="description">Beschreibung <span class="field__required">*</span></label>
+                <textarea id="description" name="description" maxlength="65535" required
+                          {#if error}aria-invalid="true"{/if}>{description}</textarea>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                <span class="field__help">Formatierung wird beim Speichern auf das zugelassene
+                      Markup reduziert; was hier steht, erscheint auf der Detailseite. Die ersten
+                      Sätze bilden den Anriss in der Liste.</span>
+            </div>
+            {/let}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn--primary" type="submit">Speichern</button>
+        <a class="btn btn--secondary" href="/anlaesse">Abbrechen</a>
+    </div>
 </form>
 
 {#scripts}

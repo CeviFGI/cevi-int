@@ -108,3 +108,51 @@
 
 /* Deleting is a form submission, so its button has to sit beside the cancel link as if it were one */
 .inline-form { display: inline; }
+
+/* --- Form shell -------------------------------------------------------------------------- */
+
+/* A form is read one line at a time, so it keeps the prose measure even inside a wide container */
+.form-card { max-width: var(--measure); }
+.form-card > h1 { margin-bottom: var(--space-4); }
+
+.form-note {
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-muted);
+    margin-bottom: var(--space-5);
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+.form-actions .form-note { margin-bottom: 0; }
+
+/*
+ * The two administrator forms carry five short fields and one editor 400px tall. Stacked, the
+ * editor pushes everything else off the screen; side by side, the metadata stays in view while
+ * the text is written (UC-002, UC-004).
+ */
+.form-card--wide { max-width: 68rem; }
+
+.form-split { display: grid; gap: 0 var(--space-6); }
+@media (min-width: 900px) {
+    .form-split { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); }
+}
+
+/*
+ * The editor ships its own frame. Matching it to the other controls is the whole point of a
+ * design system, and the rule needs the extra .form-card only because jodit.min.css is linked
+ * after the site stylesheet.
+ */
+.form-card .jodit-container:not(.jodit_inline) {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.form-card .jodit-container:not(.jodit_inline) .jodit-wysiwyg {
+    font-family: var(--font-body);
+    line-height: var(--leading-body);
+}
+.form-card .field.is-error .jodit-container:not(.jodit_inline) { border-color: var(--error); }

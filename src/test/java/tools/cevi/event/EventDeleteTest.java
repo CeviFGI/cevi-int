@@ -62,7 +62,7 @@ public class EventDeleteTest{
                 .get(deleteEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(containsString("Nicht gefunden"));
+                .body(containsString("Diese Seite gibt es nicht"));
 
         assertThat(Event.count(), equalTo(eventCount));
     }
@@ -99,7 +99,7 @@ public class EventDeleteTest{
                 .post(deleteEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(containsString("Nicht gefunden"));
+                .body(containsString("Diese Seite gibt es nicht"));
 
         assertThat(Event.count(), equalTo(eventCount));
     }

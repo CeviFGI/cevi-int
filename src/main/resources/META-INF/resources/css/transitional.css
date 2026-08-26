@@ -9,10 +9,10 @@
  * | Rule          | Used by                                   | Removed in |
  * |---------------|-------------------------------------------|------------|
  * | .box          | tags/event, voluntaryService, exchange     | phase 2    |
- * | .red          | the three form templates                   | phase 3    |
- * | .margin-left  | the two delete confirmations               | phase 3    |
  *
- * Phase 6 verifies by grep that nothing references them any more and deletes this file.
+ * .red and .margin-left are gone: phase 3 rewrote the form templates and the two delete
+ * confirmations that used them. Phase 6 verifies by grep that nothing references .box any more
+ * and deletes this file.
  */
 
 .box {
@@ -45,7 +45,3 @@
 
 .box > p { margin-bottom: var(--space-2); }
 .box > p:last-of-type { margin-bottom: 0; }
-
-.red { color: var(--error); font-weight: 600; }
-
-.margin-left { margin-left: var(--space-4); }

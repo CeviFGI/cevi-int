@@ -1,39 +1,67 @@
 {#include base}
-<h1>Kontakt</h1>
+<div class="page-head">
+    <p class="eyebrow">Fachgruppe International</p>
+    <h1>Schreib uns</h1>
+    <p class="lead">Wir sind eine Handvoll Freiwilliger und melden uns in der Regel nach wenigen
+       Arbeitstagen.</p>
+</div>
 
-<p>Hier kannst Du mit der FGI (Fachgruppe international) in Kontakt treten.</p>
-
-<p>Damit du Dir vorstellen kannst wobei wir Dich unterstützen können hier eine (nicht abschliessende) Liste:</p>
-<ul>
-    <li>Unterstützung und Beratung bei Unsicherheiten/Hindernissen (z. B. Reisen als Minderjährige).</li>
-    <li>Beratung welche Anlässe, Volontariate oder Austauschmöglichkeiten für Dich am besten geeignet sind.</li>
-    <li>Vermittlung von lokalen Kontakten wenn du auf einer Reise, Austauschsemester etc. bei einer YMCA/YWCA Gruppe reinschauen möchtest.</li>
-    <li>Unterstützung bei der Bildung von Reisegruppen (häufig kennen wir einige Personen, welche Anlässe besuchen).</li>
-    <li>Kontakt herstellen mit jemandem der bereits ein Volontariat geleistet/einen Austausch absolviert hat.</li>
-    <li>Unterstützung beim Aufbau einer Partnerschaft/Brieffreundschaft Deiner Abteilung mit einem anderen Land</li>
+{!Six bullet points read as a wall; the same six as cards are scannable and say at a glance that
+the offer is concrete (FR-035 in spirit — a list is there to be compared, not read).!}
+<h2>Womit wir helfen können</h2>
+<ul class="help-grid">
+    <li>Beratung bei Unsicherheiten und Hindernissen, etwa Reisen als Minderjährige</li>
+    <li>Einschätzung, welche Anlässe, Volontariate oder Austausche zu dir passen</li>
+    <li>Kontakte zu YMCA/YWCA-Gruppen vor Ort, wenn du unterwegs bist</li>
+    <li>Hilfe beim Bilden von Reisegruppen — meist kennen wir weitere Interessierte</li>
+    <li>Kontakt zu jemandem, der ein Volontariat oder einen Austausch schon hinter sich hat</li>
+    <li>Unterstützung beim Aufbau einer Partnerschaft deiner Abteilung mit einem anderen Land</li>
 </ul>
 
-<form action="/kontakt" method="post">
+<form class="panel form-card" action="/kontakt" method="post">
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-    {#if invalidAntispamValue }
-        <p class="red">Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein.</p>
-    {/if}
-    {#if validationMessages.size > 0 }
-        <p class="red">Fehler beim Absenden des Formulars:</p>
-        <ul>
-            {#for validationMessage in validationMessages}
-                <li class="red">{validationMessage.fieldName()}: {validationMessage.message()}</li>
-            {/for}
-        </ul>
-    {/if}
-    <textarea rows="15" cols="80" maxlength="5000" placeholder="Hier kannst Du deine Nachricht eingeben. Falls du eine Antwort wünscht mit deiner E-Mail-Adresse/Telefonnummer" name="message" required>{message}</textarea><br>
-    Spamschutz <input name="spam" value="" /> (Geben Sie hier die Zahl 50 ein. Diese Massnahme schützt uns vor automatisiertem Spam.)<br />
-    <!-- Honeypot: hidden from anyone using a browser normally, so a filled value means the
-         submission was produced automatically (BR-032). -->
+
+    {#errorSummary validationMessages title="Deine Nachricht wurde nicht gesendet." /}
+
+    {#let messageError=validationMessages.messageFor('message')}
+    <div class="field {#if messageError}is-error{/if}">
+        <label for="message">Deine Nachricht <span class="field__required">*</span></label>
+        <textarea id="message" name="message" rows="10" maxlength="5000" required
+                  aria-describedby="message-help"
+                  {#if messageError}aria-invalid="true"{/if}>{message}</textarea>
+        {#if messageError}<p class="field__error">{messageError}</p>{/if}
+        <span class="field__help" id="message-help">Magst du eine Antwort? Dann schreib deine
+              E-Mail-Adresse oder Telefonnummer dazu — wir fragen sonst nichts ab. Höchstens
+              5000 Zeichen.</span>
+    </div>
+    {/let}
+
+    {!The arithmetic is unchanged (NFR-009, BR-017); only the phrasing is. It used to read as an
+    apology for an obstacle, and it is a small favour.!}
+    {#let spamError=validationMessages.messageFor('spam')}
+    <div class="field {#if spamError}is-error{/if}">
+        <label for="spam">Sicherheitsfrage: Wie viel ergibt 20 + 30? <span class="field__required">*</span></label>
+        <input class="field__input--narrow" type="text" id="spam" name="spam" value=""
+               inputmode="numeric" autocomplete="off" aria-describedby="spam-help"
+               {#if spamError}aria-invalid="true"{/if}>
+        {#if spamError}<p class="field__error">{spamError}</p>{/if}
+        <span class="field__help" id="spam-help">Daran erkennen wir automatisch verschickte
+              Nachrichten.</span>
+    </div>
+    {/let}
+
+    {!Honeypot: hidden from anyone using a browser normally, so a filled value means the submission
+    was produced automatically (BR-032). Off-screen, never display:none — a bot fills what it can
+    read in the markup.!}
     <div class="honeypot" aria-hidden="true">
         <label for="website">Bitte dieses Feld leer lassen</label>
         <input type="text" id="website" name="website" value="" tabindex="-1" autocomplete="off"/>
     </div>
-    <input type="submit" value="Senden">
+
+    <div class="form-actions">
+        <button class="btn btn--primary" type="submit">Nachricht senden</button>
+        <p class="form-note">Wir speichern nur, was du hier schreibst —
+           <a href="/datenschutzinformation">Datenschutz</a>.</p>
+    </div>
 </form>
 {/include}

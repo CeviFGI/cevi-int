@@ -8,6 +8,7 @@ import io.quarkus.qute.TemplateInstance;
 import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.HtmlSanitizer;
 import tools.cevi.infra.ValidationMessage;
+import tools.cevi.infra.ValidationMessages;
 
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class VoluntaryResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance list(List<VoluntaryService> services);
-        public static native TemplateInstance form(long id, String organization, String organizationLink, String location, String description, List<ValidationMessage> validationMessages);
+        public static native TemplateInstance form(long id, String organization, String organizationLink, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(long id, VoluntaryService service);
     }
     @GET
@@ -39,7 +40,7 @@ public class VoluntaryResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance add() {
-        return Templates.form(0,"", "", "", "", List.of());
+        return Templates.form(0, "", "", "", "", ValidationMessages.none());
     }
 
     @GET
@@ -51,7 +52,7 @@ public class VoluntaryResource {
         if (voluntaryService == null) {
             throw new NotFoundException("VoluntaryService with id " + id + " not found");
         }
-        return Templates.form(id, voluntaryService.organization, voluntaryService.organizationLink, voluntaryService.location, voluntaryService.description, List.of());
+        return Templates.form(id, voluntaryService.organization, voluntaryService.organizationLink, voluntaryService.location, voluntaryService.description, ValidationMessages.none());
     }
 
     /**
@@ -124,7 +125,8 @@ public class VoluntaryResource {
                 QuarkusTransaction.rollback();
             }
         }
-        return Templates.form(0, organization, organizationLink, location, description, violations.stream().map(ValidationMessage::of).toList());
+        return Templates.form(0, organization, organizationLink, location, description,
+                ValidationMessages.of(violations.stream().map(ValidationMessage::of).toList()));
     }
 
     private TemplateInstance handleEdit(long id, String organization, String organizationLink, String location, String description) {
@@ -152,7 +154,8 @@ public class VoluntaryResource {
             Log.error("Unable to save [" + voluntaryService  + "] to database.", e);
             QuarkusTransaction.rollback();
         }
-        return Templates.form(id, organization, organizationLink, location, description, violations.stream().map(ValidationMessage::of).toList());
+        return Templates.form(id, organization, organizationLink, location, description,
+                ValidationMessages.of(violations.stream().map(ValidationMessage::of).toList()));
     }
 
     private TemplateInstance handleDelete(long id) {

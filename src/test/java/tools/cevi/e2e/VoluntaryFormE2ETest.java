@@ -36,7 +36,7 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
         page.locator(".jodit-wysiwyg").click();
         page.keyboard().type("Freiwilligenarbeit in Bern");
 
-        page.locator("input[type='submit']").click();
+        page.locator(".form-actions button[type='submit']").click();
         page.waitForURL("**/volontariat");
 
         assertThat(page.getByText(organization).isVisible(), is(true));
@@ -46,11 +46,30 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
         assertThat(saved.description, containsString("Freiwilligenarbeit in Bern"));
     }
 
+    /**
+     * Phase 3 gave the editor a container that matches the other controls. Its frame is drawn by
+     * jodit.min.css, which is linked after the site stylesheet — so the rule that overrides it is
+     * one specificity step away from silently losing, and nothing in the markup would show that.
+     */
+    @Test
+    public void the_editor_initialises_inside_the_restyled_container() {
+        loginAsAdmin();
+
+        page.navigate(url("/volontariat/add"));
+
+        // The label still belongs to the textarea the editor took over
+        assertThat(page.locator("label[for='description']").count(), is(1));
+
+        String radius = (String) page.locator(".jodit-container")
+                .evaluate("element => getComputedStyle(element).borderTopLeftRadius");
+        assertThat(radius, is("8px"));
+    }
+
     private void loginAsAdmin() {
         page.navigate(url("/auth/login"));
         page.locator("input[name='j_username']").fill("admin");
         page.locator("input[name='j_password']").fill("admin");
-        page.locator("input[type='submit']").click();
+        page.locator(".form-actions button[type='submit']").click();
         page.waitForURL("**/anlaesse");
     }
 

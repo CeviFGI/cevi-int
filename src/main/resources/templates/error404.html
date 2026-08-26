@@ -1,5 +1,14 @@
 {#include base}
-<h1>Nicht gefunden</h1>
-
-<p>Die angeforderte Seite existiert nicht.</p>
+<div class="panel status status--warn">
+    <svg class="status__mark" viewBox="0 0 12 11" aria-hidden="true" focusable="false">
+        <polygon points="6,0 12,11 0,11" fill="currentColor"/>
+    </svg>
+    <h1>Diese Seite gibt es nicht</h1>
+    <p>Vielleicht ist der Anlass abgelaufen oder der Link hat sich vertippt. Die aktuellen
+       Ausschreibungen findest du hier:</p>
+    <div class="cluster">
+        <a class="btn btn--primary" href="/anlaesse">Zu den Anlässen</a>
+        <a class="btn btn--ghost" href="/kontakt">Schreib uns</a>
+    </div>
+</div>
 {/include}

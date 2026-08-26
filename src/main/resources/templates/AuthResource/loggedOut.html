@@ -1,5 +1,13 @@
 {#include base}
-<h1>Abgemeldet</h1>
-
-<p>Sie wurden erfolgreich abgemeldet.</p>
+<div class="panel status status--ok">
+    <svg class="status__mark" viewBox="0 0 12 11" aria-hidden="true" focusable="false">
+        <polygon points="6,0 12,11 0,11" fill="currentColor"/>
+    </svg>
+    <h1>Abgemeldet</h1>
+    <p>Du wurdest erfolgreich abgemeldet.</p>
+    <div class="cluster">
+        <a class="btn btn--primary" href="/anlaesse">Zu den Anlässen</a>
+        <a class="btn btn--ghost" href="/auth/login">Wieder anmelden</a>
+    </div>
+</div>
 {/include}

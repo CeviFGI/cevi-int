@@ -1,5 +1,13 @@
 {#include base}
-<h1>Login fehlgeschlagen</h1>
-
-<p>Bitte versuche es <a href="/auth/login">erneut</a></p>
+<div class="panel status status--warn">
+    <svg class="status__mark" viewBox="0 0 12 11" aria-hidden="true" focusable="false">
+        <polygon points="6,0 12,11 0,11" fill="currentColor"/>
+    </svg>
+    <h1>Anmeldung fehlgeschlagen</h1>
+    <p>Benutzername oder Passwort stimmen nicht.</p>
+    <div class="cluster">
+        <a class="btn btn--primary" href="/auth/login">Nochmals versuchen</a>
+        <a class="btn btn--ghost" href="/anlaesse">Zu den Anlässen</a>
+    </div>
+</div>
 {/include}

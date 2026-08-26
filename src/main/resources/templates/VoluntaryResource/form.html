@@ -1,9 +1,11 @@
 {#include base}
 {#head}
 <!-- Served from the WebJar on the classpath. The URL carries no version, so a dependency bump in
-     pom.xml needs no template change. -->
+     pom.xml needs no template change. Loaded here and on the event form only (NFR-036). -->
 <link href="/webjars/jodit/es2021/jodit.min.css" rel="stylesheet">
 {/head}
+
+<a class="backlink" href="/volontariat"><span aria-hidden="true">←</span> Alle Angebote</a>
 
 {#if id }
 <h1>Volontariat bearbeiten</h1>
@@ -11,25 +13,65 @@
 <h1>Neues Volontariat eintragen</h1>
 {/if}
 
-<p><a href="/volontariat">zurück zur Übersicht</a></p>
-
-{#if validationMessages.size > 0 }
-<p class="red">Fehler beim ausfüllen des Formulars:</p>
-<ul>
-    {#for validationMessage in validationMessages}
-    <li class="red">{validationMessage.fieldName()}: {validationMessage.message()}</li>
-    {/for}
-</ul>
-{/if}
-
-<form action="/volontariat" method="post">
+<form class="panel form-card form-card--wide" action="/volontariat" method="post">
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
-    <strong>Organisation:</strong> <input type="text" maxlength="255" name="organization" value="{organization}" required><br>
-    <strong>Organisationslink:</strong> <input type="url" maxlength="255" name="organizationLink" value="{organizationLink}" placeholder="https://..." required><br>
-    <strong>Ort:</strong> <input type="text" maxlength="255" name="location" value="{location}" required><br>
-    <strong>Beschreibung:</strong> <textarea maxlength="65535" id="description-editor" name="description" required>{description}</textarea><br>
-    <input type="submit" value="Senden">
+
+    {#errorSummary validationMessages title="Das Volontariat wurde nicht gespeichert." /}
+
+    <div class="form-split">
+        <div>
+            {#let error=validationMessages.messageFor('organization')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="organization">Organisation <span class="field__required">*</span></label>
+                <input type="text" id="organization" name="organization" maxlength="255"
+                       value="{organization}" required {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('organizationLink')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="organizationLink">Link zur Organisation <span class="field__required">*</span></label>
+                <input type="url" id="organizationLink" name="organizationLink" maxlength="255"
+                       value="{organizationLink}" placeholder="https://..." required
+                       aria-describedby="organizationLink-help" {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                {!Without this the offer is a dead end — it is the card's own action (FR-010).!}
+                <span class="field__help" id="organizationLink-help">Ziel des Knopfs auf der Karte.
+                      Am besten direkt auf die Seite, die das Angebot beschreibt.</span>
+            </div>
+            {/let}
+
+            {#let error=validationMessages.messageFor('location')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="location">Ort <span class="field__required">*</span></label>
+                <input type="text" id="location" name="location" maxlength="255" value="{location}"
+                       required {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+            </div>
+            {/let}
+        </div>
+
+        <div>
+            {#let error=validationMessages.messageFor('description')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="description">Beschreibung <span class="field__required">*</span></label>
+                <textarea id="description" name="description" maxlength="65535" required
+                          {#if error}aria-invalid="true"{/if}>{description}</textarea>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                <span class="field__help">Ein Angebot hat keine eigene Seite: was hier steht, wird
+                      auf der Karte gekürzt und lässt sich dort ausklappen. Kurz halten lohnt
+                      sich.</span>
+            </div>
+            {/let}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn--primary" type="submit">Speichern</button>
+        <a class="btn btn--secondary" href="/volontariat">Abbrechen</a>
+    </div>
 </form>
 
 {#scripts}

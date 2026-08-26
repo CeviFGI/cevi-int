@@ -70,7 +70,8 @@ public class ContactResourceTest {
     public void form_fail_spam() {
         Csrf.given().formParam("message", "my message").formParam("spam", "10")
                 .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
-                .body(containsString("Fehler beim Absenden des Formulars. Bitte geben sie im Feld Spamschutz die Zahl 50 ein."));
+                .body(containsString("Bitte trage die Zahl 50 ein."))
+                .body(containsString("<a href=\"#spam\">"));
 
         List<Mail> sent = mailbox.getMailsSentTo(to);
         assertThat(sent, hasSize(0));
@@ -102,7 +103,8 @@ public class ContactResourceTest {
         Csrf.given().formParam("message", "x".repeat(ContactFormEntry.MAX_MESSAGE_LENGTH + 1))
                 .formParam("spam", "50")
                 .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
-                .body(containsString("Fehler beim Absenden des Formulars:"));
+                .body(containsString("Deine Nachricht wurde nicht gesendet."))
+                .body(containsString("<a href=\"#message\">"));
 
         assertThat(ContactFormEntry.count(), equalTo(before));
         assertThat(mailbox.getTotalMessagesSent(), equalTo(0));
@@ -114,10 +116,55 @@ public class ContactResourceTest {
 
         Csrf.given().formParam("message", "   ").formParam("spam", "50")
                 .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
-                .body(containsString("Fehler beim Absenden des Formulars:"));
+                .body(containsString("Deine Nachricht wurde nicht gesendet."));
 
         assertThat(ContactFormEntry.count(), equalTo(before));
         assertThat(mailbox.getTotalMessagesSent(), equalTo(0));
+    }
+
+    /**
+     * A placeholder is not a label — it disappears exactly when the visitor needs it, and a screen
+     * reader announces nothing at all for a control without one (FR-037, BR-045, WCAG 1.3.1).
+     */
+    @Test
+    public void every_control_carries_a_visible_label() {
+        String body = given().when().get(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
+                .extract().body().asString();
+
+        assertThat(body, containsString("<label for=\"message\">"));
+        assertThat(body, containsString("<label for=\"spam\">"));
+        // The reworded spam question, and the numeric keypad it asks for on a phone
+        assertThat(body, containsString("Wie viel ergibt 20 + 30?"));
+        assertThat(body, containsString("inputmode=\"numeric\""));
+    }
+
+    /**
+     * The honeypot is what tells an automated submission apart, so it must stay in the markup and
+     * out of sight — off-screen, never display:none, or a bot stops filling it (BR-032, FR-032).
+     */
+    @Test
+    public void the_honeypot_stays_in_the_markup_and_out_of_sight() {
+        given().when().get(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("class=\"honeypot\""))
+                .body(containsString("name=\"website\""))
+                .body(containsString("tabindex=\"-1\""));
+    }
+
+    /** A rejected field is marked as such, or the message reaches the eye but not the ear. */
+    @Test
+    public void a_rejected_field_is_marked_at_the_control() {
+        Csrf.given().formParam("message", "my message").formParam("spam", "10")
+                .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("aria-invalid=\"true\""))
+                .body(containsString("class=\"field__error\""));
+    }
+
+    /** A rejected submission gives the typed text back rather than asking for it again (FR-008). */
+    @Test
+    public void a_rejected_submission_keeps_the_written_message() {
+        Csrf.given().formParam("message", "Ich moechte an ein Lager").formParam("spam", "10")
+                .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("Ich moechte an ein Lager"));
     }
 
     /** Without a CSRF token the submission is refused before it reaches the endpoint (NFR-011). */
