@@ -22,7 +22,7 @@
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    color: #fff;
+    color: var(--on-dark);
     margin-bottom: var(--space-3);
 }
 
@@ -43,7 +43,7 @@
     color: var(--on-inverse);
     text-decoration: none;
 }
-.site-footer li a:hover { color: #fff; text-decoration: underline; }
+.site-footer li a:hover { color: var(--on-dark); text-decoration: underline; }
 
 .site-footer__base {
     display: flex;
@@ -57,6 +57,6 @@
     font-size: var(--step--1);
 }
 .site-footer__base a { color: var(--on-inverse); }
-.site-footer__base a:hover { color: #fff; }
+.site-footer__base a:hover { color: var(--on-dark); }
 
 .site-footer__marks { display: flex; gap: var(--space-2); }

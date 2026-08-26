@@ -69,6 +69,21 @@ public abstract class PlaywrightTestBase {
         return base + path;
     }
 
+    /**
+     * Signs in with the development credentials and waits for the landing page.
+     *
+     * <p>Here rather than in each test because four of the phase-5 gates need it: the maintenance
+     * chrome is a part of the interface that only an administrator ever sees, which is exactly why
+     * it is where an unreadable label or an undersized control survives longest.
+     */
+    protected void signInAsAdministrator() {
+        page.navigate(url("/auth/login"));
+        page.locator("input[name='j_username']").fill("admin");
+        page.locator("input[name='j_password']").fill("admin");
+        page.locator(".form-actions button[type='submit']").click();
+        page.waitForURL(url("/"));
+    }
+
     private static String sanitize(String value) {
         return value.replaceAll("[^a-zA-Z0-9.-]", "_");
     }

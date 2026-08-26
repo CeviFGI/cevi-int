@@ -28,6 +28,14 @@ public final class TemplateExtensions {
         return !Excerpt.from(description).equals(Excerpt.from(description, Integer.MAX_VALUE));
     }
 
+    /**
+     * The description as the detail page renders it: unchanged apart from a scroll container
+     * around each table, so a wide one cannot take the page sideways (NFR-013, {@link ProseTables}).
+     */
+    public static String withScrollableTables(String description) {
+        return ProseTables.wrapped(description);
+    }
+
     /** One of four accent treatments, stable for a given key (see {@link AccentVariant}). */
     public static int accentVariant(String key) {
         return AccentVariant.of(key);

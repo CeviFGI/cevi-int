@@ -32,16 +32,13 @@
     padding-block: var(--space-5) var(--space-7);
 }
 
-/* Prose is capped independently of the container: 68ch stays readable, 1120px does not. */
-.measure { max-width: var(--measure); }
-
 .section { padding-block: var(--space-6); }
 
 .page-head { padding-block: var(--space-6) var(--space-5); }
 .page-head > h1 { margin-block: var(--space-3) var(--space-3); }
 .page-head > .lead {
     font-size: var(--step-0);
-    color: #3A3A36;
+    color: var(--ink-soft);
     max-width: var(--measure);
 }
 
@@ -53,7 +50,14 @@
     gap: var(--space-2) var(--space-4);
     margin-bottom: var(--space-4);
 }
+/*
+ * inline-flex with a minimum height, not a bare inline link: "Alle Anlässe →" is the way out of
+ * a teaser into the full list, and as plain text it presented a 26 px target on a phone (NFR-038).
+ */
 .section-head > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
     font-family: var(--font-display);
     font-weight: 600;
     font-size: var(--step-0);
@@ -66,13 +70,15 @@
  * The card grid needs no breakpoints: auto-fill with a 300px floor gives one column below ~660px,
  * two below ~1000px and three above, and it adapts to the container rather than to the viewport.
  */
+/*
+ * min(300px, 100%) rather than a bare 300px: on a 320 px phone the column is 288 px, and a track
+ * with a hard 300 px floor made every card 12 px wider than the column it was laid out in.
+ */
 .grid {
     display: grid;
     gap: var(--space-4);
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
 }
-
-.stack > * + * { margin-top: var(--space-4); }
 
 .cluster {
     display: flex;

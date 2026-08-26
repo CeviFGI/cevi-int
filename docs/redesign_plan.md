@@ -393,38 +393,176 @@ moved. Recorded in `docs/requirements.md` and `docs/ux_concept.md` §7.
 
 ---
 
-## 7. Phase 5 — Responsiveness, accessibility and budget, made testable
+## 7. Phase 5 — Responsiveness, accessibility and budget, made testable — **delivered 2026-08-26**
 
 **Goal:** turn NFR-013 and NFR-014 from *assumed and open* into *verified*, and pin the new NFRs.
 
-| Test (new, `src/test/java/tools/cevi/e2e/`) | Asserts |
+### Tests
+
+| Test (`src/test/java/tools/cevi/e2e/`) | Asserts |
 |---|---|
-| `ResponsiveLayoutE2ETest` | For every public route × {320, 360, 768, 1024, 1440, 1920}: `document.scrollingElement.scrollWidth <= clientWidth` (NFR-013). |
-| `TypographyFloorE2ETest` | No rendered text node computes below 14 px (NFR-013). |
-| `TapTargetE2ETest` | At 360 px, every `a`, `button`, `input`, `summary` has a bounding box ≥ 44 × 44 px (NFR-038). |
-| `NavigationDrawerE2ETest` | Drawer opens and closes by keyboard at 360 px; the active item is marked; sign-out remains a `POST`. |
-| `FocusVisibleE2ETest` | Tabbing through a page never yields a focused element with no visible outline; the skip link is first (WCAG 2.4.1, 2.4.7). |
-| `ContrastE2ETest` | Samples the computed foreground/background of body text, buttons, badges and meta lines and asserts ratio ≥ 4.5 : 1 (WCAG 1.4.3). |
-| `CssBudgetTest` (unit) | Stylesheet bytes ≤ budget (NFR-041). |
+| `ResponsiveLayoutE2ETest` | For every public route × {320, 360, 768, 1024, 1440, 1920}: `document.scrollingElement.scrollWidth <= clientWidth`, and separately that nothing outgrows the column it was laid out in. A detail page carrying a six-column table proves the scroll container actually works (NFR-013). |
+| `TypographyFloorE2ETest` | No rendered text node computes below 14 px, at 320 and 360 px, signed out and signed in; and each of the six steps of the scale resolves above the floor at 320, 360 and 1920 px (NFR-013). |
+| `TapTargetE2ETest` | At 360 px every `a`, `button`, `input`, `summary` has a hit area ≥ 44 × 44 px — with the drawer open, every `<details>` open, and once more as an administrator (NFR-038). |
+| `NavigationDrawerE2ETest` | Drawer opens and closes by keyboard at 360 px; exactly one item is marked `aria-current`; sign-out is a `POST` carrying a token and still reads as a menu row. |
+| `FocusVisibleE2ETest` | 40 tab stops per route never yield a focused element with no visible indicator; the skip link is the first stop, becomes visible, and following it puts the keyboard inside `<main>` (WCAG 2.4.1, 2.4.7). |
+| `ContrastE2ETest` | Every element holding text reaches 4.5 : 1 (3 : 1 when large) against what is painted behind it, including a rejected contact form and the administrator chrome (WCAG 1.4.3). |
+| `ReducedMotionE2ETest` | Under `prefers-reduced-motion: reduce` nothing keeps a perceptible transition or animation — with the counter-check that the same pages *do* animate by default, and that the drawer still works with motion off (NFR-040). |
+| `CssBudgetTest` (unit, since phase 1) | Stylesheet bytes ≤ budget (NFR-041). |
+| `ContrastTest` (unit) | The relative-luminance and contrast arithmetic, against the figures WCAG publishes. |
+| `ProseTablesTest` (unit) | The table wrapper below. |
 
-Playwright already runs headless Chromium in the toolchain container, so all of this is
-`tooling/docker.sh verify` — no new tooling, no Node.
+**Deviations from the plan as written, and why:**
 
-**Manual review, once, with the product owner** (the tests cannot judge this): the two lists and
-the contact form side by side, before and after, on a real phone.
+- **`ReducedMotionE2ETest` was added.** The phase goal says "pin the new NFRs" but the table listed
+  no test for NFR-040, which was the only new NFR with nothing behind it. It is three cases.
+- **`Contrast` is a Java record, not arithmetic inside the page script.** A browser can report what
+  a colour resolved to; turning two colours into a ratio is the part that can be silently wrong,
+  and a contrast test that computes the ratio wrongly is worse than none — it reports a clean sheet
+  on a page nobody can read. So the maths lives where `ContrastTest` can check it against the
+  published worked examples, and the page only reports what it measured.
+- **The two navigation cases moved out of `EventUpcomingE2ETest`.** They were about the header,
+  which every page shares, and had lived there only because it was the first e2e test to exist.
+- **`PlaywrightTestBase` gained `signInAsAdministrator()`.** Four gates need it: the maintenance
+  chrome is the part of the interface no visitor sees, which is where an unreadable label survives
+  longest — and it did, see below.
+- **Each gate reports what failed, not that something failed.** `ResponsiveLayoutE2ETest` names the
+  element that sticks out (including a text node, because a word too long to break overflows without
+  any element box growing); `ContrastE2ETest` prints the measured ratio, the two colours and the
+  threshold. This was not politeness: the one defect that took three runs to find was invisible
+  until the message named it.
+
+### What the gates found
+
+Seven defects, none of which any of the 161 existing tests could see.
+
+| Defect | Where | Fix |
+|---|---|---|
+| **`<h1>Datenschutzinformation</h1>` pushed the whole page sideways.** One 22-character German compound at `--step-3` is 388 px wide; on a 320 px phone nothing could break it. | `base.css` | `hyphens: auto` (the document is `lang="de"`, so the browser breaks it where German allows) plus `overflow-wrap: break-word` for a word no dictionary knows. |
+| **No table in a description had a scroll container.** `prose.css` had carried the `.prose-table` rule since phase 2 on the assumption that the template applied the wrapper. Nothing did — the rule had never once matched an element. | new `ProseTables` + `TemplateExtensions.withScrollableTables`, used by the event detail page and the offer card | Wrapping on the way out of storage rather than in `HtmlSanitizer`: it is presentation, and it also covers descriptions that were stored before the fix. |
+| **Every card was 12 px wider than the column holding it** at 320 px — `minmax(300px, 1fr)` against a 288 px column. | `layout.css` | `minmax(min(300px, 100%), 1fr)`. |
+| **The card band's kicker measured 4.09 : 1.** `opacity: .78` on white over `--cevi-red`. | `components.css` | `opacity: .9` — 5.07 : 1 on the worst variant, and the step down from the date below it survives. |
+| **`.card__admin-note` failed both thresholds at once**: 0.72 rem is 11.5 px, and `#9A968D` on the sunken strip is 2.70 : 1. Administrator-only chrome, so nobody had looked at it since it was written. | `components.css` | `var(--step--1)` and `var(--ink-muted)`; the uppercase and the tracking carry the "this is an aside" reading on their own. |
+| **"Alle Anlässe →" was a 26 px tap target.** The way out of a start-page teaser into the full list. | `layout.css` | `inline-flex` with `min-height: var(--tap-target)`. |
+| **`tokens.css` overstated its own contrast.** The header claimed 18 px ink at 17.9 : 1; it measures 18.4 : 1. | `tokens.css` | Corrected. Found because `ContrastTest` asserts the file's published figures rather than restating them. |
+
+Two of those — the heading and the missing table wrapper — are the exact failure mode NFR-013 names
+in its own text, and both had been shipped for four phases.
+
+### Deliberate non-findings
+
+- **A link inside a sentence is exempt from NFR-038**, per WCAG 2.5.5's own inline exception: a
+  44 px-tall link would break the line it sits in. The exemption is a named condition in
+  `TapTargetE2ETest`, not a silent filter.
+- **A card title is measured as the card.** Its `::after` is stretched over the whole card, so the
+  thumb aims at a 300 × 260 px area, not at two lines of text. Measuring the anchor would have
+  reported a defect no visitor can experience — and invited someone to "fix" it by padding the
+  title until the card fell apart.
+- **The checkbox behind the menu label is focusable and off-screen on purpose.** It is what makes
+  the drawer work without script; `FocusVisibleE2ETest` accepts the ring the label draws on its
+  behalf, but only while the label is actually rendered.
+
+### Requirements
+
+NFR-013, NFR-014, NFR-038, NFR-039, NFR-040 and NFR-041 move to **Verified** in
+`docs/requirements.md`, with a note stating for each exactly what is machine-checked and what still
+rests on review — WCAG's judgement clauses (link text, heading sense, whether an error message can
+be acted on) are not testable and are not claimed to be.
+
+### Done
+
+`tooling/docker.sh verify` passes: 177 unit tests (161 before), 73 e2e tests (14 before), coverage
+gate met.
+
+**Still owed.** Two things this phase deliberately did not do:
+
+- **The review with the product owner on a real phone.** The tests answer "does it measure 44 px",
+  never "is this the right thing at 44 px". The two lists and the contact form, before and after,
+  on a real device, remain part of the phase.
+- **Sonar analysis of the new Java classes** (project workflow step 6). `ProseTables`, `Contrast`
+  and `PublicPages` were not analysed: the SonarQube MCP server is configured for this machine but
+  its tools were not available in the session that wrote them. It carries over to phase 6, which
+  already schedules a Sonar pass.
 
 ---
 
-## 8. Phase 6 — Cleanup and documentation
+## 8. Phase 6 — Cleanup and documentation — **delivered 2026-08-26**
 
-- Remove the dead rules the redesign orphans (`.box`, `.red`, `.margin-left`, the `elements.css`
-  hairline treatment) and confirm by grep that no template still references them.
-- Replace `logo.png` (1500 × 178, 29 KB, always scaled to 50 px) with a correctly-sized asset —
-  SVG if the working group can supply one (`docs/ux_concept.md` §10).
-- Update `CLAUDE.md`: a short "Design system" section naming `tokens.css` as the single source of
-  colour/type/spacing, so the next contributor does not add a one-off hex value.
-- Re-run `/requirements` status pass: NFR-013, NFR-014 → Verified; FR-010 → Verified.
-- Sonar analysis on every new Java class (project workflow step 6).
+### What was removed
+
+| Removed | Confirmed by |
+|---|---|
+| `css/transitional.css` and its `@import` | Every class every template uses was listed and diffed against every class the stylesheets declare. `.box`, `.title` and `.date` — the file's whole content — appear in no template. `.red` and `.margin-left` had already gone in phase 3. |
+| `.measure` and `.stack` in `layout.css` | Declared as utilities in phase 1 and never used by any phase. (The `--measure` *token* stays: `prose.css`, `pages.css` and `layout.css` all read it.) |
+| `empty--inverse` in `home.html` | The reverse diff — a class in the markup that no stylesheet declares. The inverse band styles `.empty` from the section, so the modifier had never done anything. |
+
+The diff in both directions is worth more than the deletions it produced: it is the check that says
+whether the stylesheet and the templates still describe the same site.
+
+### The logo
+
+Replaced with a correctly-sized raster: **674 × 80, 5.8 KB**, down from 1500 × 178 and 29 KB. The
+header draws it at 28 px on a phone and 40 px from 600 px up, so the asset is sized for the taller
+of the two on a high-density screen and nothing more. Downscaled with Lanczos and reduced to a
+168-entry palette — the mark is flat colour, so the difference from the full-colour downscale
+measures 0.33 % RMSE. `StaticAssetTest` now pins both the byte budget and the pixel width, so the
+original cannot quietly come back.
+
+**An SVG would still be better** and is the open point in `docs/ux_concept.md` §10. Tracing the PNG
+was deliberately not done: an autotraced approximation of a brand mark is exactly the kind of thing
+that should come from the working group rather than from a build step.
+
+### The requirements status pass
+
+Fifteen requirements moved. Re-reading each against *the tests that exist* rather than against the
+code that was written turned up three things:
+
+- **NFR-037 was not true as written.** It says 0 component stylesheets contain a literal colour or
+  a hard-coded font size; `CssBudgetTest` had only ever checked that no second file declares
+  `:root` variables. Six literal colours had accumulated across five files — none wrong to look at,
+  each a value that could no longer be changed in one place. They are now three tokens
+  (`--ink-soft`, `--on-dark`, `--border-tinted`), `prose.css` reads `--font-mono` instead of
+  restating the stack, and the test checks the whole sentence.
+- **NFR-042 had no test at all.** It is a data-protection requirement before it is a performance
+  one, and it was resting on nobody having yet written a Google Fonts `<link>`. New
+  `NoThirdPartyAssetsTest` checks every public page and every stylesheet, distinguishing what the
+  browser *fetches* from what a visitor may *follow* — an event description linking to the
+  organiser is not a third-party request.
+- **C-021 was checked one editor too narrowly.** `EditorAssetsTest` asserted that public pages
+  reference no Jodit asset; the constraint says they carry no script at all. It now asserts that.
+
+**NFR-044 and C-019 are *Implemented*, not *Verified*.** The palette and the typefaces are the
+Corporate Design Manual's and `tokens.css` measures them, but whether Lora is accepted as the body
+face is a working-group decision no test can stand in for (`docs/ux_concept.md` §10).
+
+Still `Open` after the pass, all outside this plan: FR-030 (user accounts), NFR-001 … NFR-004 and
+NFR-020 (performance, availability and backup assumptions nobody has measured), NFR-035 (the editor
+dependency rule), NFR-045 (dark mode, deferred by decision), C-006 (browser support).
+
+### Documentation
+
+`CLAUDE.md` gained a **Design system** section: `tokens.css` as the single source of colour, type
+and spacing, the byte ceiling that makes a framework impossible rather than merely discouraged, and
+the seven browser gates with what each holds. It points at `docs/ux_concept.md` for the *why* and at
+this document for what each phase found.
+
+### Done
+
+`tooling/docker.sh verify` passes: **188 unit tests** (177 before), **73 e2e tests**, coverage gate
+met. The stylesheet bundle is **16.4 KB gzipped** of the 24 KB in NFR-041 — 0.1 KB less than after
+phase 4, despite three new tokens, because `transitional.css` went.
+
+**Still owed, and now the whole of what the redesign owes:**
+
+- **The review on a real phone with the product owner.** Carried over from phase 5. The tests
+  answer "does it measure 44 px", never "is 44 px the right thing here".
+- **Sonar analysis of the new Java classes** — `ProseTables`, `Contrast`, `PublicPages` (project
+  workflow step 6). The SonarQube MCP server is configured for this machine but its tools were not
+  available in either session that wrote them. This is the one item of the plan that was not
+  delivered.
+- **The three open points in `docs/ux_concept.md` §10** that are working-group decisions: the Lora
+  body face (NFR-044), the start page copy (FR-034), the 160-character excerpt (FR-035). Each is
+  recorded against its requirement, none blocks anything.
 
 ---
 
@@ -464,8 +602,8 @@ Written with `/use-case-spec` after the requirement changes are accepted, before
 | 2 | Event and offer cards, prose | Large | Yes — delivered |
 | 3 | Forms and status pages | Medium | Yes — delivered |
 | 4 | Start page, information pages | Medium | Yes — delivered |
-| 5 | Responsive/a11y/budget tests | Medium | Yes — no visible change, locks quality |
-| 6 | Cleanup, assets, docs | Small | Yes |
+| 5 | Responsive/a11y/budget tests | Medium | Yes — delivered |
+| 6 | Cleanup, assets, docs | Small | Yes — delivered |
 
 Phases 1–3 are the minimum viable redesign: after Phase 3 every element the audience named has been
 rebuilt. Phases 4–6 are what make it a *finished* site rather than a restyled one.

@@ -5,9 +5,12 @@ import io.quarkus.test.security.TestSecurity;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Pattern;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * The rich-text editor is by far the largest asset the application serves, and only the two
@@ -22,14 +25,37 @@ class EditorAssetsTest {
     private static final String EDITOR_STYLESHEET = "/webjars/jodit/es2021/jodit.min.css";
     private static final String EDITOR_INIT = "/js/editor-init.js";
 
+    private static final String[] PUBLIC_PAGES = { "/", "/anlaesse", "/volontariat", "/fgi",
+            "/kontakt", "/datenschutzinformation", "/auth/login", "/version" };
+
+    private static final Pattern SCRIPT = Pattern.compile("(?i)<script\\b");
+
     @Test
     void public_pages_do_not_reference_the_editor() {
-        for (String path : new String[] { "/", "/anlaesse", "/volontariat", "/fgi", "/kontakt",
-                "/datenschutzinformation", "/auth/login" }) {
+        for (String path : PUBLIC_PAGES) {
             given().redirects().follow(true).when().get(path).then()
                     .statusCode(HttpStatus.SC_OK)
                     .body(not(containsString("jodit")))
                     .body(not(containsString(EDITOR_INIT)));
+        }
+    }
+
+    /**
+     * The stronger form of the same rule, and the one C-021 actually states: a public page carries
+     * no script at all, not merely no editor. The navigation drawer and the disclosures are a
+     * checkbox and a {@code <details>} for exactly this reason, so the constraint is a property of
+     * the markup rather than an intention — and it is what keeps {@code script-src 'self'} free of
+     * the exceptions that make a Content-Security-Policy a formality (NFR-024).
+     */
+    @Test
+    void a_public_page_carries_no_script_at_all() {
+        for (String path : PUBLIC_PAGES) {
+            String body = given().redirects().follow(true).when().get(path).then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .extract().body().asString();
+
+            assertFalse(SCRIPT.matcher(body).find(),
+                    path + " delivers script to a visitor who never asked to edit anything (C-021)");
         }
     }
 

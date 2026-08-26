@@ -9,7 +9,7 @@
  * Manual (2020), page 25 — Pantone 032 / 072 / Black C (C-019, NFR-044). Everything else is a tint
  * of one of them or a warm neutral on the same axis as Cevi-Schwarz.
  *
- * Contrast against --surface, measured: ink 17.9:1, ink-muted 6.9:1, blue 10.3:1, red 6.0:1.
+ * Contrast against --surface, measured: ink 18.4:1, ink-muted 6.9:1, blue 10.3:1, red 6.0:1.
  * Blue therefore carries text and red carries actions — red reaches only 3.1:1 on --ink and is
  * never used for text on a dark ground (NFR-014).
  */
@@ -22,16 +22,28 @@
     --cevi-blue-strong:   #26276F;
     --cevi-blue-tint:     #ECECF7;
 
-    /* Neutrals, warm axis derived from Cevi-Schwarz */
+    /*
+     * Neutrals, warm axis derived from Cevi-Schwarz.
+     *
+     * --ink-soft is body copy a step below --ink: leads, card excerpts, the prose of a
+     * description. --on-dark is the lightest ink, for every ground dark enough to need it — the
+     * primary button, the card accent band, the skip link, the footer, the inverse section; it is
+     * distinct from --on-inverse, which is the *muted* text on that same dark ground.
+     * --border-tinted is the hairline of the blue-tinted maintenance bar, where the warm --border
+     * reads wrong.
+     */
     --ink:                #141412;
     --ink-muted:          #5A5A56;
+    --ink-soft:           #3A3A36;
     --border:             #E4E2DC;
     --border-strong:      #C9C6BF;
+    --border-tinted:      #B9B9DC;
     --surface:            #FFFFFF;
     --surface-sunken:     #F6F5F2;
     --surface-inverse:    #1B1B26;
     --surface-inverse-2:  #262633;
     --on-inverse:         #C6C5D2;
+    --on-dark:            #FFFFFF;
     --border-inverse:     #34344A;
 
     /* Feedback */

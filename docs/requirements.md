@@ -27,7 +27,7 @@ here so the requirement is testable and are listed for confirmation in
 | FR-007 | Derive Unique Short Name       | As an administrator, I want the system to derive a unique short name from the title when I supply none so that I do not have to invent public addresses myself.       | Medium   | Verified     |
 | FR-008 | Preserve Rejected Form Entries | As an administrator, I want a rejected form returned with my values and the faulty fields marked so that I do not have to retype a long description.                  | High     | Verified     |
 | FR-009 | Browse Voluntary Service Offers| As a visitor, I want to see all recorded voluntary service offers with organisation, location and description so that I can decide which organisation to approach.    | High     | Verified     |
-| FR-010 | Link Offer to Organisation     | As a visitor, I want every offer to link to the website of the organisation running it so that I can apply directly with that organisation.                           | High     | Open         |
+| FR-010 | Link Offer to Organisation     | As a visitor, I want every offer to link to the website of the organisation running it so that I can apply directly with that organisation.                           | High     | Verified     |
 | FR-011 | Create Voluntary Service Offer | As an administrator, I want to add an offer with organisation, organisation link, location and description so that visitors learn about a new opportunity.            | High     | Verified     |
 | FR-012 | Edit Voluntary Service Offer   | As an administrator, I want to change an existing offer so that the published information stays accurate.                                                            | High     | Verified     |
 | FR-013 | Delete Offer with Confirmation | As an administrator, I want to remove an offer only after confirming on a separate page so that offers that ended disappear without accidental deletions.            | High     | Verified     |
@@ -51,12 +51,12 @@ here so the requirement is testable and are listed for confirmation in
 | FR-031 | Bootstrap Initial Administrator| As an operator, I want the first administrator account created from a deployment secret when the user table is empty so that a fresh or restored production database never carries publicly known credentials.        | High     | Implemented  |
 | FR-032 | Reject Automated Submissions   | As an administrator, I want the contact form to discard submissions that fill a field no human can see so that simple spam bots do not reach the working group even though the arithmetic question is public.         | Medium   | Verified     |
 | FR-033 | Format Description in the Browser | As an administrator, I want to format a description in the browser with headings, bold, italic, underlined and struck-through text, superscript and subscript, font family and size, text colour, ordered and unordered lists, paragraph alignment, line height, tables, links, inline pictures and a source-code view so that I can lay out an announcement without writing HTML by hand. | High     | Implemented  |
-| FR-034 | Understand the Site on Arrival | As a visitor arriving on a link shared in a chat, I want the start page to tell me in one screen what this site offers and lead me on to events, voluntary service and the working group so that I can decide to stay before scrolling. | High     | Open         |
-| FR-035 | Scan a List Before Reading     | As a visitor, I want every entry in the event and offer lists reduced to its title, date, place, a short excerpt and one action so that I can compare several entries on a phone screen instead of scrolling through full descriptions. | High     | Open         |
-| FR-036 | See How Urgent an Event Is     | As a visitor, I want each event to show how much time is left before it drops off the list so that I notice an opportunity that is about to pass.                     | Medium   | Open         |
-| FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Open         |
-| FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Open         |
-| FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Open         |
+| FR-034 | Understand the Site on Arrival | As a visitor arriving on a link shared in a chat, I want the start page to tell me in one screen what this site offers and lead me on to events, voluntary service and the working group so that I can decide to stay before scrolling. | High     | Verified     |
+| FR-035 | Scan a List Before Reading     | As a visitor, I want every entry in the event and offer lists reduced to its title, date, place, a short excerpt and one action so that I can compare several entries on a phone screen instead of scrolling through full descriptions. | High     | Verified     |
+| FR-036 | See How Urgent an Event Is     | As a visitor, I want each event to show how much time is left before it drops off the list so that I notice an opportunity that is about to pass.                     | Medium   | Verified     |
+| FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Verified     |
+| FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Verified     |
+| FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Verified     |
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -118,8 +118,8 @@ as the gap it is; scope and role model need confirmation.
 | NFR-010 | Rich Text Sanitisation         | HTML submitted through the rich-text editor is reduced to a documented allow-list of tags, attributes and URL schemes before it is stored, so that 0 stored descriptions can execute script when rendered unescaped. | Security        | High     | Verified     |
 | NFR-011 | Cross-Site Request Forgery     | 100 % of state-changing form submissions are rejected with HTTP 400 unless they carry a CSRF token matching the token cookie of the same browser session.     | Security        | High     | Verified     |
 | NFR-012 | Interface Language and Locale  | 100 % of visitor-facing text is German and all dates and numbers are formatted for the `de-CH` locale.                                                        | Usability       | High     | Implemented  |
-| NFR-013 | Mobile Layout                  | At viewport widths of 320, 360, 768, 1024, 1440 and 1920 px, every page renders with 0 horizontal scrolling and 0 rendered text below 14 px; content wider than the viewport (tables and images inside descriptions) scrolls inside its own container instead of the page. | Usability       | High     | Open         |
-| NFR-014 | Accessibility                  | All public pages conform to WCAG 2.1 level AA; in particular every text and interface element reaches a contrast ratio of at least 4.5 : 1 (3 : 1 for text at 24 px or above), every form control has a programmatically associated visible label, and every function is reachable by keyboard. | Usability       | High     | Open         |
+| NFR-013 | Mobile Layout                  | At viewport widths of 320, 360, 768, 1024, 1440 and 1920 px, every page renders with 0 horizontal scrolling and 0 rendered text below 14 px; content wider than the viewport (tables and images inside descriptions) scrolls inside its own container instead of the page. | Usability       | High     | Verified     |
+| NFR-014 | Accessibility                  | All public pages conform to WCAG 2.1 level AA; in particular every text and interface element reaches a contrast ratio of at least 4.5 : 1 (3 : 1 for text at 24 px or above), every form control has a programmatically associated visible label, and every function is reachable by keyboard. | Usability       | High     | Verified     |
 | NFR-015 | Atomic Content Changes         | A failed create, change or delete leaves the stored data exactly as it was before the attempt — 0 partially written records.                                  | Maintainability | High     | Verified     |
 | NFR-016 | E-Mail Failure Isolation       | A failed e-mail notification never fails the visitor's request: the visitor still receives the confirmation and the failure is logged at level ERROR (BR-018). | Availability    | High     | Implemented  |
 | NFR-017 | Automated Test Coverage        | The build fails when line coverage over the merged unit and e2e runs falls below 80 %.                                                                        | Maintainability | High     | Verified     |
@@ -141,15 +141,15 @@ as the gap it is; scope and role model need confirmation.
 | NFR-033 | Host File Ownership            | Every file a tooling container writes into the working copy (`target/`, test reports, traces) is owned by the invoking host user — 0 root-owned artefacts that the IDE, git or a later run cannot delete.                        | Maintainability | Medium   | Implemented  |
 | NFR-034 | Warm Dependency Cache          | The tooling reuses the host Maven repository and the downloaded browser binary across invocations, so a repeated `verify` on an unchanged working copy downloads 0 dependencies and 0 browsers.                                  | Maintainability | Medium   | Implemented  |
 | NFR-035 | Frontend Dependency Maintenance | Every frontend library delivered to the browser has an upstream release not older than 12 months at the time of a release build, so that a reported vulnerability can be answered by upgrading instead of by patching a dead component locally. | Security        | High     | Open         |
-| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Open         |
-| NFR-037 | Single Design System           | Every colour, type size, spacing step, corner radius and shadow used by the interface is declared once as a custom property in a single token stylesheet; 0 templates and 0 component stylesheets contain a literal colour value or a hard-coded font size. | Maintainability | High     | Open         |
-| NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Open         |
-| NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Open         |
-| NFR-040 | Reduced Motion                 | When the browser reports `prefers-reduced-motion: reduce`, 100 % of transitions and animations are disabled; 0 animations are required to understand or operate the interface. | Usability       | Medium   | Open         |
-| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript; the complete first view stays below 150 KB. | Performance     | High     | Open         |
-| NFR-042 | No Third-Party Asset Requests  | A public page issues 0 requests to hosts other than the application's own origin — fonts, styles, scripts and images are served from it; this keeps the Content-Security-Policy of NFR-024 free of external sources and sends 0 visitor IP addresses to third parties. | Security        | High     | Open         |
-| NFR-043 | Consistent Page Structure      | 100 % of pages render exactly one `h1`, a heading order with no skipped level, a skip link as the first focusable element, and the data protection link reachable without scrolling the navigation. | Usability       | Medium   | Open         |
-| NFR-044 | Brand Conformity               | 100 % of brand colours and typefaces in the interface are those defined by the Cevi Schweiz Corporate Design Manual (2020): Cevi-Rot `#C41333`, Cevi-Blau `#323394`, Cevi-Schwarz `#141412`, Montserrat for titles and interface text, Lora for body copy; 0 further brand hues are introduced. | Usability       | Medium   | Open         |
+| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Verified     |
+| NFR-037 | Single Design System           | Every colour, type size, spacing step, corner radius and shadow used by the interface is declared once as a custom property in a single token stylesheet; 0 templates and 0 component stylesheets contain a literal colour value or a hard-coded font size. | Maintainability | High     | Verified     |
+| NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Verified     |
+| NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Verified     |
+| NFR-040 | Reduced Motion                 | When the browser reports `prefers-reduced-motion: reduce`, 100 % of transitions and animations are disabled; 0 animations are required to understand or operate the interface. | Usability       | Medium   | Verified     |
+| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript; the complete first view stays below 150 KB. | Performance     | High     | Verified     |
+| NFR-042 | No Third-Party Asset Requests  | A public page issues 0 requests to hosts other than the application's own origin — fonts, styles, scripts and images are served from it; this keeps the Content-Security-Policy of NFR-024 free of external sources and sends 0 visitor IP addresses to third parties. | Security        | High     | Verified     |
+| NFR-043 | Consistent Page Structure      | 100 % of pages render exactly one `h1`, a heading order with no skipped level, a skip link as the first focusable element, and the data protection link reachable without scrolling the navigation. | Usability       | Medium   | Verified     |
+| NFR-044 | Brand Conformity               | 100 % of brand colours and typefaces in the interface are those defined by the Cevi Schweiz Corporate Design Manual (2020): Cevi-Rot `#C41333`, Cevi-Blau `#323394`, Cevi-Schwarz `#141412`, Montserrat for titles and interface text, Lora for body copy; 0 further brand hues are introduced. | Usability       | Medium   | Implemented  |
 | NFR-045 | Dark Colour Scheme             | When the browser reports `prefers-color-scheme: dark`, every page renders in a dark palette that meets the same contrast thresholds as NFR-014, implemented solely by redefining the tokens of NFR-037. | Usability       | Low      | Open         |
 
 **Note on NFR-035 — the requirement the current editor fails.** Summernote 0.9.1 is the newest
@@ -210,6 +210,41 @@ revision 1 and never verified, which is how the current interface came to fail t
 stated as measurable conditions and are verified by browser tests (`docs/redesign_plan.md` §7)
 rather than by inspection.
 
+**Note on NFR-013, NFR-014, NFR-038 … NFR-041 — what "Verified" covers, as of phase 5.** Each is
+checked by a real browser on every public route, and each found something (`docs/redesign_plan.md`
+§7). What the tests assert:
+
+| Requirement | Checked by | What is not machine-checked |
+|---|---|---|
+| NFR-013 | `ResponsiveLayoutE2ETest` at all six widths, `TypographyFloorE2ETest` at 320 and 360 px | — |
+| NFR-014 | `ContrastE2ETest` (contrast), `FocusVisibleE2ETest` (focus order, skip link), `NavigationDrawerE2ETest` (keyboard operation), `ContactResourceTest` (labels) | The judgement clauses of WCAG 2.1 AA — sensible link text, a heading structure that describes the page, an error message a person can act on. Those stay a review question. |
+| NFR-038 | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
+| NFR-039 | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
+| NFR-040 | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
+| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on a public page) | The 150 KB first view as a whole, which no test currently sums. |
+
+A "Verified" here therefore means *the stated numbers are enforced by the build*, not that the
+interface is beyond criticism. The review with the product owner on a real phone remains part of
+the phase.
+
+**Note on the phase-6 status pass (2026-08-26).** Every requirement the redesign delivered was
+re-read against the tests that exist rather than against the code that was written. Three results
+are worth recording:
+
+- **NFR-037 was not true as written.** It says 0 component stylesheets contain a literal colour or
+  a hard-coded font size. `CssBudgetTest` had only ever checked the first half of the sentence —
+  that no second file declares `:root` variables — and six literal colours had accumulated across
+  five files by the end of phase 4. None was wrong to look at; each was a value that could no
+  longer be changed in one place. They are now three tokens (`--ink-soft`, `--on-dark`,
+  `--border-tinted`), and the test checks the whole sentence.
+- **NFR-042 had no test at all.** It is a data-protection requirement before it is a performance
+  one, and it was resting on the fact that nobody had yet written a Google Fonts `<link>`.
+  `NoThirdPartyAssetsTest` now checks every public page and every stylesheet.
+- **NFR-044 and C-019 are *Implemented*, not *Verified*.** The palette and the typefaces are the
+  Corporate Design Manual's, and `tokens.css` states and measures them — but the open question in
+  §10 of `docs/ux_concept.md`, whether Lora is accepted as the body face, is a working-group
+  decision that no test can stand in for.
+
 **Note on NFR-036 — why it appears with the editor exchange.** Today the editor is loaded from
 `base.qute.html` on every page, so every visitor downloads it although only two administrator pages
 use it. A maintained editor is larger than the current one; loading it where it is used keeps the
@@ -237,9 +272,9 @@ public pages faster than they are today instead of slower.
 | C-016 | Container-Based Development Tooling | Every local development command (compile, unit tests, `verify` incl. the Playwright e2e tests, dev mode, arbitrary Maven goals) must be executable through a single wrapper script `tooling/docker.sh` that runs it inside a container; a contributor must need only Docker and git — no locally installed JDK, Maven or browser. | Operational | Medium   | Implemented |
 | C-017 | No Frontend Build Step       | Frontend libraries must be consumable as prebuilt browser bundles resolved as Maven dependencies; the build must not require Node.js, npm or a JavaScript bundler. | Technical   | High     | Implemented |
 | C-018 | Permissive Frontend Licences | Every frontend library delivered to a visitor's browser must be under a permissive licence (MIT, BSD or Apache-2.0), and every web font under a permissive font licence (SIL OFL-1.1, MIT, Apache-2.0); copyleft-licensed components must not be shipped, so that publishing the application never depends on satisfying copyleft obligations. | Regulatory  | High     | Implemented |
-| C-019 | Corporate Design Conformity  | The interface must follow the Cevi Schweiz Corporate Design Manual (2020) for logo, brand colours and typefaces; no alternative brand identity may be introduced for this platform.                                        | Business    | High     | Open        |
-| C-020 | No CSS Framework             | The visual layer must be built from the project's own stylesheets; no CSS framework may be introduced, because every framework would have to be overridden to reach C-019, adds a dependency subject to NFR-035, and costs more transferred bytes than NFR-041 allows. | Technical   | Medium   | Open        |
-| C-021 | No Client-Side Scripting on Public Pages | Navigation, disclosure and layout on pages reachable without an administrator session must work without JavaScript; scripting may be delivered only to the two administrator form pages that host the rich-text editor. | Technical   | High     | Implemented |
+| C-019 | Corporate Design Conformity  | The interface must follow the Cevi Schweiz Corporate Design Manual (2020) for logo, brand colours and typefaces; no alternative brand identity may be introduced for this platform.                                        | Business    | High     | Implemented |
+| C-020 | No CSS Framework             | The visual layer must be built from the project's own stylesheets; no CSS framework may be introduced, because every framework would have to be overridden to reach C-019, adds a dependency subject to NFR-035, and costs more transferred bytes than NFR-041 allows. | Technical   | Medium   | Verified    |
+| C-021 | No Client-Side Scripting on Public Pages | Navigation, disclosure and layout on pages reachable without an administrator session must work without JavaScript; scripting may be delivered only to the two administrator form pages that host the rich-text editor. | Technical   | High     | Verified    |
 
 **Note on C-019, C-020, C-021 — decisions taken with the product owner on 2026-08-25.** A CSS
 framework, photographic imagery per record and a deeper restructuring of the navigation were all

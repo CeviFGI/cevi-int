@@ -120,6 +120,28 @@ These are load-bearing; changing them needs a matching change in `docs/requireme
 - The rich-text editor (Jodit, MIT, dependency-free — there is no jQuery in this application) comes from a WebJar and is served under version-less `/webjars/...` URLs by `quarkus-webjars-locator`. Do not check frontend libraries into the repository.
 - **The editor is loaded by the two form templates only**, never from `base.qute.html`: public pages must not carry it (NFR-036, `EditorAssetsTest`). `base.qute.html` offers `{#insert head}` and `{#insert scripts}` for that.
 
+### Design system
+
+The visual layer is the project's own CSS, no framework (C-020). `css/site.css` is an `@import`
+hub; the files behind it are layered tokens → base → layout → components → page-specific.
+
+- **`css/tokens.css` is the single source of colour, type size, spacing, radius, shadow and
+  motion** (NFR-037). It is the only file that declares `:root` custom properties, and
+  `CssBudgetTest` fails the build if a second one starts to. A component that needs a new value
+  adds a token there first — never a literal hex value or a `px` font size in a component file.
+  The three brand colours are fixed by the Cevi Schweiz Corporate Design Manual (NFR-044) and are
+  not open to adjustment.
+- **The whole bundle has a byte ceiling** of 24 KB gzipped, enforced by `CssBudgetTest` (NFR-041).
+  That is what makes a CSS framework impossible rather than merely discouraged.
+- **The quality thresholds are tested, not reviewed.** Seven browser tests under
+  `src/test/java/tools/cevi/e2e/` hold the interface to NFR-013, NFR-014 and NFR-038 … NFR-041:
+  no page scrolls sideways at any of six widths, no text renders below 14 px, every control is
+  44 × 44 on a phone, every focusable element shows a ring, every piece of text reaches its
+  contrast threshold, and nothing animates under `prefers-reduced-motion`. Each failure message
+  names the element and the measurement. Run them with `tooling/docker.sh verify`.
+- **`docs/ux_concept.md` states what the design is and why; `docs/redesign_plan.md` records what
+  each phase delivered and what it found.** Read them before changing the visual language.
+
 ### Validation Pattern
 Resources manually call `validator.validate(entity)` and collect results into `Set<ValidationMessage>`. Violations are returned to the template to render inline error messages. Transactions are managed explicitly with `QuarkusTransaction.begin()/commit()/rollback()`.
 

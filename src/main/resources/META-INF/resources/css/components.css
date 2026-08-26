@@ -25,11 +25,11 @@
                 border-color var(--dur-fast) var(--ease);
 }
 
-.btn--primary { background: var(--cevi-red); color: #fff; }
-.btn--primary:hover { background: var(--cevi-red-strong); color: #fff; }
+.btn--primary { background: var(--cevi-red); color: var(--on-dark); }
+.btn--primary:hover { background: var(--cevi-red-strong); color: var(--on-dark); }
 
 .btn--secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
-.btn--secondary:hover { background: var(--ink); color: #fff; }
+.btn--secondary:hover { background: var(--ink); color: var(--on-dark); }
 
 .btn--ghost { background: var(--surface); color: var(--cevi-blue); border-color: var(--border); }
 .btn--ghost:hover { border-color: var(--cevi-blue); color: var(--cevi-blue-strong); }
@@ -39,7 +39,7 @@
  * the page. The quiet cancel is placed before them.
  */
 .btn--danger { background: transparent; color: var(--cevi-red); border-color: var(--cevi-red); }
-.btn--danger:hover { background: var(--cevi-red); color: #fff; }
+.btn--danger:hover { background: var(--cevi-red); color: var(--on-dark); }
 
 .btn--block { width: 100%; }
 
@@ -161,7 +161,7 @@
     padding: var(--space-3) var(--space-4);
     margin-bottom: var(--space-4);
     background: var(--cevi-blue-tint);
-    border: 1px dashed #B9B9DC;
+    border: 1px dashed var(--border-tinted);
     border-radius: var(--radius-md);
 }
 .admin-bar__who {
@@ -239,11 +239,17 @@ dl.panel dd:last-child { margin-bottom: 0; }
     justify-content: flex-end;
     min-height: 92px;
     padding: var(--space-4);
-    color: #fff;
+    color: var(--on-dark);
     position: relative;
     overflow: hidden;
 }
 
+/*
+ * The kicker is recessed with opacity so that one rule covers all four band variants. .78 read
+ * well and measured 4.09:1 on the red band — under the 4.5:1 of NFR-014, which is what
+ * ContrastE2ETest reports. .9 keeps the step down from the date below it and measures 5.07:1 on
+ * the worst variant.
+ */
 .card__band-kicker {
     font-family: var(--font-display);
     font-weight: 600;
@@ -251,7 +257,7 @@ dl.panel dd:last-child { margin-bottom: 0; }
     line-height: 1;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    opacity: .78;
+    opacity: .9;
     margin-bottom: var(--space-1);
 }
 
@@ -298,7 +304,7 @@ dl.panel dd:last-child { margin-bottom: 0; }
 
 .card__excerpt {
     margin: 0;
-    color: #3A3A36;
+    color: var(--ink-soft);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     line-clamp: 3;
@@ -354,7 +360,7 @@ dl.panel dd:last-child { margin-bottom: 0; }
     border-radius: var(--radius-lg);
 }
 .teaser h2 { font-size: var(--step-1); margin-bottom: var(--space-1); }
-.teaser p { color: #4A3238; margin: 0; }
+.teaser p { color: var(--ink-soft); margin: 0; }
 
 /* --- Disclosure ---------------------------------------------------------------------------- */
 
@@ -382,14 +388,19 @@ dl.panel dd:last-child { margin-bottom: 0; }
 .disclosure > summary:hover { text-decoration: underline; }
 .disclosure .prose { margin-top: var(--space-3); font-size: var(--step--1); }
 
+/*
+ * Uppercase and letter-spaced rather than smaller and paler: at 0.72rem it fell under the 14px
+ * floor of NFR-013, and #9A968D on the sunken strip measured 2.70:1 against the 4.5:1 of NFR-014.
+ * The case and the tracking carry the "this is an aside" reading on their own.
+ */
 .card__admin-note {
     margin-left: auto;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.72rem;
+    font-size: var(--step--1);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #9A968D;
+    color: var(--ink-muted);
 }
 
 /* --- Confirmation pages -------------------------------------------------------------------- */

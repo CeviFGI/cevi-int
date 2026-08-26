@@ -14,7 +14,7 @@ to send the visitor for the rest of the text, it opens in place instead.
         {#if it.description.shortened}
         <details class="disclosure">
             <summary>Ganzen Text lesen</summary>
-            <div class="prose">{it.description.raw}</div>
+            <div class="prose">{it.description.withScrollableTables.raw}</div>
         </details>
         {/if}
         <div class="card__actions">

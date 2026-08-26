@@ -99,11 +99,20 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/*
+ * hyphens and overflow-wrap are not decoration here. "Datenschutzinformation" is one 22-character
+ * word at --step-3, which is 388 px wide on a 320 px phone: with nothing to break it, the heading
+ * pushed the whole page sideways (NFR-013, found by ResponsiveLayoutE2ETest). The document is
+ * lang="de", so the browser hyphenates it where German allows; overflow-wrap is the guarantee for
+ * a word no dictionary knows, such as a place name in a description.
+ */
 h1, h2, h3, h4 {
     font-family: var(--font-display);
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
     text-wrap: balance;
+    hyphens: auto;
+    overflow-wrap: break-word;
 }
 
 h1 { font-size: var(--step-3); font-weight: 800; }
@@ -147,7 +156,7 @@ hr {
     z-index: 100;
     transform: translateY(-200%);
     background: var(--cevi-red);
-    color: #fff;
+    color: var(--on-dark);
     font-family: var(--font-display);
     font-weight: 600;
     text-decoration: none;
@@ -157,7 +166,7 @@ hr {
 }
 .skip-link:focus {
     transform: translateY(0);
-    color: #fff;
+    color: var(--on-dark);
 }
 
 /* --- Visually hidden --------------------------------------------------------------------- */

@@ -21,7 +21,7 @@
 
 {!The one place administrator-authored HTML is rendered unescaped. It was reduced to the
 allow-list when it was stored (NFR-010); prose.css styles everything that list permits.!}
-<div class="prose">{event.description.raw}</div>
+<div class="prose">{event.description.withScrollableTables.raw}</div>
 
 {#if inject:currentUser.admin}
 <div class="admin-bar admin-bar--detached">

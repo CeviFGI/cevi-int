@@ -41,7 +41,7 @@
     max-width: var(--measure);
     font-size: var(--step-1);
     line-height: 1.5;
-    color: #3A3A36;
+    color: var(--ink-soft);
     margin-bottom: var(--space-5);
 }
 
@@ -58,14 +58,14 @@
     padding-block: var(--space-7);
 }
 /* Scoped to the section's own heading: a card lying on the band brings its own colours */
-.section--inverse .section-head > h2 { color: #fff; }
-.section--inverse .section-head > a { color: #fff; }
+.section--inverse .section-head > h2 { color: var(--on-dark); }
+.section--inverse .section-head > a { color: var(--on-dark); }
 
 .section--inverse .empty {
     background: var(--surface-inverse-2);
     border-color: var(--border-inverse);
 }
-.section--inverse .empty > h3 { color: #fff; }
+.section--inverse .empty > h3 { color: var(--on-dark); }
 .section--inverse .empty > p { color: var(--on-inverse); }
 
 /* --- Channel cards (information page) ------------------------------------------------------- */
