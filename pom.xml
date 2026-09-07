@@ -16,7 +16,7 @@
     <playwright.version>1.62.0</playwright.version>
     <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
     <owasp-html-sanitizer.version>20260313.1</owasp-html-sanitizer.version>
-    <webjar-jodit.version>4.12.29</webjar-jodit.version>
+    <webjar-jodit.version>4.13.23</webjar-jodit.version>
     <maven.compiler.release>25</maven.compiler.release>
   </properties>
   <dependencyManagement>
