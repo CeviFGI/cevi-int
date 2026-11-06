@@ -80,7 +80,7 @@ public class ContactResourceTest {
 
     /**
      * A filled honeypot means the submission was produced automatically. Nothing is stored or
-     * forwarded, but the answer looks exactly like a successful one (BR-032).
+     * forwarded, but the answer looks exactly like a successful one (UC-005 BR-005).
      */
     @Test
     public void form_discarded_when_honeypot_filled() {
@@ -124,7 +124,7 @@ public class ContactResourceTest {
 
     /**
      * A placeholder is not a label — it disappears exactly when the visitor needs it, and a screen
-     * reader announces nothing at all for a control without one (FR-037, BR-045, WCAG 1.3.1).
+     * reader announces nothing at all for a control without one (FR-037, UC-005 BR-008, WCAG 1.3.1).
      */
     @Test
     public void every_control_carries_a_visible_label() {
@@ -140,7 +140,7 @@ public class ContactResourceTest {
 
     /**
      * The honeypot is what tells an automated submission apart, so it must stay in the markup and
-     * out of sight — off-screen, never display:none, or a bot stops filling it (BR-032, FR-032).
+     * out of sight — off-screen, never display:none, or a bot stops filling it (UC-005 BR-005, FR-032).
      */
     @Test
     public void the_honeypot_stays_in_the_markup_and_out_of_sight() {

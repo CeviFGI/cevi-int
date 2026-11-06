@@ -100,24 +100,24 @@
 
 ## Business Rules
 
-### BR-014: Offer maintenance is restricted to administrators
+### BR-001: Offer maintenance is restricted to administrators
 
 Only a signed-in administrator may add, change or remove voluntary service offers.
 
-### BR-015: Mandatory offer information
+### BR-002: Mandatory offer information
 
 Organisation, organisation link, location and description must all be present for an offer to be stored.
 
-### BR-016: Removal must be confirmed
+### BR-003: Removal must be confirmed
 
 An offer is only removed after the administrator has explicitly confirmed the removal on a separate page.
 
-### BR-030: Length limits for offer information
+### BR-004: Length limits for offer information
 
-Organisation, organisation link and location are limited to 255 characters each; the description is limited to 65535 characters. The same limits apply as for events (BR-006), so both kinds of published content behave alike.
+Organisation, organisation link and location are limited to 255 characters each; the description is limited to 65535 characters. The same limits apply as for events (UC-002 BR-003), so both kinds of published content behave alike.
 
-### BR-031: The organisation link must be a web address
+### BR-005: The organisation link must be a web address
 
 The link to the organisation is accepted only if it points at a website reachable over the web. Any other kind of address is rejected, so a stored link can never turn into something that runs in a visitor's browser when the offer is displayed as a hyperlink.
 
-Offers are also covered by BR-028 (changes accepted only from the system's own forms) and BR-029 (descriptions keep only permitted formatting), both defined in UC-002.
+Offers are also covered by UC-002 BR-009 (changes accepted only from the system's own forms) and UC-002 BR-010 (descriptions keep only permitted formatting).

@@ -12,7 +12,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 /**
  * Creates the first administrator account from the credentials the deployment supplies, so that a
  * fresh or restored database never comes up with credentials that are readable in the repository
- * (BR-038).
+ * (UC-006 BR-008).
  * <p>
  * Runs in every profile. In dev and test the password is configured in
  * {@code application.properties}; in production it comes from a secret and a missing one aborts the

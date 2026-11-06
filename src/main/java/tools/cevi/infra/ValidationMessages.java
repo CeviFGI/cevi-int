@@ -6,7 +6,7 @@ import java.util.List;
 import io.quarkus.qute.TemplateData;
 
 /**
- * The faults of one submission, in the shape a form template can bind per field (FR-037, BR-045).
+ * The faults of one submission, in the shape a form template can bind per field (FR-037, UC-005 BR-008).
  *
  * <p>The resources collect violations as a flat collection; a form has to ask the opposite
  * question — "is <em>this</em> control faulty, and what does it say?" — once per control. Doing

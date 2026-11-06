@@ -67,22 +67,22 @@
 
 ## Business Rules
 
-### BR-025: Information pages are reached from the navigation, not from the entry point
+### BR-001: Information pages are reached from the navigation, not from the entry point
 
 The information pages are reached through the navigation, which is present on every page. This rule replaces the earlier one that made the event list the entry point of the site: since the start page carries content of its own (UC-008), entering the site is no longer the same act as opening a list.
 
-### BR-026: Data protection information is publicly reachable
+### BR-002: Data protection information is publicly reachable
 
 The data protection information is reachable from every page without signing in.
 
-### BR-027: The version page names application and schema version
+### BR-003: The version page names application and schema version
 
 The version page states both the version of the application and the version of the database schema in use, so an operator can tell whether a deployment and its migrations match.
 
-### BR-046: Collected sources are grouped by channel
+### BR-004: Collected sources are grouped by channel
 
 The external sources on the presentation of the working group are grouped by the kind of channel they are — blogs, social networks, websites, newsletters, picture collections. The collection is long enough that an ungrouped list forces a visitor to read all of it to find one entry, and on a phone the groups are presented collapsed so that the page stays navigable.
 
-### BR-039: Version information is not public
+### BR-005: Version information is not public
 
 The version page is reachable only with an established administrator session. It is written for operators, and naming the exact versions to anyone who asks makes it easier to look up which published weaknesses apply to the running system.

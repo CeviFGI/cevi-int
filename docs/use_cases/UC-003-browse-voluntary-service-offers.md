@@ -77,18 +77,18 @@
 
 ## Business Rules
 
-### BR-012: All offers are shown
+### BR-001: All offers are shown
 
 Voluntary service offers are not filtered by date or any other criterion — every recorded offer is visible to every visitor.
 
-### BR-013: Every offer points to its organisation
+### BR-002: Every offer points to its organisation
 
 Each offer names the organisation that runs it and links to that organisation's own website, because the application only advertises the offer and does not administer applications.
 
-### BR-043: The organisation is the offer's own control
+### BR-003: The organisation is the offer's own control
 
 The link to the organisation is presented as the offer's primary control, and it opens the organisation's site separately from the overview. An offer has no page of its own on this platform, so without that control the offer is a dead end — the visitor would learn that an opportunity exists but not where to pursue it.
 
-### BR-044: Offers are shortened like events
+### BR-004: Offers are shortened like events
 
 An offer's description is shortened in the overview in the same way as an event's, so that offers can be compared rather than read one after another. Because an offer has no page of its own, the complete description is made available in place instead.

@@ -39,7 +39,7 @@ public class EventUpcomingTest {
     }
 
     /**
-     * BR-040: the list is for comparing, the event's own page is for reading. Rendering every
+     * UC-001 BR-004: the list is for comparing, the event's own page is for reading. Rendering every
      * description in full is what made the list unusable on a phone, so the excerpt has to be
      * there and the tail of the text has to be absent.
      */
@@ -63,7 +63,7 @@ public class EventUpcomingTest {
                 .body(containsString(tail));
     }
 
-    /** BR-041: how long an event stays announced is derived from the display date it already has. */
+    /** UC-001 BR-005: how long an event stays announced is derived from the display date it already has. */
     @Test
     public void list_states_how_much_time_an_event_has_left() {
         EventFixture.createEvent("CLEANUP countdown_in_list", LocalDate.now().plusDays(3));

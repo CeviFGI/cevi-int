@@ -50,7 +50,7 @@ public class ContactResource {
     public TemplateInstance submit(@FormParam("message") String message, @FormParam("spam") String spam,
                                    @FormParam("website") String honeypot) {
         // The honeypot field is hidden from anyone using a browser normally, so a value in it means
-        // the submission was produced automatically (BR-032). Answering exactly as for an accepted
+        // the submission was produced automatically (UC-005 BR-005). Answering exactly as for an accepted
         // message keeps the sender from tuning around the check.
         if (honeypot != null && !honeypot.isBlank()) {
             Log.info("Discarded a contact form submission that filled the honeypot field");
@@ -58,7 +58,7 @@ public class ContactResource {
         }
 
         // A wrong answer is a fault of the spam field like any other, so it is carried the same
-        // way and the form can name it where it happened rather than in a banner (BR-045).
+        // way and the form can name it where it happened rather than in a banner (UC-005 BR-008).
         if (spam == null || !spam.equals("50")) {
             return Templates.form(message, ValidationMessages.of(List.of(
                     ValidationMessage.of("spam", "Bitte trage die Zahl 50 ein."))));
@@ -78,7 +78,7 @@ public class ContactResource {
             entry.persist();
             QuarkusTransaction.commit();
             // The message text is personal data and would additionally allow forged log lines to be
-            // injected, so only the reference is recorded (BR-034).
+            // injected, so only the reference is recorded (UC-005 BR-007).
             Log.info("Contact form entry persisted, id=" + entry.getId());
         } catch (Exception e) {
             Log.error("Unable to save a contact form entry to database. Trying to send the mail anyway", e);

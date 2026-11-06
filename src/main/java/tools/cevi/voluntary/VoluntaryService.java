@@ -39,7 +39,7 @@ public class VoluntaryService extends PanacheEntityBase {
     public String description;
 
     /**
-     * The most recently recorded offers, for the extract on the start page (BR-048). An offer
+     * The most recently recorded offers, for the extract on the start page (UC-008 BR-002). An offer
      * carries no date of its own, so the id is the only order the entity model offers.
      */
     public static List<VoluntaryService> newest(int limit) {

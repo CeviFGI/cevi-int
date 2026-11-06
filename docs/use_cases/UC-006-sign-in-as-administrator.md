@@ -11,7 +11,7 @@
 ## Preconditions
 
 - A user account with the administrator role exists. On a system whose accounts are still empty,
-  that account is created at start-up from the credentials the deployment supplies (see BR-038).
+  that account is created at start-up from the credentials the deployment supplies (see BR-008).
 
 ## Main Success Scenario
 
@@ -88,34 +88,34 @@
 
 ## Business Rules
 
-### BR-021: Only accounts with the administrator role may maintain content
+### BR-001: Only accounts with the administrator role may maintain content
 
 Access to the maintenance functions depends on the administrator role held by the account, not merely on being signed in.
 
-### BR-022: Passwords are never stored readably
+### BR-002: Passwords are never stored readably
 
 Passwords are stored only in an irreversible form, so a copy of the stored accounts does not reveal them.
 
-### BR-023: Maintenance links are shown only to signed-in users
+### BR-003: Maintenance links are shown only to signed-in users
 
 Edit and delete links on the public pages appear only for a visitor with an established session.
 
-### BR-024: An established session survives page changes
+### BR-004: An established session survives page changes
 
 Once signed in, the administrator stays signed in across pages until they sign out or the session expires.
 
-### BR-035: Sign-in attempts are recorded
+### BR-005: Sign-in attempts are recorded
 
 Every sign-in attempt is noted in the operating records with its outcome; a failed attempt is recorded prominently, with the name that was tried and where the attempt came from. Without this, a series of guessing attempts is indistinguishable from ordinary traffic.
 
-### BR-036: A session expires when left unused
+### BR-006: A session expires when left unused
 
 A session that has been unused for 30 minutes is no longer accepted. Once handed out, a session cannot be withdrawn by the platform before that, so the limited lifetime is what bounds the value of a session copied from the network.
 
-### BR-037: The session is confined to encrypted transport and to this site
+### BR-007: The session is confined to encrypted transport and to this site
 
 The session is handed to the browser in a way that keeps it out of unencrypted requests, out of reach of scripts running in the page, and out of requests that originate from another website.
 
-### BR-038: The first administrator account comes from the deployment
+### BR-008: The first administrator account comes from the deployment
 
 Where no user account exists yet, the platform creates the first administrator account from credentials the deployment supplies. If a production deployment supplies none, the platform refuses to start rather than run without administration or with credentials that are publicly known. Demonstration accounts exist only outside production.

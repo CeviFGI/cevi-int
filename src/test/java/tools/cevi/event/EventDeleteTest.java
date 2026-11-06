@@ -106,7 +106,7 @@ public class EventDeleteTest{
 
     /**
      * A GET must not delete: a prefetching browser, a link preview or a plain link from another
-     * site would otherwise be enough to remove an event (BR-028, NFR-021).
+     * site would otherwise be enough to remove an event (UC-002 BR-009, NFR-021).
      */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})

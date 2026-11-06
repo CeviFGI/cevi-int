@@ -49,7 +49,7 @@ public class Event extends PanacheEntityBase {
     }
 
     /**
-     * The nearest events only, for the extract on the start page (BR-048). Reading the whole list
+     * The nearest events only, for the extract on the start page (UC-008 BR-002). Reading the whole list
      * and cutting it in the template would grow with the table; this one does not.
      */
     public static List<Event> upcomingEvents(int limit) {

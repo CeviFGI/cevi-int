@@ -31,7 +31,7 @@ public class IndexResource {
     @Inject
     SecurityIdentity identity;
 
-    /** How much of each list the start page shows before pointing at the whole of it (BR-048). */
+    /** How much of each list the start page shows before pointing at the whole of it (UC-008 BR-002). */
     private static final int EVENT_TEASERS = 3;
     private static final int OFFER_TEASERS = 2;
 
@@ -44,7 +44,7 @@ public class IndexResource {
     }
 
     /**
-     * The start page answers instead of forwarding (BR-047, FR-023 as amended). The typical visitor
+     * The start page answers instead of forwarding (UC-008 BR-001, FR-023 as amended). The typical visitor
      * follows a link shared in a chat group and has not chosen this site from a menu, so the first
      * screen has to say what the platform is before it offers anything to do. {@code /anlaesse}
      * keeps its own address, so every link shared before this change still leads where it did.
@@ -71,7 +71,7 @@ public class IndexResource {
 
     /**
      * Written for operators. Naming the exact application and schema version to anyone who asks
-     * makes it cheap to look up which published weaknesses apply to the running system (BR-039).
+     * makes it cheap to look up which published weaknesses apply to the running system (UC-007 BR-005).
      */
     @Path("/version")
     @GET

@@ -31,7 +31,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
     /**
      * Signing out changes state, so it is a form submission carrying a CSRF token rather than a
-     * link. This walks the whole round trip through a real browser (BR-028).
+     * link. This walks the whole round trip through a real browser (UC-002 BR-009).
      */
     @Test
     public void logout_ends_the_session() {

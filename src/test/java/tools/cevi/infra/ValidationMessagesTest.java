@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 /**
- * The lookup a form template does once per control (BR-045). It is worth its own test because the
+ * The lookup a form template does once per control (UC-005 BR-008). It is worth its own test because the
  * alternative — a loop and a comparison inside the template — is the least testable place in the
  * application, which is exactly why it lives here.
  */

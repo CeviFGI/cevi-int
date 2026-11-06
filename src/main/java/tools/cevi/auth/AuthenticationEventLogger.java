@@ -8,7 +8,7 @@ import jakarta.enterprise.event.Observes;
 import org.jboss.logging.Logger;
 
 /**
- * Records the outcome of every sign-in attempt (BR-035).
+ * Records the outcome of every sign-in attempt (UC-006 BR-005).
  * <p>
  * The sign-in endpoint itself is provided by Quarkus, so there is no place in the application code
  * where a failed attempt would otherwise become visible: a guessing run looks exactly like ordinary

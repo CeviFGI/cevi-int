@@ -52,7 +52,7 @@ public class AuthResource {
 
     /**
      * Signing out changes state, so it is a form submission and not a link: as a GET, any other
-     * site could sign an administrator out simply by referencing the address (BR-028).
+     * site could sign an administrator out simply by referencing the address (UC-002 BR-009).
      */
     @POST
     @Path("logout")

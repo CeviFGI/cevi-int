@@ -1,6 +1,6 @@
 /*
  * Replaces the single credit line. The data protection link lives here as well as in the drawer,
- * because it must be reachable from every page (BR-026, C-011).
+ * because it must be reachable from every page (UC-007 BR-002, C-011).
  */
 .site-footer {
     background: var(--surface-inverse);

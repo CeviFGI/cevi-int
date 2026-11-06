@@ -64,7 +64,7 @@ public class VoluntaryResource {
     /**
      * Shows the confirmation page. Deleting itself happens in {@link #confirmDelete(long)}: a
      * GET must not change data, or a prefetching browser, a link preview or a plain link from
-     * another site is enough to remove an offer (BR-028).
+     * another site is enough to remove an offer (UC-002 BR-009).
      */
     @GET
     @Path("delete")
@@ -101,7 +101,7 @@ public class VoluntaryResource {
                                    @FormParam("description") String description) {
 
         // Reduced here rather than in the templates: the description is rendered unescaped, so what
-        // is stored has to be safe regardless of how it got in (BR-029).
+        // is stored has to be safe regardless of how it got in (UC-002 BR-010).
         String safeDescription = HtmlSanitizer.sanitize(description);
 
         if (id == 0) {

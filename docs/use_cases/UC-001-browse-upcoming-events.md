@@ -82,14 +82,14 @@ The event list is sorted by display date, closest event first.
 
 Each event is reachable under a short, readable name that identifies it uniquely, so a link to an event stays valid.
 
-### BR-040: The list shows an excerpt, the event page the whole text
+### BR-004: The list shows an excerpt, the event page the whole text
 
 In a list, an event's description is shortened to a short plain-text excerpt that breaks on a word boundary. The complete formatted description is presented only on the event's own page. A list answers which event is worth opening; presenting every description in full makes that comparison impossible on a phone.
 
-### BR-041: Every listed event states how much time is left
+### BR-005: Every listed event states how much time is left
 
 Each event in the list states how long it will remain announced, derived from the same display date that decides whether it is listed at all. An opportunity that is about to pass must be recognisable without opening it.
 
-### BR-042: Maintenance controls never outrank the visitor's control
+### BR-006: Maintenance controls never outrank the visitor's control
 
 Where maintenance controls are shown to a signed-in administrator, they are presented as a separate, visually quieter group. The control meant for the visitor stays the most prominent one on the page, because the public pages are read overwhelmingly by visitors.

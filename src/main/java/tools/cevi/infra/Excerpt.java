@@ -3,7 +3,7 @@ package tools.cevi.infra;
 import java.util.regex.Pattern;
 
 /**
- * Shortens a stored description to a plain-text excerpt for a list (BR-040, BR-044).
+ * Shortens a stored description to a plain-text excerpt for a list (UC-001 BR-004, UC-003 BR-004).
  *
  * <p><strong>This is a presentation helper, never a security control.</strong> It reads a value
  * that was already reduced to the allow-list when it was stored (NFR-010), and its result is

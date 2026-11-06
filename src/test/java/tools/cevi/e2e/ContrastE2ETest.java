@@ -137,7 +137,7 @@ public class ContrastE2ETest extends PlaywrightTestBase {
         page.navigate(url("/kontakt"));
 
         // The fields are `required`, so an empty form never leaves the browser. A wrong answer to
-        // the spam question is the shortest way to a server-side rejection (BR-017).
+        // the spam question is the shortest way to a server-side rejection (UC-005 BR-001).
         page.locator("#message").fill("Wie kommt man an eine Stelle in Armenien?");
         page.locator("#spam").fill("7");
         page.locator(".form-actions button[type='submit']").click();

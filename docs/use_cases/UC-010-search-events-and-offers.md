@@ -110,7 +110,7 @@ _None — the use case changes no data._
 
 ### BR-001: The search covers exactly what the public lists show
 
-The search finds Upcoming Events and Voluntary Service Offers, and nothing else. An Event whose Display Date has passed is not found, just as it is hidden from the Event List (UC-001 BR-001); every Voluntary Service Offer can be found, just as every offer is on the Offer List (UC-003 BR-012). An Administrator Session changes nothing: a signed-in Administrator finds the same entries as any visitor. Information Pages, Contact Messages, User Accounts and Exchange Offers are never searched.
+The search finds Upcoming Events and Voluntary Service Offers, and nothing else. An Event whose Display Date has passed is not found, just as it is hidden from the Event List (UC-001 BR-001); every Voluntary Service Offer can be found, just as every offer is on the Offer List (UC-003 BR-001). An Administrator Session changes nothing: a signed-in Administrator finds the same entries as any visitor. Information Pages, Contact Messages, User Accounts and Exchange Offers are never searched.
 
 ### BR-002: Every word a visitor reads is searchable
 

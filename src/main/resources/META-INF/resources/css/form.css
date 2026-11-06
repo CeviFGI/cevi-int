@@ -72,7 +72,7 @@
 
 /*
  * The summary is what a screen reader announces first, so it stays — but it now links to the field
- * that caused the fault instead of only naming it (BR-045).
+ * that caused the fault instead of only naming it (UC-005 BR-008).
  */
 .error-summary {
     background: var(--error-surface);
@@ -96,7 +96,7 @@
 
 /*
  * Kept out of sight and out of the tab order, but NOT display:none — simple bots fill in every
- * input they find, which is exactly what the check is looking for (BR-032).
+ * input they find, which is exactly what the check is looking for (UC-005 BR-005).
  */
 .honeypot {
     position: absolute;

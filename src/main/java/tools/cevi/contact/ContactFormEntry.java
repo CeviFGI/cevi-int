@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 @Table(name= "contact_form_entries")
 @Entity
 public class ContactFormEntry extends PanacheEntityBase {
-    /** Upper bound for a contact message, see BR-033. */
+    /** Upper bound for a contact message, see UC-005 BR-006. */
     public static final int MAX_MESSAGE_LENGTH = 5000;
 
     @Id

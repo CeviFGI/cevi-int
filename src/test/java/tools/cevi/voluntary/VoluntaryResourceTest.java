@@ -39,7 +39,7 @@ public class VoluntaryResourceTest {
     URL deleteEndpoint;
 
     /**
-     * FR-010 and BR-043. The field was captured and validated from the beginning, but no template
+     * FR-010 and UC-003 BR-003. The field was captured and validated from the beginning, but no template
      * ever rendered it, so an offer told the visitor an opportunity existed and not where to
      * pursue it. This is the regression test that was missing while the requirement stood at
      * "Verified".
@@ -60,7 +60,7 @@ public class VoluntaryResourceTest {
                 .body(containsString("rel=\"noopener noreferrer\""));
     }
 
-    /** BR-044: the overview compares offers; the whole text is opened in place, not elsewhere. */
+    /** UC-003 BR-004: the overview compares offers; the whole text is opened in place, not elsewhere. */
     @Test
     public void a_long_offer_is_shortened_but_its_full_text_stays_reachable() {
         String organization = "CLEANUP offer_is_shortened";
@@ -283,7 +283,7 @@ public class VoluntaryResourceTest {
 
     /**
      * A GET must not delete: a prefetching browser, a link preview or a plain link from another
-     * site would otherwise be enough to remove an offer (BR-028, NFR-021).
+     * site would otherwise be enough to remove an offer (UC-002 BR-009, NFR-021).
      */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})

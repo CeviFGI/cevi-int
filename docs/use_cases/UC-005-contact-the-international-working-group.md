@@ -82,34 +82,34 @@
 
 ## Business Rules
 
-### BR-017: Spam protection question must be answered
+### BR-001: Spam protection question must be answered
 
 A message is only accepted when the spam protection field contains the expected number. This keeps automated submissions out without requiring the visitor to register.
 
-### BR-018: Contact messages are recorded and forwarded
+### BR-002: Contact messages are recorded and forwarded
 
 Every accepted message is both recorded for later reference and forwarded by e-mail, so a message is not lost if one of the two paths fails.
 
-### BR-019: Messages go to one fixed recipient
+### BR-003: Messages go to one fixed recipient
 
 Notifications are always sent to the single address configured for the contact form; the visitor cannot choose the recipient.
 
-### BR-020: No sender data is requested
+### BR-004: No sender data is requested
 
 The form asks only for the message text. If the visitor wants a reply, they include their own contact details in the message.
 
-### BR-032: A field invisible to humans must stay empty
+### BR-005: A field invisible to humans must stay empty
 
 The form carries a field that is hidden from anyone using a browser normally. A submission that fills it was produced automatically and is discarded. The visitor-facing answer is the same as for an accepted message, so the sender cannot tell the two apart and tune around the check.
 
-### BR-033: The message has a length limit
+### BR-006: The message has a length limit
 
 A message is accepted only up to 5000 characters. The endpoint is open to everyone, so without a limit a single submission could fill the storage the whole platform depends on.
 
-### BR-034: Message contents stay out of the operating records
+### BR-007: Message contents stay out of the operating records
 
 The working group receives the message; the operating records of the platform note only that a message was recorded and under which reference. Message contents are personal data, and the operating records have a wider circle of readers and a different retention than the platform's own storage.
 
-### BR-045: Every input is labelled and every fault is named at its field
+### BR-008: Every input is labelled and every fault is named at its field
 
 Each input of the form carries a visible label that stays readable while the field is being filled in, and an explanation of why the field is asked for. When a submission is rejected, the fault is named directly at the field that caused it, and a summary at the top of the form states that nothing was sent and leads to that field. A placeholder is not a label: it disappears exactly when the visitor needs it, and a fault named far from its cause forces the visitor to search for it.

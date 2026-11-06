@@ -67,7 +67,7 @@ here so the requirement is testable and are listed for confirmation in
 
 **Note on FR-041, FR-042 — decisions taken with the product owner on 2026-11-06.** The search
 covers exactly what the public lists show: Upcoming Events only — an event whose Display Date has
-passed stays as hidden from the search as it is from the Event List (BR-001) — and every Voluntary
+passed stays as hidden from the search as it is from the Event List (UC-001 BR-001) — and every Voluntary
 Service Offer. Information Pages are not searched; their content is fixed text in the templates,
 not data. A Voluntary Service Offer has no page of its own, so a match on an offer leads to that
 offer's entry in the Offer List rather than to a new page. The search is a plain form submitted
@@ -107,7 +107,7 @@ breaks: `/anlaesse` is unchanged and the redirect is replaced, not moved.
 
 **Note on FR-034 — covered by its own use case.** Entering the platform became a flow of its own
 once the start page stopped forwarding, so it is specified as UC-008 *Enter the Platform* rather
-than folded into UC-007. UC-007 keeps the information pages; its BR-025, which made the event list
+than folded into UC-007. UC-007 keeps the information pages; its former BR-025, which made the event list
 the entry point of the site, is replaced accordingly.
 
 **Note on FR-034 … FR-039 — why presentation is written as requirements.** The platform's audience
@@ -129,20 +129,20 @@ as the gap it is; scope and role model need confirmation.
 | NFR-002 | Concurrent Visitors            | The system serves 50 concurrent visitors with a 95th-percentile page response time of at most 2000 ms. **(assumed)**                                          | Scalability     | Medium   | Open         |
 | NFR-003 | Availability                   | The site is reachable at least 99.0 % of the minutes of each calendar month. **(assumed)**                                                                    | Availability    | Medium   | Open         |
 | NFR-004 | Startup Readiness              | After the container starts, the application answers HTTP requests within 10 seconds, including Flyway schema migration. **(assumed)**                         | Availability    | Medium   | Open         |
-| NFR-005 | Password Storage               | Passwords are stored exclusively as bcrypt hashes; 0 code paths write a password or a password hash to a log, a rendered page or an object's `toString()` (BR-022). | Security        | High     | Implemented  |
-| NFR-006 | Write Access Authorisation     | 100 % of endpoints that create, change or delete data reject requests without the `admin` role server-side, verified by an automated test per endpoint (BR-004, BR-014, BR-021). | Security        | High     | Verified     |
+| NFR-005 | Password Storage               | Passwords are stored exclusively as bcrypt hashes; 0 code paths write a password or a password hash to a log, a rendered page or an object's `toString()` (UC-006 BR-002). | Security        | High     | Implemented  |
+| NFR-006 | Write Access Authorisation     | 100 % of endpoints that create, change or delete data reject requests without the `admin` role server-side, verified by an automated test per endpoint (UC-002 BR-001, UC-004 BR-001, UC-006 BR-001). | Security        | High     | Verified     |
 | NFR-007 | Session Cookie Protection      | The session cookie is flagged HTTP-only, `Secure` and `SameSite=Strict`, and is encrypted with a key supplied per environment; the repository contains 0 keys usable in production, and a production start without a supplied key aborts instead of falling back. | Security        | High     | Implemented  |
 | NFR-008 | Transport Encryption           | 100 % of production traffic is served over HTTPS with TLS 1.2 or higher; plain HTTP requests are redirected to HTTPS in a single hop. **(assumed)**           | Security        | High     | Implemented  |
-| NFR-009 | Spam Submission Rejection      | The contact form rejects 100 % of submissions whose spam protection field is empty or differs from the expected value (BR-017).                               | Security        | High     | Verified     |
+| NFR-009 | Spam Submission Rejection      | The contact form rejects 100 % of submissions whose spam protection field is empty or differs from the expected value (UC-005 BR-001).                               | Security        | High     | Verified     |
 | NFR-010 | Rich Text Sanitisation         | HTML submitted through the rich-text editor is reduced to a documented allow-list of tags, attributes and URL schemes before it is stored, so that 0 stored descriptions can execute script when rendered unescaped. | Security        | High     | Verified     |
 | NFR-011 | Cross-Site Request Forgery     | 100 % of state-changing form submissions are rejected with HTTP 400 unless they carry a CSRF token matching the token cookie of the same browser session.     | Security        | High     | Verified     |
 | NFR-012 | Interface Language and Locale  | 100 % of visitor-facing text is German and all dates and numbers are formatted for the `de-CH` locale.                                                        | Usability       | High     | Implemented  |
 | NFR-013 | Mobile Layout                  | At viewport widths of 320, 360, 768, 1024, 1440 and 1920 px, every page renders with 0 horizontal scrolling and 0 rendered text below 14 px; content wider than the viewport (tables and images inside descriptions) scrolls inside its own container instead of the page. | Usability       | High     | Verified     |
 | NFR-014 | Accessibility                  | All public pages conform to WCAG 2.1 level AA; in particular every text and interface element reaches a contrast ratio of at least 4.5 : 1 (3 : 1 for text at 24 px or above), every form control has a programmatically associated visible label, and every function is reachable by keyboard. | Usability       | High     | Verified     |
 | NFR-015 | Atomic Content Changes         | A failed create, change or delete leaves the stored data exactly as it was before the attempt — 0 partially written records.                                  | Maintainability | High     | Verified     |
-| NFR-016 | E-Mail Failure Isolation       | A failed e-mail notification never fails the visitor's request: the visitor still receives the confirmation and the failure is logged at level ERROR (BR-018). | Availability    | High     | Implemented  |
+| NFR-016 | E-Mail Failure Isolation       | A failed e-mail notification never fails the visitor's request: the visitor still receives the confirmation and the failure is logged at level ERROR (UC-005 BR-002). | Availability    | High     | Implemented  |
 | NFR-017 | Automated Test Coverage        | The build fails when line coverage over the merged unit and e2e runs falls below 80 %.                                                                        | Maintainability | High     | Verified     |
-| NFR-018 | Automatic Schema Migration     | Schema migrations are applied automatically at startup with 0 manual steps, and the applied schema version is readable from the version page (BR-027).         | Maintainability | High     | Implemented  |
+| NFR-018 | Automatic Schema Migration     | Schema migrations are applied automatically at startup with 0 manual steps, and the applied schema version is readable from the version page (UC-007 BR-003).         | Maintainability | High     | Implemented  |
 | NFR-019 | Deployment Footprint           | The application deploys as a single OCI image needing only a mounted SQLite file and environment variables — 0 additional services required.                   | Portability     | High     | Implemented  |
 | NFR-020 | Backup and Restore             | The database file is backed up at least daily and a backup can be restored within 4 hours, with at most 24 hours of data loss. **(assumed)**                   | Availability    | Medium   | Open         |
 | NFR-021 | Safe HTTP Methods              | 0 endpoints change stored data in response to a `GET`, `HEAD` or `OPTIONS` request; every create, change and delete is reachable only by `POST`.               | Security        | High     | Verified     |

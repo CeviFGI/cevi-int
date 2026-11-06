@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.not;
  * The contact form was the second element the audience named. What it now owes is testable only in
  * a browser: that a rejected submission puts the visitor at the fault instead of leaving them to
  * find it, and that the field which recognises automated senders is invisible to a human without
- * being removed from the page (FR-037, BR-032, BR-045).
+ * being removed from the page (FR-037, UC-005 BR-005, UC-005 BR-008).
  *
  * <p>Quarkus only indexes {@code @QuarkusTest} on the concrete class, not on an inherited base.
  */
@@ -41,7 +41,7 @@ public class ContactFormE2ETest extends PlaywrightTestBase {
 
     /**
      * The summary is what a screen reader announces first, so it has to hold the focus when the
-     * page comes back — and it has to lead at the field rather than merely name it (BR-045).
+     * page comes back — and it has to lead at the field rather than merely name it (UC-005 BR-008).
      */
     @Test
     public void a_rejected_submission_keeps_the_text_and_lands_on_the_error_summary() {
@@ -68,7 +68,7 @@ public class ContactFormE2ETest extends PlaywrightTestBase {
     /**
      * Off-screen, never {@code display: none}: a simple sender fills in every input it can read in
      * the markup, which is the whole mechanism. Hiding it the obvious way would switch the check
-     * off without any test noticing (BR-032, FR-032).
+     * off without any test noticing (UC-005 BR-005, FR-032).
      */
     @Test
     public void the_honeypot_is_out_of_sight_but_still_in_the_page() {

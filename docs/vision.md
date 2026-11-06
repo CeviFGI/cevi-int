@@ -74,7 +74,7 @@ international work, which shapes every goal below.
   it does not administer placements.
 - **Visitor accounts.** Only administrators sign in. Visitors never register.
 - **Sender data on the contact form.** No name, no e-mail field. A visitor who wants a reply
-  writes their contact details into the message text (BR-020) — deliberate data minimisation.
+  writes their contact details into the message text (UC-005 BR-004) — deliberate data minimisation.
 - **Content in languages other than German.** The audience is German-speaking Swiss Cevi members.
 
 ### Undecided

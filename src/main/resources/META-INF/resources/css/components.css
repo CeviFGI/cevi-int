@@ -123,7 +123,7 @@
 }
 
 /*
- * Maintenance controls (BR-042). Below a hairline, quieter than the visitor's control — and with a
+ * Maintenance controls (UC-001 BR-006). Below a hairline, quieter than the visitor's control — and with a
  * stacking context of their own, because in phase 2 the card title becomes a stretched link that
  * would otherwise swallow every click meant for these.
  */
@@ -293,7 +293,7 @@ dl.panel dd:last-child { margin-bottom: 0; }
 
 /*
  * The whole card is the target: on a phone a 300x260px area beats a 16px underlined title. The
- * admin strip carries z-index 1 so that its controls stay clickable through this (BR-042).
+ * admin strip carries z-index 1 so that its controls stay clickable through this (UC-001 BR-006).
  */
 .card__title a::after {
     content: "";

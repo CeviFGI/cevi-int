@@ -37,7 +37,7 @@ the offer is concrete (FR-035 in spirit — a list is there to be compared, not 
     </div>
     {/let}
 
-    {!The arithmetic is unchanged (NFR-009, BR-017); only the phrasing is. It used to read as an
+    {!The arithmetic is unchanged (NFR-009, UC-005 BR-001); only the phrasing is. It used to read as an
     apology for an obstacle, and it is a small favour.!}
     {#let spamError=validationMessages.messageFor('spam')}
     <div class="field {#if spamError}is-error{/if}">
@@ -52,7 +52,7 @@ the offer is concrete (FR-035 in spirit — a list is there to be compared, not 
     {/let}
 
     {!Honeypot: hidden from anyone using a browser normally, so a filled value means the submission
-    was produced automatically (BR-032). Off-screen, never display:none — a bot fills what it can
+    was produced automatically (UC-005 BR-005). Off-screen, never display:none — a bot fills what it can
     read in the markup.!}
     <div class="honeypot" aria-hidden="true">
         <label for="website">Bitte dieses Feld leer lassen</label>

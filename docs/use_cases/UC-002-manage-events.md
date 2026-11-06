@@ -101,42 +101,42 @@
 
 ## Business Rules
 
-### BR-004: Event maintenance is restricted to administrators
+### BR-001: Event maintenance is restricted to administrators
 
 Only a signed-in administrator may add, change or remove events. Visitors can only read them.
 
-### BR-005: Mandatory event information
+### BR-002: Mandatory event information
 
 Title, short name, date text, location, display date and description must all be present for an event to be stored.
 
-### BR-006: Length limits for event information
+### BR-003: Length limits for event information
 
 Title, short name, date text and location are limited to 255 characters each; the description is limited to 65535 characters.
 
-### BR-007: Short names are unique
+### BR-004: Short names are unique
 
 No two events may share the same short name, because the short name forms the public address of the event.
 
-### BR-008: Short names are derived from the title
+### BR-005: Short names are derived from the title
 
 If the administrator does not supply a short name, the system derives one from the title. If that name is already taken, a counter is appended until the name is free.
 
-### BR-009: Derived short names are shortened
+### BR-006: Derived short names are shortened
 
 A short name derived from the title is truncated to at most 252 characters before uniqueness is established.
 
-### BR-010: Removal must be confirmed
+### BR-007: Removal must be confirmed
 
 An event is only removed after the administrator has explicitly confirmed the removal on a separate page.
 
-### BR-011: An invalid display date is ignored
+### BR-008: An invalid display date is ignored
 
 If the supplied display date cannot be read as a date, the previously stored display date is kept; for a new event this means the entry is rejected as incomplete.
 
-### BR-028: Changes are accepted only from the system's own forms
+### BR-009: Changes are accepted only from the system's own forms
 
 Every addition, change and removal must be traceable to a form the system handed out to the same signed-in session, and must be submitted as a form rather than by following a link. A request that merely carries a valid session, without that origin, is refused. This prevents a foreign website from performing changes in the name of an administrator who happens to be signed in.
 
-### BR-029: Descriptions keep only permitted formatting
+### BR-010: Descriptions keep only permitted formatting
 
 Before a description is stored, it is reduced to the formatting the platform permits — text emphasis, headings, lists, tables, links, images and colours. Everything else, in particular anything that could run as a program in a visitor's browser, is discarded. The reduction happens when the system receives the description; what the editor in the browser allows is a convenience for the administrator, not the boundary that is relied upon.

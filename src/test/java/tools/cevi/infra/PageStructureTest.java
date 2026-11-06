@@ -68,7 +68,7 @@ class PageStructureTest {
 
     /**
      * The data protection information must be reachable from every page without signing in
-     * (BR-026, C-011). It sits in the navigation drawer and in the footer; either satisfies this.
+     * (UC-007 BR-002, C-011). It sits in the navigation drawer and in the footer; either satisfies this.
      */
     @ParameterizedTest
     @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi", "/auth/login"})

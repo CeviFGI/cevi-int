@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 /**
- * States how much time an event has left before it drops off the list (BR-041).
+ * States how much time an event has left before it drops off the list (UC-001 BR-005).
  *
  * <p>It reads the same {@code displayDate} that decides whether the event is listed at all, so it
  * needs no new field and cannot disagree with the list it appears in.

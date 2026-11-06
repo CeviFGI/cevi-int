@@ -23,7 +23,7 @@ band span the full width while everything inside them stays on the container (UC
 
 {#if inject:currentUser.admin}
 {!A4 of UC-008: the maintenance functions are offered, as a separate and quieter group than
-anything meant for a visitor (FR-038, BR-042).!}
+anything meant for a visitor (FR-038, UC-001 BR-006).!}
 <div class="container">
     <div class="admin-bar">
         <span class="admin-bar__who">Angemeldet als Administrator</span>
@@ -42,7 +42,7 @@ anything meant for a visitor (FR-038, BR-042).!}
         </div>
         {#if events.isEmpty}
         {!A1 of UC-008: an empty section explains itself rather than leaving a hole on the first
-        screen, which is what tells a visitor a site has been abandoned (BR-049).!}
+        screen, which is what tells a visitor a site has been abandoned (UC-008 BR-003).!}
         <div class="empty">
             <h3>Gerade ist nichts ausgeschrieben</h3>
             <p>Das heisst selten, dass nichts läuft — schreib uns, wir wissen meistens mehr.</p>
@@ -50,7 +50,7 @@ anything meant for a visitor (FR-038, BR-042).!}
         </div>
         {#else}
         {!The same card as /anlaesse, without the maintenance strip: this is an extract, and
-        maintaining an entry happens in the list it belongs to (BR-048).!}
+        maintaining an entry happens in the list it belongs to (UC-008 BR-002).!}
         <div class="grid">
             {#for event in events}
             {#event event showActions=false}{/event}

@@ -401,7 +401,7 @@ caused them.
 │  │ │                              │ │  │  min-height 200px, resize-y,
 │  │ └──────────────────────────────┘ │  │  focus ring = --cevi-blue
 │  │ Magst du eine Antwort? Schreib   │  │  helper text, --step--1
-│  │ deine Mail oder Nummer dazu.     │  │  (explains BR-020 politely)
+│  │ deine Mail oder Nummer dazu.     │  │  (explains UC-005 BR-004 politely)
 │  │                          0/5000  │  │  live counter, CSS-only*
 │  │                                  │  │
 │  │ Sicherheitsfrage *               │  │
@@ -425,7 +425,7 @@ caused them.
   under the control. A summary block stays at the top of the form (focused on load, `role="alert"`)
   because it is what a screen reader announces first — but it now *links* to the offending field.
 - **The honeypot stays exactly as it is** — off-screen, `aria-hidden`, out of the tab order
-  (BR-032, FR-032). It must not become `display: none`.
+  (UC-005 BR-005, FR-032). It must not become `display: none`.
 - **The spam question is reframed** from "Diese Massnahme schützt uns vor automatisiertem Spam" as
   an apology into a plain question with a numeric keypad on mobile. The *value* checked stays 50;
   nothing about NFR-009 changes.

@@ -10,7 +10,7 @@ import jakarta.validation.ConstraintViolation;
  * <p>The record carries the technical name of the field because that is what a constraint
  * violation knows; that name is also the id of the control, so the error summary can link
  * straight at it. {@link #label()} turns it into what the visitor read above that control
- * (BR-045).
+ * (UC-005 BR-008).
  */
 public record ValidationMessage(String fieldName, String message) {
 

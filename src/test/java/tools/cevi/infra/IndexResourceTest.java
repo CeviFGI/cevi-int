@@ -46,7 +46,7 @@ public class IndexResourceTest {
 
     /**
      * The collected sources are grouped by channel, and each group is a native disclosure so that
-     * one link can be found without scrolling past fifty (FR-039, BR-025).
+     * one link can be found without scrolling past fifty (FR-039, UC-007 BR-001).
      */
     @Test
     public void fgi_page_groups_the_sources_by_channel() {
@@ -60,7 +60,7 @@ public class IndexResourceTest {
     }
 
     /**
-     * The start page answers instead of forwarding (BR-047, FR-023 as amended, UC-008). Until
+     * The start page answers instead of forwarding (UC-008 BR-001, FR-023 as amended, UC-008). Until
      * requirements revision 5 this asserted the 303 to /anlaesse.
      */
     @Test
@@ -87,7 +87,7 @@ public class IndexResourceTest {
     /**
      * A1 and A2 of UC-008: where an extract has nothing to show, the section says so and offers a
      * way onward. An empty area on the first screen is what tells a visitor a site is abandoned,
-     * so this is a requirement, not a nicety (BR-049).
+     * so this is a requirement, not a nicety (UC-008 BR-003).
      *
      * <p>The demo data is removed and put back around the assertion rather than worked around: the
      * branch under test is exactly "the database holds nothing".
@@ -144,14 +144,14 @@ public class IndexResourceTest {
     public void version_working() {
         given().when().get(versionEndpoint).then()
                 .statusCode(HttpStatus.SC_OK)
-                // The page names both the application and the schema version (BR-027). The two
+                // The page names both the application and the schema version (UC-007 BR-003). The two
                 // German labels are content, not markup, so this survives the page being relaid
                 // out — which the previous assertion on the literal "Version:" did not.
                 .body(containsString("Anwendung"))
                 .body(containsString("Datenbankschema"));
     }
 
-    /** The version page names application and schema version and is therefore not public (BR-039). */
+    /** The version page names application and schema version and is therefore not public (UC-007 BR-005). */
     @Test
     public void version_requires_authentication() {
         given()

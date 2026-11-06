@@ -18,7 +18,7 @@ public final class TemplateExtensions {
     private TemplateExtensions() {
     }
 
-    /** Shortens a stored description for a list (BR-040, BR-044). Rendered escaped, never raw. */
+    /** Shortens a stored description for a list (UC-001 BR-004, UC-003 BR-004). Rendered escaped, never raw. */
     public static String excerpt(String description) {
         return Excerpt.from(description);
     }
@@ -46,7 +46,7 @@ public final class TemplateExtensions {
         return AccentVariant.of(String.valueOf(key));
     }
 
-    /** How much time the event has left, in German, or an empty string (BR-041). */
+    /** How much time the event has left, in German, or an empty string (UC-001 BR-005). */
     public static String countdown(LocalDate displayDate) {
         return Countdown.text(displayDate);
     }

@@ -36,7 +36,7 @@ public class EventDetailTest {
                 .body(containsString("Alle Anl"));
     }
 
-    /** The detail page is where the whole formatted description lives (BR-040). */
+    /** The detail page is where the whole formatted description lives (UC-001 BR-004). */
     @Test
     public void detail_renders_the_formatted_description() {
         String title = "CLEANUP detail_renders_formatting";

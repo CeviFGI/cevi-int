@@ -160,7 +160,7 @@
 
 /*
  * Secondary rows, shown in the drawer only. The data protection link is one of them: it has to be
- * reachable from every page (BR-026, C-011), and on desktop it is — from the footer, which is where
+ * reachable from every page (UC-007 BR-002, C-011), and on desktop it is — from the footer, which is where
  * it belongs rather than competing with the content links.
  */
 .site-nav__link--minor {

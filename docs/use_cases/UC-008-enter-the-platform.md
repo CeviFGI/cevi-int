@@ -69,14 +69,14 @@
 
 ## Business Rules
 
-### BR-047: The start page answers instead of forwarding
+### BR-001: The start page answers instead of forwarding
 
 Opening the start page presents content, not a forwarding to another page. The typical visitor arrives by following a link shared in a chat group and has not chosen this site from a menu — the first screen therefore has to say what the platform is before it offers anything to do.
 
-### BR-048: The start page shows extracts, never the whole list
+### BR-002: The start page shows extracts, never the whole list
 
 The start page presents only a small extract of the events and of the offers, and each extract names the way to its complete list. The complete lists keep their own addresses and remain reachable directly, so that a link to a list shared earlier still leads where it did before.
 
-### BR-049: A section with nothing to show explains itself
+### BR-003: A section with nothing to show explains itself
 
 Where an extract has nothing to present, the section states why and offers a way onward. The platform announces what volunteers happen to have collected, so an empty section is a normal state, not a fault — but an empty area on the first screen tells the visitor the site is abandoned.
