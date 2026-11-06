@@ -51,17 +51,9 @@
 2. The system ends the session and confirms that the administrator is signed out.
 3. Use case ends.
 
-### A6: Session left unused for too long
-
-**Trigger:** The administrator makes no request for longer than the permitted idle period after signing in (step 6)
-**Flow:**
-
-1. The session stops being accepted, and the next maintenance function the administrator opens leads to the sign-in page.
-2. Use case continues at step 2.
-
 ### A4: Sign out without an active session
 
-**Trigger:** The sign-out form is submitted while no session is established (A3 step 2)
+**Trigger:** The sign-out form is submitted although the session has already ended (step 7)
 **Flow:**
 
 1. The system sends the visitor to the start page.
@@ -69,10 +61,18 @@
 
 ### A5: Maintenance function opened without a session
 
-**Trigger:** Anyone opens a maintenance function while not signed in
+**Trigger:** Instead of the sign-in page, someone who is not signed in opens a maintenance function (step 1)
 **Flow:**
 
 1. The system sends them to the sign-in page.
+2. Use case continues at step 2.
+
+### A6: Session left unused for too long
+
+**Trigger:** The administrator makes no request for longer than the permitted idle period after signing in (step 6)
+**Flow:**
+
+1. The session stops being accepted, and the next maintenance function the administrator opens leads to the sign-in page.
 2. Use case continues at step 2.
 
 ## Postconditions

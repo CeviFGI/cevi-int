@@ -58,7 +58,7 @@
 
 ### A4: Removal not confirmed
 
-**Trigger:** The administrator leaves the confirmation page without confirming (A3 step 2)
+**Trigger:** The administrator chose to delete (A3) but leaves the confirmation page without confirming (step 1)
 **Flow:**
 
 1. The event remains unchanged.
