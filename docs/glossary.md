@@ -1,0 +1,84 @@
+# Glossary
+
+**Date:** 2026-11-06
+**Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
+`docs/use_cases/UC-001` … `UC-008`
+
+One name per domain concept. The specifications are written in English; where the German
+interface uses its own label, the definition names it so the screens can be matched to the terms.
+A word in the **Avoid** column must not be used for that concept in requirements, use cases or
+test cases.
+
+## Roles
+
+| Term          | Definition                                                                                                                                                                         | Avoid                    |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
+| Visitor       | Anyone reading the public pages without signing in, typically a Cevi member aged 15–30 on a phone. Named *Besucher* as the actor of the use case diagram. Never holds a User Account. | Guest, Customer          |
+| Administrator | Member of the International Working Group who holds a User Account with the `admin` role and maintains Events and Voluntary Service Offers.                                          | Moderator, Maintainer    |
+| Operator      | Person running the deployment who checks application and schema version on the Version Page; inherits from the Administrator because that page requires an Administrator Session.  | Sysadmin                 |
+| Mail Service  | External e-mail infrastructure that delivers the E-Mail Notification; a system actor without goals of its own.                                                                      | Mail server, SMTP server |
+
+## Organisation
+
+| Term                         | Definition                                                                                                                                                         | Avoid             |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| Cevi                         | The Swiss YMCA/YWCA youth association (Cevi Schweiz) whose members form the audience of the platform and whose Corporate Design Manual fixes the brand colours.     |                   |
+| International Working Group  | The volunteer body of Cevi Schweiz that runs the platform, publishes its content and receives Contact Messages; short form *working group*.                         | Team, Committee   |
+| Organisation                 | An outside body that runs a voluntary service or an exchange; the Visitor applies there directly, never through the platform.                                       | Provider          |
+| Partner Organisation         | An Organisation abroad that offers an Exchange Offer together with the International Working Group.                                                                  |                   |
+
+## Content
+
+| Term                    | Definition                                                                                                                                                                                  | Avoid                      |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| Event                   | An international Cevi gathering announced on the platform, with title, Date Text, location, Display Date and Description. Labelled *Anlass* in the interface. Registration happens with the organiser, not here. | Camp                       |
+| Upcoming Event          | An Event whose Display Date is today or later; only Upcoming Events appear on the Event List (BR-001).                                                                                      | Current event, Future event |
+| Date Text               | The free-text period of an Event as Visitors read it, e.g. "15. – 24. Oktober 2023"; never compared by the system.                                                                          |                            |
+| Display Date            | The single calendar date until which an Event stays on the Event List; the system compares it with today and derives from it how much time is left (BR-041).                               | Expiry date, End date      |
+| Short Name              | The unique, readable identifier of an Event that forms its Public Address; derived from the title when the Administrator supplies none (FR-007). Stored as the attribute `slug`.            | Permalink                  |
+| Public Address          | The stable, shareable URL of a page — for an Event built from its Short Name — that still resolves months later (BR-003).                                                                   | Permalink                  |
+| Voluntary Service Offer | A voluntary service opportunity abroad that an Organisation runs and the International Working Group recommends, with Organisation, Organisation Link, location and Description. Short form *offer*. | Job, Internship            |
+| Organisation Link       | The `http://` or `https://` address of the website of the Organisation behind a Voluntary Service Offer or Exchange Offer.                                                                 |                            |
+| Exchange Offer          | An exchange opportunity with a Partner Organisation. Present in the schema but used by no use case; scope undecided (FR-029).                                                               |                            |
+| Description             | The formatted text of an Event or offer, written in the rich-text editor and reduced to the Allow-List before it is stored.                                                                |                            |
+| Allow-List              | The documented set of HTML tags, attributes and URL schemes a Description may keep; everything else is removed on the server before storage (NFR-010).                                     | Whitelist                  |
+| Excerpt                 | The shortened beginning of a Description shown in a list entry; the full text is shown only on the own page of the entry (BR-040).                                                         | Teaser                     |
+
+## Contact
+
+| Term                     | Definition                                                                                                                                                              | Avoid               |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| Contact Form             | The public form through which a Visitor writes to the International Working Group without a User Account; it asks for no sender details (BR-020).                       |                     |
+| Contact Message          | The free text of at most 5 000 characters a Visitor submits through the Contact Form; recorded in the database and forwarded by E-Mail Notification (BR-018, BR-033).    | Inquiry             |
+| Spam Protection Question | The visible arithmetic question on the Contact Form whose expected answer a submission must contain to be accepted (BR-017).                                            | Captcha             |
+| Hidden Field             | A Contact Form field no human can see; a submission that fills it is discarded as automated (BR-032).                                                                    | Honeypot            |
+| E-Mail Notification      | The e-mail the system sends through the Mail Service to one fixed recipient address for every accepted Contact Message (BR-019); a failed delivery never fails the Visitor's submission. |                     |
+
+## Access
+
+| Term                  | Definition                                                                                                                                                                  | Avoid                   |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| User Account          | A stored identity with user name, bcrypt-hashed password and role that may sign in; only Administrators have one.                                                           |                         |
+| Sign In               | Proving identity with user name and password to open an Administrator Session. The interface page is the login page at `/auth/login`.                                      | Log in, Log on          |
+| Sign Out              | Ending the Administrator Session through a `POST` with CSRF token.                                                                                                          | Log out, Log off        |
+| Administrator Session | The verified, encrypted session established by Sign In; it expires 30 minutes after the last request (BR-036) and unlocks the Maintenance Functions.                         |                         |
+| Maintenance Function  | Any create, change or delete operation on Events or Voluntary Service Offers; reachable only within an Administrator Session.                                               | Admin function, Backend |
+| Maintenance Link      | A link or button to a Maintenance Function on a public page; shown only during an Administrator Session and visually set apart from the Visitor's own action (BR-023, BR-042). |                         |
+| Confirmation Page     | The separate page on which an Administrator confirms the deletion of an Event or offer before it is removed (FR-006, FR-013).                                               |                         |
+| Initial Administrator | The first User Account, created at start-up from a deployment secret when the user table is empty (BR-038).                                                                 | Default admin           |
+| Demo Seed             | The demo Events and offers inserted on first start with an empty database outside the `prod` profile; never runs in production (NFR-022).                                  | Test data               |
+
+## Pages
+
+| Term                       | Definition                                                                                                                                                       | Avoid                  |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| Start Page                 | The page at `/` that says in one screen what the platform offers and leads on to Events, Voluntary Service Offers and the working group (UC-008).                | Landing page, Home page |
+| Event List                 | The page under `/anlaesse` that lists all Upcoming Events in order of Display Date, nearest first.                                                                 |                        |
+| Offer List                 | The page that lists all Voluntary Service Offers, each linking to its Organisation.                                                                                |                        |
+| Information Page           | A public page about the platform itself: the Working Group Presentation and the Data Protection Page.                                                             |                        |
+| Working Group Presentation | The Information Page that introduces the International Working Group and groups its external sources by channel (BR-046).                                         |                        |
+| Data Protection Page       | The Information Page explaining how personal data is handled; reachable from every page (BR-026).                                                                 | Privacy policy         |
+| Version Page               | The page naming the application version and the database schema version; requires an Administrator Session (BR-027, BR-039).                                      | Status page            |
+| Schema Version             | The version of the last Flyway migration applied to the database, shown on the Version Page.                                                                      |                        |
+| Not-Found Page             | The explanatory page with a way back that answers an unknown address (FR-027).                                                                                     | 404 page               |
+| Error Page                 | The plain page shown when the system cannot produce the requested page, without technical details (FR-028).                                                       |                        |
