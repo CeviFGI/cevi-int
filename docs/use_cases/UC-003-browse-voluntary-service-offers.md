@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, so they can decide which organisation to approach.
 **Status:** Approved
-**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list.
+**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041): A5 describes how the Offer List presents an offer chosen from a search result (UC-010 step 5).
 
 ## Preconditions
 
@@ -55,6 +55,14 @@
 
 1. The system additionally offers the maintenance controls for each offer, presented as a separate and quieter group than the control meant for visitors.
 2. Use case continues at step 3.
+
+### A5: The visitor arrives from a search result
+
+**Trigger:** The visitor picks an offer on the Search Results Page or among the Live Results (UC-010 step 5) instead of opening the voluntary service section (step 1)
+**Flow:**
+
+1. The system presents all recorded offers as in step 2, brings the chosen offer into view, marks it as the one chosen and presents its complete description in place, as in A2.
+2. Use case continues at step 4.
 
 ## Postconditions
 

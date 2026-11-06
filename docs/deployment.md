@@ -78,6 +78,11 @@ The application sends `Strict-Transport-Security` with `max-age=31536000; includ
 browser that has seen the site once will not make a plain-HTTP request to it again. Keep the
 `redirect-to-https@file` middleware on the `web` entrypoint for first-time visitors.
 
+The search (UC-010) is a `GET` form, so the Search Term travels in the query string of `/suche`.
+The application never logs it (UC-010 BR-005), but a Traefik access log would. If the access log is
+enabled, drop its `RequestPath` field, which carries the query string
+(`accessLog.fields.names.RequestPath=drop`); otherwise every search a visitor makes ends up on disk.
+
 ---
 
 ## 3. Rate limiting

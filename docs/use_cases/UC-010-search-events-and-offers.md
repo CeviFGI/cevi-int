@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor finds the Upcoming Events and Voluntary Service Offers that mention what they are looking for — a country, a topic, an organisation — without reading through the Event List and the Offer List one entry after another.
 **Trigger:** The visitor enters a Search Term in the search field and starts the search.
-**Status:** Draft
+**Status:** Approved
 **Introduced:** 2026-11-06 with requirements revision 7 (FR-041, FR-042). Until then a visitor could find an event or offer only by reading both lists, and the full Description of an offer only by opening each one in place.
 
 **Requirements:** [FR-041, FR-042, NFR-041, NFR-046, NFR-047, C-021](../requirements.md)
@@ -23,19 +23,19 @@
 2. The system searches the Upcoming Events and all Voluntary Service Offers for the Search Term.
 3. The system presents the Search Results Page: the Search Term in the search field, the number of matches, and the matching Upcoming Events and the matching Voluntary Service Offers in two separate groups, each entry with its title or Organisation, its location, for an event its Date Text, and an excerpt of its Description that shows where the Search Term occurs in it (BR-008).
 4. The visitor picks the entry that interests them.
-5. The system leads the visitor to that entry: for an event to its Event Page, for an offer to its entry in the Offer List, brought into view, marked as the one chosen and with its complete Description shown in place (as in UC-003 A2).
+5. The system leads the visitor to that entry: for an event to its Event Page, for an offer to its entry in the Offer List, brought into view, marked as the one chosen and with its complete Description shown in place (UC-003 A5).
 6. The visitor reads the event or offer they were looking for.
 
 ## Alternative Flows
 
 ### A1: Live Results while typing
 
-**Trigger:** The visitor's browser runs scripts and the visitor has typed at least two characters in the search field without starting the search yet (step 1)
+**Trigger:** The visitor's browser runs scripts and the visitor has typed at least two letters or digits in the search field without starting the search yet (step 1)
 **Flow:**
 
 1. As soon as the visitor pauses typing, the system shows Live Results below the search field: at most five matching Upcoming Events and at most five matching Voluntary Service Offers, each with its title or Organisation and location, and a link to all results on the Search Results Page.
 2. The system announces the number of Live Results to assistive technology and lets the visitor move through them by keyboard.
-3. When the visitor keeps typing, the system replaces the Live Results with those for the changed Search Term; when fewer than two characters other than spaces remain in the field, or the visitor leaves it, the system removes them.
+3. When the visitor keeps typing, the system replaces the Live Results with those for the changed Search Term; when fewer than two letters or digits remain in the field, or the visitor leaves it, the system removes them.
 4. When the visitor picks a Live Result, use case continues at step 5; when the visitor starts the search instead, use case continues at step 2.
 
 ### A2: No match
@@ -49,10 +49,10 @@
 
 ### A3: Search Term too short or empty
 
-**Trigger:** The Search Term contains fewer than two characters other than spaces (step 1)
+**Trigger:** The Search Term contains fewer than two letters or digits (step 1)
 **Flow:**
 
-1. The system does not search and presents the Search Results Page with the search field and the hint that a Search Term needs at least two characters.
+1. The system does not search and presents the Search Results Page with the search field and the hint that a Search Term needs at least two letters or digits. A Search Term of spaces and punctuation only, such as `--`, counts as empty.
 2. Use case continues at step 1.
 
 ### A4: Search Term too long
@@ -122,11 +122,11 @@ A Search Term of several words finds an entry only when every word occurs in it,
 
 ### BR-004: Better matches first
 
-Within each group the entries are ordered by how well they match. An entry ranks by the best field in which any word of the Search Term occurs: title or Organisation first, then location or Date Text, then Description. Entries of the same rank follow a fixed order: events by Display Date, nearest first, as on the Event List (UC-001 BR-002); offers by Organisation in alphabetical order. The same Search Term over the same stored entries therefore always yields the same order.
+Within each group the entries are ordered by how well they match. An entry ranks by the best field in which any word of the Search Term occurs: title or Organisation first, then location or Date Text, then Description. Entries of the same rank follow a fixed order: events by Display Date, nearest first, as on the Event List (UC-001 BR-002); offers by Organisation in alphabetical order. Entries that are still equal follow the order in which they were recorded, the earlier first. The same Search Term over the same stored entries therefore always yields the same order.
 
 ### BR-005: A Search Results Page has its own address
 
-The Search Results Page carries the Search Term in its address, so that opening the same address again shows the results for the same Search Term at that moment. Searching changes no data and records nothing: the platform stores neither the Search Term nor who searched, in its database or in its application log. The application log names the address of a search without its Search Term, as it does for every request.
+The Search Results Page carries the Search Term in its address, so that opening the same address again shows the results for the same Search Term at that moment. Searching changes no data and records nothing: the platform stores neither the Search Term nor who searched, in its database or in its application log. The application log names the address of a search without its Search Term, as it does for every request. The rule covers the platform itself; what a reverse proxy in front of it logs is a matter of its operation, not of this use case.
 
 ### BR-006: The search works without script
 
