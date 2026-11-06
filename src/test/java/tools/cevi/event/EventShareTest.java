@@ -100,7 +100,10 @@ class EventShareTest {
         assertThat(body, containsString("data-text=\"" + title + ", some date\""));
     }
 
-    /** NFR-041 and C-021: the event page loads the one share script, from the own origin. */
+    /**
+     * NFR-041 and C-021 (revision 7): the event page loads the share script from its own origin;
+     * every script it carries is self-hosted, none is inline, and together they stay within 8 KB.
+     */
     @Test
     void the_event_page_loads_the_share_script_from_its_own_origin() {
         String slug = slugOf(EventFixture.createEvent("CLEANUP share script"));
@@ -108,7 +111,15 @@ class EventShareTest {
         String body = eventPage("slug=" + slug);
 
         assertThat(body, containsString("<script src=\"" + SHARE_SCRIPT + "\" defer></script>"));
-        assertThat(Pattern.compile("(?i)<script\\b").matcher(body).results().count(), is(1L));
+        Matcher script = Pattern.compile("(?i)<script\\b[^>]*>").matcher(body);
+        int total = 0;
+        while (script.find()) {
+            Matcher src = Pattern.compile("src=\"(/js/[^\"]+)\"").matcher(script.group());
+            assertThat(script.group(), src.find(), is(true));
+            total += given().when().get(src.group(1)).then().statusCode(HttpStatus.SC_OK)
+                    .extract().body().asByteArray().length;
+        }
+        assertThat(total, lessThanOrEqualTo(8 * 1024));
     }
 
     /**

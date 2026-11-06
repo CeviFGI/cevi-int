@@ -22,7 +22,10 @@ final class PublicPages {
             "/fgi",
             "/datenschutzinformation",
             "/auth/login",
-            "/version");
+            "/version",
+            // UC-010: a Search Results Page with both groups — "Horyzon" is an offer of the demo
+            // data and named in the description of one of its events.
+            "/suche?q=horyzon");
 
     private PublicPages() {
     }

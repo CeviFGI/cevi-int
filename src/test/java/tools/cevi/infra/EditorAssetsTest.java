@@ -5,12 +5,15 @@ import io.quarkus.test.security.TestSecurity;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The rich-text editor is by far the largest asset the application serves, and only the two
@@ -28,7 +31,11 @@ class EditorAssetsTest {
     private static final String[] PUBLIC_PAGES = { "/", "/anlaesse", "/volontariat", "/fgi",
             "/kontakt", "/datenschutzinformation", "/auth/login", "/version" };
 
-    private static final Pattern SCRIPT = Pattern.compile("(?i)<script\\b");
+    /** A script element, with its {@code src} when it has one. */
+    private static final Pattern SCRIPT_TAG = Pattern.compile("(?i)<script\\b(?:[^>]*\\ssrc=\"([^\"]*)\")?[^>]*>");
+
+    /** NFR-041: at most 8 KB of self-hosted script per public page, uncompressed. */
+    private static final int SCRIPT_BUDGET = 8 * 1024;
 
     @Test
     void public_pages_do_not_reference_the_editor() {
@@ -41,24 +48,33 @@ class EditorAssetsTest {
     }
 
     /**
-     * The stronger form of the same rule, and the one C-021 actually states: a public page carries
-     * no script at all, not merely no editor. The one exception C-021 admits — the share script on
-     * an event's own page (FR-040) — is why no event page is listed here; {@code EventShareTest}
-     * holds that page to its single script of at most 2 KB. The navigation drawer and the
-     * disclosures are a checkbox and a {@code <details>} for exactly this reason, so the constraint
-     * is a property of the markup rather than an intention — and it is what keeps
-     * {@code script-src 'self'} free of the exceptions that make a Content-Security-Policy a
-     * formality (NFR-024).
+     * The rule C-021 and NFR-041 state since revision 7: script may enhance a public page, never
+     * carry it — so a public page carries no inline script (it would need an exception in
+     * {@code script-src 'self'}, NFR-024), only files from its own {@code /js/} folder, never a
+     * library from a WebJar, and at most 8 KB of them in total. The event page, which also loads
+     * the share script, is held to the same ceiling by {@code EventShareTest}; that every page
+     * works without any of it is what the server-rendered tests of each use case show.
      */
     @Test
-    void a_public_page_carries_no_script_at_all() {
-        for (String path : PUBLIC_PAGES) {
+    void a_public_page_carries_only_small_self_hosted_scripts() {
+        List<String> pages = new ArrayList<>(List.of(PUBLIC_PAGES));
+        pages.add("/suche?q=anlass");
+        for (String path : pages) {
             String body = given().redirects().follow(true).when().get(path).then()
                     .statusCode(HttpStatus.SC_OK)
                     .extract().body().asString();
 
-            assertFalse(SCRIPT.matcher(body).find(),
-                    path + " delivers script to a visitor who never asked to edit anything (C-021)");
+            int total = 0;
+            Matcher script = SCRIPT_TAG.matcher(body);
+            while (script.find()) {
+                String src = script.group(1);
+                assertTrue(src != null && src.startsWith("/js/"),
+                        path + " delivers a script that is inline or not self-hosted (C-021): " + script.group());
+                total += given().when().get(src).then().statusCode(HttpStatus.SC_OK)
+                        .extract().body().asByteArray().length;
+            }
+            assertTrue(total <= SCRIPT_BUDGET,
+                    path + " executes " + total + " bytes of script, more than NFR-041 allows (" + SCRIPT_BUDGET + ")");
         }
     }
 
