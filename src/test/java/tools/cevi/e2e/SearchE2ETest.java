@@ -99,7 +99,7 @@ public class SearchE2ETest extends PlaywrightTestBase {
         assertThat(status()).hasText("2 Treffer");
     }
 
-    /** A1 step 3: fewer than two characters other than spaces remove the Live Results. */
+    /** A1 step 3: fewer than two letters or digits remove the Live Results. */
     @Test
     void live_results_disappear_below_two_characters() {
         page.navigate(url("/"));
@@ -180,7 +180,7 @@ public class SearchE2ETest extends PlaywrightTestBase {
     }
 
     /**
-     * Step 5: picking an offer leads to its entry in the Offer List — brought into view, marked as
+     * Step 5 and UC-003 A5: picking an offer leads to its entry in the Offer List — brought into view, marked as
      * the one chosen, with its complete Description open.
      */
     @Test

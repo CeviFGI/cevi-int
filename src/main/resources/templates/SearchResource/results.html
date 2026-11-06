@@ -6,8 +6,8 @@
 <div class="page-head">
     {#if !term.searchable}
     <h1>Suche</h1>
-    {!UC-010 A3: no search below two characters other than spaces.!}
-    <p class="lead">Gib einen Suchbegriff mit mindestens zwei Zeichen ein.</p>
+    {!UC-010 A3: no search below two letters or digits.!}
+    <p class="lead">Gib einen Suchbegriff mit mindestens zwei Buchstaben oder Ziffern ein.</p>
     {#else}
     <p class="eyebrow">{count} Treffer</p>
     <h1>Suche nach «{term.text}»</h1>

@@ -16,7 +16,7 @@ public record SearchTerm(String text, List<String> words) {
     // UC-010 A4: a longer Search Term is cut to its first 100 characters (NFR-047).
     public static final int MAX_LENGTH = 100;
 
-    // UC-010 A3: fewer than two characters other than spaces start no search.
+    // UC-010 A3: fewer than two letters or digits start no search; spaces and punctuation do not count.
     public static final int MIN_LENGTH = 2;
 
     public static SearchTerm of(String raw) {
@@ -26,7 +26,7 @@ public record SearchTerm(String text, List<String> words) {
 
     /** Whether the term is long enough to search for (A3). */
     public boolean searchable() {
-        return text.replace(" ", "").length() >= MIN_LENGTH;
+        return Words.letterCount(text) >= MIN_LENGTH;
     }
 
     /** UC-010 BR-005: the address of the Search Results Page for this term. */

@@ -48,8 +48,11 @@ public final class Search {
                 ranked.add(new Ranked<>(event, rank, text));
             }
         }
-        // UC-010 BR-004: by rank; ties keep the Event List order, nearest Display Date first.
-        ranked.sort(Comparator.comparingInt(Ranked::rank));
+        // UC-010 BR-004: by rank; ties by Display Date, nearest first, as on the Event List, then
+        // in the order recorded.
+        ranked.sort(Comparator.<Ranked<Event>>comparingInt(Ranked::rank)
+                .thenComparing(r -> r.entry().displayDate)
+                .thenComparingInt(r -> r.entry().id));
         return hits(ranked, limit, r -> new Hit(r.entry().title, r.entry().location, r.entry().date,
                 excerpt(r.entry().description, r.text(), term), "/anlaesse/detail?slug=" + encode(r.entry().slug), r.entry().slug));
     }
@@ -63,7 +66,7 @@ public final class Search {
                 ranked.add(new Ranked<>(offer, rank, text));
             }
         }
-        // UC-010 BR-004: by rank; ties by Organisation in alphabetical order, then fixed by id.
+        // UC-010 BR-004: by rank; ties by Organisation in alphabetical order, then in the order recorded.
         Collator collator = Collator.getInstance(Locale.forLanguageTag("de-CH"));
         ranked.sort(Comparator.<Ranked<VoluntaryService>>comparingInt(Ranked::rank)
                 .thenComparing(r -> r.entry().organization, collator)

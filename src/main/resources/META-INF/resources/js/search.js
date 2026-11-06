@@ -8,10 +8,10 @@
     var status = form.querySelector('[data-search-status]');
     var timer, asked = 0;
 
-    // UC-010 A3: two characters other than spaces, as on the Search Results Page.
+    // UC-010 A1/A3: two letters or digits, as on the Search Results Page.
     function term() {
         var v = input.value.trim();
-        return v.replaceAll(' ', '').length >= 2 ? v : '';
+        return Array.from(v.replace(/[^\p{L}\p{N}]/gu, '')).length >= 2 ? v : '';
     }
 
     function hide() {

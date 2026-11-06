@@ -192,7 +192,7 @@ class SearchResourceTest {
     }
 
     /**
-     * Main success scenario, step 5: an offer leads to its entry in the Offer List — brought into
+     * Main success scenario, step 5 and UC-003 A5: an offer leads to its entry in the Offer List — brought into
      * view by the address's fragment, marked as the one chosen, its complete Description open.
      */
     @Test
@@ -307,14 +307,14 @@ class SearchResourceTest {
         assertThat(body, containsString("href=\"/volontariat?angebot=" + offer.id + "#angebot-" + offer.id + "\""));
     }
 
-    /** A1 step 3: fewer than two characters other than spaces give no Live Results. */
+    /** A1 step 3: fewer than two letters or digits give no Live Results; punctuation does not count. */
     @Test
-    void live_results_need_two_characters_other_than_spaces() {
+    void live_results_need_two_letters_or_digits() {
         event("CLEANUP Z Einbuchstabe", "Text");
 
-        String body = live("z   ");
-
-        assertThat(body, not(containsString("live-results__list")));
+        for (String query : List.of("z   ", "--", "z-")) {
+            assertThat(query, live(query), not(containsString("live-results__list")));
+        }
     }
 
     /**
@@ -334,28 +334,31 @@ class SearchResourceTest {
         assertThat(offerGroup(body), is(""));
     }
 
-    /** A3: an empty, missing or one-character Search Term starts no search and shows the hint. */
+    /**
+     * A3: an empty, missing or one-letter Search Term, or one of spaces and punctuation only,
+     * starts no search and shows the hint.
+     */
     @Test
-    void a_search_term_below_two_characters_is_not_searched() {
+    void a_search_term_below_two_letters_or_digits_is_not_searched() {
         event("CLEANUP Z kurz", "Text");
-        for (String query : List.of("", "z", " z ", "   ")) {
+        for (String query : List.of("", "z", " z ", "   ", "--", "?!", "z-", "/ . /")) {
             String body = search(query);
 
-            assertThat(query, body, containsString("mindestens zwei Zeichen"));
+            assertThat(query, body, containsString("mindestens zwei Buchstaben oder Ziffern"));
             assertThat(query, eventGroup(body), is(""));
             assertThat(query, body, not(containsString("Nichts gefunden")));
         }
         String withoutParameter = given().when().get("/suche").then()
                 .statusCode(HttpStatus.SC_OK).extract().body().asString();
-        assertThat(withoutParameter, containsString("mindestens zwei Zeichen"));
+        assertThat(withoutParameter, containsString("mindestens zwei Buchstaben oder Ziffern"));
     }
 
-    /** A3: two characters other than spaces are enough, even with spaces between them. */
+    /** A3: two letters or digits are enough, even with spaces or punctuation between them. */
     @Test
-    void two_characters_start_a_search() {
-        String body = search("zq");
-
-        assertThat(body, not(containsString("mindestens zwei Zeichen")));
+    void two_letters_or_digits_start_a_search() {
+        for (String query : List.of("zq", "z q", "z-9", "ü2")) {
+            assertThat(query, search(query), not(containsString("mindestens zwei Buchstaben oder Ziffern")));
+        }
     }
 
     /**
@@ -641,6 +644,36 @@ class SearchResourceTest {
                 "Zqorg Älpha", "Zqorg Beta", "Mitte Verein", "Aaa Verein")));
     }
 
+    /**
+     * BR-004: events of the same rank and the same Display Date follow the order in which they
+     * were recorded, the earlier first — whatever their titles.
+     */
+    @Test
+    void events_of_equal_rank_and_display_date_follow_the_order_recorded() {
+        LocalDate day = LocalDate.now().plusDays(5);
+        event("CLEANUP Zqgleichtag Zulu", "x", "x", "Text", day);
+        event("CLEANUP Zqgleichtag Alpha", "x", "x", "Text", day);
+        event("CLEANUP Zqgleichtag Mike", "x", "x", "Text", day);
+
+        assertThat(titles(eventGroup(search("zqgleichtag"))), is(List.of(
+                "CLEANUP Zqgleichtag Zulu", "CLEANUP Zqgleichtag Alpha", "CLEANUP Zqgleichtag Mike")));
+    }
+
+    /**
+     * BR-004: offers of the same rank and the same Organisation follow the order in which they
+     * were recorded, the earlier first — whatever their location.
+     */
+    @Test
+    void offers_of_equal_rank_and_organisation_follow_the_order_recorded() {
+        offer("Zqgleichorg Verein", "Zürich", "Text", "https://example.org/");
+        offer("Zqgleichorg Verein", "Aarau", "Text", "https://example.org/");
+        offer("Zqgleichorg Verein", "Malmö", "Text", "https://example.org/");
+
+        String group = offerGroup(search("zqgleichorg"));
+        assertThat(group.indexOf("Zürich") < group.indexOf("Aarau"), is(true));
+        assertThat(group.indexOf("Aarau") < group.indexOf("Malmö"), is(true));
+    }
+
     /** BR-004: the same Search Term over the same entries always yields the same order. */
     @Test
     void the_order_is_stable() {
@@ -730,8 +763,10 @@ class SearchResourceTest {
         event("CLEANUP Zqsql Anlass", "Text");
 
         assertThat(search("zqsql' OR 1=1 --"), containsString("Nichts gefunden"));
-        assertThat(search("%"), containsString("mindestens zwei Zeichen"));
-        assertThat(search("%%"), containsString("Nichts gefunden"));
+        assertThat(search("%"), containsString("mindestens zwei Buchstaben oder Ziffern"));
+        // A3: wildcards alone hold no letter or digit; around a word they are no wildcard either.
+        assertThat(search("%%"), containsString("mindestens zwei Buchstaben oder Ziffern"));
+        assertThat(search("%zqs_l%"), containsString("Nichts gefunden"));
         assertThat(titles(eventGroup(search("zqsql"))), is(List.of("CLEANUP Zqsql Anlass")));
     }
 

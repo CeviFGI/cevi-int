@@ -30,7 +30,8 @@ public class VoluntaryResource {
         public static native TemplateInstance delete(long id, VoluntaryService service);
     }
     /**
-     * The Offer List. {@code angebot} names the offer a search result led to (UC-010 step 5): that
+     * The Offer List. {@code angebot} names the offer a search result led to (UC-010 step 5,
+     * UC-003 A5): that
      * entry is marked and shows its complete Description; the address's fragment brings it into
      * view without script. An id that no longer exists marks nothing (UC-010 A7).
      */

@@ -30,6 +30,16 @@ final class Words {
         return words;
     }
 
+    /** How many letters and digits {@code text} holds — the characters words are made of (UC-010 A3). */
+    static int letterCount(String text) {
+        int count = 0;
+        Matcher matcher = WORD.matcher(text == null ? "" : text);
+        while (matcher.find()) {
+            count += matcher.group().codePointCount(0, matcher.group().length());
+        }
+        return count;
+    }
+
     /** The position in {@code text} of the first word that begins with one of {@code prefixes}. */
     static int firstOccurrence(String text, List<String> prefixes) {
         Matcher matcher = WORD.matcher(text);
