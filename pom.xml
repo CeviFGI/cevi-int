@@ -184,6 +184,12 @@
           </excludes>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+            <!-- quarkus-jacoco's shutdown hook waits for its own data file, which never appears
+                 while the jacoco-maven-plugin agent already records into jacoco-unit.exec; it then
+                 gives up after a hard-coded 10 s on every test JVM. Pointing it at the agent's file
+                 (and keeping that file, which the agent appends to) removes the wait. -->
+            <quarkus.jacoco.data-file>${project.build.directory}/jacoco-unit.exec</quarkus.jacoco.data-file>
+            <quarkus.jacoco.reuse-data-file>true</quarkus.jacoco.reuse-data-file>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -206,7 +212,17 @@
               <argLine>${failsafeArgLine}</argLine>
               <systemPropertyVariables>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                <!-- Same as for Surefire: quarkus-jacoco reads the agent's file instead of waiting
+                     10 s for one of its own. -->
+                <quarkus.jacoco.data-file>${project.build.directory}/jacoco-it.exec</quarkus.jacoco.data-file>
+                <quarkus.jacoco.reuse-data-file>true</quarkus.jacoco.reuse-data-file>
               </systemPropertyVariables>
+              <environmentVariables>
+                <!-- Playwright.create() would otherwise install Firefox and WebKit as well on every
+                     run and warn about their missing system libraries. The tests only use Chromium,
+                     which the install-playwright-browsers execution below has already fetched. -->
+                <PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>1</PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>
+              </environmentVariables>
             </configuration>
           </execution>
         </executions>

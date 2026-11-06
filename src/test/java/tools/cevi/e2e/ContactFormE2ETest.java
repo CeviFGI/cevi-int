@@ -9,8 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tools.cevi.contact.ContactFormEntry;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -35,7 +35,8 @@ public class ContactFormE2ETest extends PlaywrightTestBase {
         page.locator("#spam").fill("50");
         page.locator(".form-actions button[type='submit']").click();
 
-        assertThat(page.getByText("Nachricht ist unterwegs").isVisible(), is(true));
+        // Web-first assertion: waits for the answer page, so the entry below is committed too.
+        assertThat(page.getByText("Nachricht ist unterwegs")).isVisible();
         assertThat(ContactFormEntry.find("message", message).count(), is(1L));
     }
 
@@ -51,16 +52,16 @@ public class ContactFormE2ETest extends PlaywrightTestBase {
         page.locator("#spam").fill("7");
         page.locator(".form-actions button[type='submit']").click();
 
-        assertThat(page.locator("#message").inputValue(), is(message));
-
+        // Web-first assertions throughout: they wait for the answer page and for the focus to be
+        // set, where reading the state right after the click raced the page load.
         Locator summary = page.locator(".error-summary");
-        assertThat(summary.isVisible(), is(true));
-        assertThat(page.evaluate("document.activeElement.className").toString(),
-                containsString("error-summary"));
+        assertThat(summary).isVisible();
+        assertThat(summary).isFocused();
+        assertThat(page.locator("#message")).hasValue(message);
 
         summary.locator("a").click();
-        assertThat(page.evaluate("document.activeElement.id").toString(), is("spam"));
-        assertThat(page.locator("#spam").getAttribute("aria-invalid"), is("true"));
+        assertThat(page.locator("#spam")).isFocused();
+        assertThat(page.locator("#spam")).hasAttribute("aria-invalid", "true");
 
         assertThat(ContactFormEntry.find("message", message).count(), is(0L));
     }

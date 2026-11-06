@@ -4,7 +4,6 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -150,6 +149,8 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
     void without_a_share_dialog_the_address_is_copied_and_confirmed() {
         allowClipboard();
         List<String> foreign = foreignRequests();
+        // A controlled clock, so the five seconds of BR-006 pass without the test waiting them out.
+        page.clock().install();
         openEventPage(NO_SHARE_DIALOG);
 
         shareButton().click();
@@ -157,8 +158,10 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
         assertThat(status()).hasText("Link kopiert");
         assertThat(clipboard(), is(publicAddress()));
         assertThat(addressField()).isHidden();
-        assertThat(status()).isEmpty(new LocatorAssertions.IsEmptyOptions()
-                .setTimeout(10_000));
+        page.clock().runFor(4_000);
+        assertThat(status()).hasText("Link kopiert");
+        page.clock().runFor(1_000);
+        assertThat(status()).isEmpty();
         assertThat(foreign, empty());
     }
 

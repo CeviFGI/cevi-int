@@ -3,15 +3,15 @@ package tools.cevi.search;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import tools.cevi.event.Event;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -25,8 +25,13 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
  * <p>Measured in the test JVM against the SQLite file, not on the production host the requirement
  * names; it holds the implementation to the figure, and a regression that multiplies the work per
  * entry shows up here first.
+ *
+ * <p>The volume is stored once for the class, not per test: both measurements only read it. The
+ * fixtures' per-test clean-up deletes by id, so it never touches these rows; {@link #removeThem()}
+ * does.
  */
 @QuarkusTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SearchResponseTimeTest {
 
     private static final String PREFIX = "CLEANUP Last ";
@@ -40,9 +45,16 @@ class SearchResponseTimeTest {
             .repeat(12) + "<a href=\"https://example.org/info\">Weitere Informationen</a></p>"
             + "<ul><li>Kosten: 300 Euro</li><li>Alter: 18 bis 30</li></ul>";
 
-    @BeforeEach
+    /**
+     * {@code @BeforeAll} runs without a request context, so the transaction is the
+     * {@code requiringNew()} kind rather than {@code begin()}/{@code commit()}, which is request-scoped.
+     */
+    @BeforeAll
     void storeTheVolumeNfr046Names() {
-        QuarkusTransaction.begin();
+        QuarkusTransaction.requiringNew().run(SearchResponseTimeTest::storeTheVolume);
+    }
+
+    private static void storeTheVolume() {
         for (int i = 0; i < EVENTS; i++) {
             Event event = new Event();
             event.title = PREFIX + "Anlass " + i;
@@ -61,15 +73,14 @@ class SearchResponseTimeTest {
             offer.description = DESCRIPTION + (i % 20 == 0 ? "<p>Zqlast</p>" : "");
             offer.persist();
         }
-        QuarkusTransaction.commit();
     }
 
-    @AfterEach
+    @AfterAll
     void removeThem() {
-        QuarkusTransaction.begin();
-        Event.delete("title like ?1", PREFIX + "%");
-        VoluntaryService.delete("organization like ?1", PREFIX + "%");
-        QuarkusTransaction.commit();
+        QuarkusTransaction.requiringNew().run(() -> {
+            Event.delete("title like ?1", PREFIX + "%");
+            VoluntaryService.delete("organization like ?1", PREFIX + "%");
+        });
     }
 
     private static long p95(String path, String term) {
@@ -82,7 +93,7 @@ class SearchResponseTimeTest {
             request(path, term);
             durations.add((System.nanoTime() - start) / 1_000_000);
         }
-        Collections.sort(durations);
+        durations.sort(null);
         return durations.get((int) Math.ceil(RUNS * 0.95) - 1);
     }
 

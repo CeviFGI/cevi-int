@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,13 +48,13 @@ public class NavigationDrawerE2ETest extends PlaywrightTestBase {
         Locator contact = navigationLink("Kontakt");
         Locator menuButton = page.locator("label.site-nav__button");
 
-        assertThat(contact.isVisible(), is(false));
+        assertThat(contact).isHidden();
 
         menuButton.click();
-        assertThat(contact.isVisible(), is(true));
+        assertThat(contact).isVisible();
 
         menuButton.click();
-        assertThat(contact.isVisible(), is(false));
+        assertThat(contact).isHidden();
     }
 
     /** From 900 px the navigation is a row and needs no menu button at all. */
@@ -64,8 +63,8 @@ public class NavigationDrawerE2ETest extends PlaywrightTestBase {
         page.setViewportSize(DESKTOP_WIDTH, 800);
         page.navigate(url("/anlaesse"));
 
-        assertThat(navigationLink("Kontakt").isVisible(), is(true));
-        assertThat(page.locator("label.site-nav__button").isVisible(), is(false));
+        assertThat(navigationLink("Kontakt")).isVisible();
+        assertThat(page.locator("label.site-nav__button")).isHidden();
     }
 
     /**
@@ -85,7 +84,7 @@ public class NavigationDrawerE2ETest extends PlaywrightTestBase {
                 "the checkbox behind the menu label has to be focusable, or the drawer is mouse-only");
 
         page.keyboard().press("Space");
-        assertThat(contact.isVisible(), is(true));
+        assertThat(contact).isVisible();
 
         // The brand link sits between the toggle and the panel in the document, so the drawer is
         // the second stop, not the first. What matters is that it is reachable at all — a panel
@@ -98,7 +97,7 @@ public class NavigationDrawerE2ETest extends PlaywrightTestBase {
 
         toggle.focus();
         page.keyboard().press("Space");
-        assertThat(contact.isVisible(), is(false));
+        assertThat(contact).isHidden();
     }
 
     /**

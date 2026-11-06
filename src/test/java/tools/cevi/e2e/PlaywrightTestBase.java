@@ -29,6 +29,10 @@ import java.nio.file.Paths;
  * {@link BrowserContext}. A trace is recorded for every test but only kept on disk
  * (under {@code target/playwright-traces/}) when the test fails, ready to be
  * inspected with the Playwright Trace Viewer or uploaded as a CI artifact.
+ *
+ * <p>Tracing costs about a tenth of the e2e run. It stays on by default because a trace is the
+ * main diagnosis of a failure in CI; {@code -Dplaywright.trace=false} switches it off for a local
+ * run.
  */
 @QuarkusTest
 @ExtendWith(PlaywrightTestBase.PlaywrightLifecycle.class)
@@ -97,18 +101,25 @@ public abstract class PlaywrightTestBase {
     static class PlaywrightLifecycle implements BeforeEachCallback, AfterEachCallback, TestWatcher {
         private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(PlaywrightTestBase.class);
         private static final Path TRACE_DIR = Paths.get("target", "playwright-traces");
+        private static final boolean TRACING = !"false".equalsIgnoreCase(System.getProperty("playwright.trace"));
 
         @Override
         public void beforeEach(ExtensionContext extensionContext) {
             PlaywrightTestBase instance = (PlaywrightTestBase) extensionContext.getRequiredTestInstance();
             instance.context = browser.newContext();
-            instance.context.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true).setSources(true));
+            if (TRACING) {
+                instance.context.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true).setSources(true));
+            }
             instance.page = instance.context.newPage();
         }
 
         @Override
         public void afterEach(ExtensionContext extensionContext) throws IOException {
             PlaywrightTestBase instance = (PlaywrightTestBase) extensionContext.getRequiredTestInstance();
+            if (!TRACING) {
+                instance.context.close();
+                return;
+            }
             Files.createDirectories(TRACE_DIR);
             Path tracePath = TRACE_DIR.resolve(sanitize(extensionContext.getUniqueId()) + ".zip");
             try {
