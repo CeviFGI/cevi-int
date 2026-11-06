@@ -25,14 +25,19 @@ public class VoluntaryResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance list(List<VoluntaryService> services);
+        public static native TemplateInstance list(List<VoluntaryService> services, int chosen);
         public static native TemplateInstance form(long id, String organization, String organizationLink, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(long id, VoluntaryService service);
     }
+    /**
+     * The Offer List. {@code angebot} names the offer a search result led to (UC-010 step 5): that
+     * entry is marked and shows its complete Description; the address's fragment brings it into
+     * view without script. An id that no longer exists marks nothing (UC-010 A7).
+     */
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance list() {
-        return Templates.list(VoluntaryService.listAll());
+    public TemplateInstance list(@QueryParam("angebot") int chosen) {
+        return Templates.list(VoluntaryService.listAll(), chosen);
     }
 
     @GET
@@ -119,7 +124,7 @@ public class VoluntaryResource {
                 voluntaryService.persist();
                 QuarkusTransaction.commit();
                 Log.info("Created: " + voluntaryService);
-                return Templates.list(VoluntaryService.listAll());
+                return Templates.list(VoluntaryService.listAll(), 0);
             } catch (Exception e) {
                 Log.error("Unable to save [" + voluntaryService  + "] to database.", e);
                 QuarkusTransaction.rollback();
@@ -146,7 +151,7 @@ public class VoluntaryResource {
                 voluntaryService.persist();
                 QuarkusTransaction.commit();
                 Log.info("Updated: " + voluntaryService);
-                return Templates.list(VoluntaryService.listAll());
+                return Templates.list(VoluntaryService.listAll(), 0);
             } else {
                 QuarkusTransaction.rollback();
             }
@@ -168,6 +173,6 @@ public class VoluntaryResource {
             Log.error("Unable to delete VoluntaryService [" + id  + "] from database.", e);
             QuarkusTransaction.rollback();
         }
-        return Templates.list(VoluntaryService.listAll());
+        return Templates.list(VoluntaryService.listAll(), 0);
     }
 }

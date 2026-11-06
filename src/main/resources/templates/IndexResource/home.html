@@ -75,7 +75,7 @@ anything meant for a visitor (FR-038, BR-042).!}
         {#else}
         <div class="grid">
             {#for service in services}
-            {#voluntaryService service showActions=false}{/voluntaryService}
+            {#voluntaryService service showActions=false chosen=0}{/voluntaryService}
             {/for}
         </div>
         {/if}

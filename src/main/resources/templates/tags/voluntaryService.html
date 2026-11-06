@@ -2,17 +2,20 @@
 An offer in a list (BR-043, BR-044). An offer has no page of its own, so the control leading to the
 organisation is the card's own action and the card itself is not a link. Because there is nowhere
 to send the visitor for the rest of the text, it opens in place instead.
+UC-010 step 5: the offer a search result led to (`chosen`) is marked and opened; its id is the
+fragment the search result's address scrolls to.
 !}
-<article class="card">
+<article class="card{#if it.id == chosen} card--chosen{/if}" id="angebot-{it.id}">
     <div class="card__band card__band--v{it.id.accentVariant}">
         <p class="card__band-kicker">Volontariat</p>
         <p class="card__band-date">{it.location}</p>
     </div>
     <div class="card__body">
+        {#if it.id == chosen}<p class="chip">Dein Suchtreffer</p>{/if}
         <h2 class="card__title">{it.organization}</h2>
         <p class="card__excerpt">{it.description.excerpt}</p>
         {#if it.description.shortened}
-        <details class="disclosure">
+        <details class="disclosure"{#if it.id == chosen} open{/if}>
             <summary>Ganzen Text lesen</summary>
             <div class="prose">{it.description.withScrollableTables.raw}</div>
         </details>

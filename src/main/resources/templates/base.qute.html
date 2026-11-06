@@ -37,6 +37,21 @@
           </label>
         </div>
 
+        <!-- UC-010 BR-007: the search field, in the same place on every page. A plain GET form, so
+             searching works without script (BR-006); search.js only adds the Live Results (A1). -->
+        <form class="site-search" action="/suche" method="get" role="search" data-search>
+          <label class="visually-hidden" for="site-search-q">Anlässe und Volontariate durchsuchen</label>
+          <input class="site-search__input" id="site-search-q" type="search" name="q"
+                 value="{#insert searchValue}{/}" placeholder="Land, Thema, Organisation …"
+                 autocomplete="off" spellcheck="false">
+          <button class="site-search__button" type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+            <span class="visually-hidden">Suchen</span>
+          </button>
+          <div class="live-results" id="site-search-live" hidden></div>
+          <p class="visually-hidden" role="status" data-search-status></p>
+        </form>
+
         <nav class="site-nav__panel" aria-label="Hauptnavigation">
           <ul class="site-nav__list">
             <li><a class="site-nav__link" href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}aria-current="page"{/if}>Anlässe</a></li>
@@ -101,6 +116,8 @@
     </footer>
   </div>
 
+  <!-- UC-010 A1: Live Results below the search field; nothing depends on it (C-021, NFR-041) -->
+  <script src="/js/search.js" defer></script>
   {#insert scripts}{/}
 </body>
 </html>

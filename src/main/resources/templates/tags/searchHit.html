@@ -1,0 +1,17 @@
+{!
+UC-010 step 3: one match on the Search Results Page — title or Organisation, location (in the band for an offer, as on the Offer List), the Date Text
+of an event, and the passage of the Description around the match. The excerpt is plain text and
+rendered escaped. The title leads to the event's page or to the offer's entry in the Offer List
+(step 5).
+!}
+<article class="card">
+    <div class="card__band card__band--v{it.key.accentVariant}">
+        <p class="card__band-kicker">{kicker}</p>
+        <p class="card__band-date">{#if it.dateText}{it.dateText}{#else}{it.location}{/if}</p>
+    </div>
+    <div class="card__body">
+        <h3 class="card__title"><a href="{it.href}">{it.title}</a></h3>
+        {#if it.dateText}<p class="meta meta--place">{it.location}</p>{/if}
+        <p class="card__excerpt">{it.excerpt}</p>
+    </div>
+</article>

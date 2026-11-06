@@ -1,0 +1,20 @@
+{!UC-010 A1: the fragment search.js places below the search field. The first line is what the
+script announces to assistive technology (A1 step 2).!}
+<p class="live-results__count" data-count>{#if count == 0}Keine Treffer{#else if count == 1}1 Treffer{#else}{count} Treffer{/if}</p>
+{#if !events.isEmpty}
+<p class="live-results__group">Anlässe</p>
+<ul class="live-results__list">
+    {#for hit in events}
+    <li><a class="live-results__link" href="{hit.href}"><span class="live-results__title">{hit.title}</span> <span class="live-results__place">{hit.location}</span></a></li>
+    {/for}
+</ul>
+{/if}
+{#if !offers.isEmpty}
+<p class="live-results__group">Volontariat</p>
+<ul class="live-results__list">
+    {#for hit in offers}
+    <li><a class="live-results__link" href="{hit.href}"><span class="live-results__title">{hit.title}</span> <span class="live-results__place">{hit.location}</span></a></li>
+    {/for}
+</ul>
+{/if}
+<a class="live-results__link live-results__all" href="{term.address}">Alle Treffer anzeigen</a>

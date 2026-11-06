@@ -32,17 +32,30 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
                 && webApplicationException.getResponse().getStatus() < 500) {
             int status = webApplicationException.getResponse().getStatus();
             Log.warnf("HTTPStatus[%d], errorId[%s], Url[%s], Message[%s]",
-                    status, errorId, uriInfo.getRequestUri(), exception.toString());
+                    status, errorId, loggableAddress(), exception.toString());
             return Response.status(status)
                     .type(MediaType.TEXT_HTML_TYPE)
                     .entity(error500.data("errorId", errorId))
                     .build();
         }
 
-        Log.error("HTTPStatus[500], errorId[" + errorId + "], Url[" + uriInfo.getRequestUri() + "], Message[" + exception + "], Stack Trace ", exception);
+        Log.error("HTTPStatus[500], errorId[" + errorId + "], Url[" + loggableAddress() + "], Message[" + exception + "], Stack Trace ", exception);
         return Response.status(500)
                 .type(MediaType.TEXT_HTML_TYPE)
                 .entity(error500.data("errorId", errorId))
                 .build();
+    }
+
+    /**
+     * The address of the failed request for the log. A search carries its Search Term in the
+     * query, and the term is never logged (UC-010 BR-005), so a search is logged by its path only.
+     */
+    // UC-010 BR-005: the log names the address of a search without its Search Term.
+    private String loggableAddress() {
+        String path = uriInfo.getPath();
+        if (path.startsWith("/suche") || path.startsWith("suche")) {
+            return path;
+        }
+        return String.valueOf(uriInfo.getRequestUri());
     }
 }

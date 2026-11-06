@@ -1,0 +1,55 @@
+{#include base}
+{!UC-010 step 3: the Search Term stays in the search field of the header (BR-007), shortened to
+100 characters when it was longer (A4).!}
+{#searchValue}{term.text}{/searchValue}
+<div class="page-column">
+<div class="page-head">
+    {#if !term.searchable}
+    <h1>Suche</h1>
+    {!UC-010 A3: no search below two characters other than spaces.!}
+    <p class="lead">Gib einen Suchbegriff mit mindestens zwei Zeichen ein.</p>
+    {#else}
+    <p class="eyebrow">{count} Treffer</p>
+    <h1>Suche nach «{term.text}»</h1>
+    {/if}
+</div>
+
+{#if term.searchable}
+{#if count == 0}
+{!UC-010 A2: nothing matched — the way to both lists and to the Contact Form.!}
+<div class="empty">
+    <h2>Nichts gefunden</h2>
+    <p>Kein Anlass und kein Volontariat passt zu «{term.text}». Versuch es mit einem anderen Wort,
+       schau dich in den Listen um oder frag uns direkt.</p>
+    <div class="cluster">
+        <a class="btn btn--primary" href="/anlaesse">Zu den Anlässen</a>
+        <a class="btn btn--ghost" href="/volontariat">Zum Volontariat</a>
+        <a class="btn btn--ghost" href="/kontakt">Schreib uns</a>
+    </div>
+</div>
+{#else}
+{!UC-010 A5: a group without matches is left out, not shown empty.!}
+{#if !events.isEmpty}
+<section class="search-group" aria-labelledby="treffer-anlaesse">
+    <h2 id="treffer-anlaesse">Anlässe <span class="search-group__count">{events.size}</span></h2>
+    <div class="grid">
+        {#for hit in events}
+        {#searchHit hit kicker="Anlass"}{/searchHit}
+        {/for}
+    </div>
+</section>
+{/if}
+{#if !offers.isEmpty}
+<section class="search-group" aria-labelledby="treffer-volontariat">
+    <h2 id="treffer-volontariat">Volontariat <span class="search-group__count">{offers.size}</span></h2>
+    <div class="grid">
+        {#for hit in offers}
+        {#searchHit hit kicker="Volontariat"}{/searchHit}
+        {/for}
+    </div>
+</section>
+{/if}
+{/if}
+{/if}
+</div>
+{/include}

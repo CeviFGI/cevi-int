@@ -23,7 +23,7 @@
 {#else}
 <div class="grid">
     {#for service in services}
-    {#voluntaryService service showActions=true}{/voluntaryService}
+    {#voluntaryService service showActions=true chosen=chosen}{/voluntaryService}
     {/for}
 </div>
 {/if}
