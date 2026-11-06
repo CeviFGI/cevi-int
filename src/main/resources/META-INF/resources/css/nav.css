@@ -14,6 +14,7 @@
  *     div.site-header__inner
  *       div.site-header__bar            brand + menu button
  *       nav.site-nav__panel             the list
+ *       form.site-search                the search field (search.css), after the list
  *
  * The checkbox sits outside the inner wrapper so that ~ reaches the panel from it.
  */

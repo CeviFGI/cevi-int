@@ -2,9 +2,11 @@
  * Search (UC-010): the search field in the header, its Live Results, the Search Results Page and
  * the offer a search result leads to.
  *
- * The field sits in the header of every page (BR-007): below the bar on a phone, between the brand
- * and the navigation on a wide screen. The Live Results are an overlay below the field and exist
- * only where search.js runs (A1, C-021).
+ * The field sits in the header of every page (BR-007), after the navigation in the markup and on
+ * screen alike, so the focus order never departs from what the visitor sees (WCAG 2.4.3): below the
+ * bar — and below the open drawer — on a phone, a row of its own below brand and navigation on a
+ * medium screen, and after the navigation at the end of the row on a wide one. The Live Results are
+ * an overlay below the field and exist only where search.js runs (A1, C-021).
  */
 
 .site-search {
@@ -52,15 +54,11 @@
 
 @media (min-width: 900px) {
     .site-header__inner { flex-wrap: wrap; }
-    .site-search {
-        order: 3;
-        flex-basis: 100%;
-    }
+    .site-search { flex-basis: 100%; }
 }
 @media (min-width: 1100px) {
     .site-header__inner { flex-wrap: nowrap; }
     .site-search {
-        order: 0;
         flex: 1;
         max-width: 22rem;
         padding-bottom: 0;
