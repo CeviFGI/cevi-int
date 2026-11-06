@@ -1,8 +1,10 @@
 # Requirements: Cevi International Platform
 
 **Document status:** Draft for review
-**Date:** 2026-08-25 (revision 5 — visual redesign: design system, brand conformity, entry page,
-scannable lists, form usability, responsiveness and accessibility made testable)
+**Date:** 2026-11-06 (revision 6 — sharing an event from its page: FR-040, C-021 and NFR-041
+amended to admit one share script on the event page); revision 5 of 2026-08-25 — visual redesign:
+design system, brand conformity, entry page, scannable lists, form usability, responsiveness and
+accessibility made testable
 **Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-008`, `docs/entity_model.md`,
 security review of 2026-08-15, `docs/ux_concept.md` and `docs/redesign_plan.md` of 2026-08-25,
 Cevi Schweiz Corporate Design Manual (2020)
@@ -57,6 +59,7 @@ here so the requirement is testable and are listed for confirmation in
 | FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Verified     |
 | FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Verified     |
 | FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Verified     |
+| FR-040 | Share an Event                 | As a visitor, I want a share control on an event's page that opens my device's share dialog with the event's title, date text and public address, or — where the browser offers no share dialog — copies the public address to the clipboard and confirms it, so that I can pass an event on to friends in a chat without copying the address by hand. | Medium   | Open         |
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -146,7 +149,7 @@ as the gap it is; scope and role model need confirmation.
 | NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Verified     |
 | NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Verified     |
 | NFR-040 | Reduced Motion                 | When the browser reports `prefers-reduced-motion: reduce`, 100 % of transitions and animations are disabled; 0 animations are required to understand or operate the interface. | Usability       | Medium   | Verified     |
-| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript; the complete first view stays below 150 KB. | Performance     | High     | Verified     |
+| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript — except the event page, which executes at most 2 KB (uncompressed) of share script for FR-040; the complete first view stays below 150 KB. | Performance     | High     | Verified     |
 | NFR-042 | No Third-Party Asset Requests  | A public page issues 0 requests to hosts other than the application's own origin — fonts, styles, scripts and images are served from it; this keeps the Content-Security-Policy of NFR-024 free of external sources and sends 0 visitor IP addresses to third parties. | Security        | High     | Verified     |
 | NFR-043 | Consistent Page Structure      | 100 % of pages render exactly one `h1`, a heading order with no skipped level, a skip link as the first focusable element, and the data protection link reachable without scrolling the navigation. | Usability       | Medium   | Verified     |
 | NFR-044 | Brand Conformity               | 100 % of brand colours and typefaces in the interface are those defined by the Cevi Schweiz Corporate Design Manual (2020): Cevi-Rot `#C41333`, Cevi-Blau `#323394`, Cevi-Schwarz `#141412`, Montserrat for titles and interface text, Lora for body copy; 0 further brand hues are introduced. | Usability       | Medium   | Implemented  |
@@ -274,7 +277,7 @@ public pages faster than they are today instead of slower.
 | C-018 | Permissive Frontend Licences | Every frontend library delivered to a visitor's browser must be under a permissive licence (MIT, BSD or Apache-2.0), and every web font under a permissive font licence (SIL OFL-1.1, MIT, Apache-2.0); copyleft-licensed components must not be shipped, so that publishing the application never depends on satisfying copyleft obligations. | Regulatory  | High     | Implemented |
 | C-019 | Corporate Design Conformity  | The interface must follow the Cevi Schweiz Corporate Design Manual (2020) for logo, brand colours and typefaces; no alternative brand identity may be introduced for this platform.                                        | Business    | High     | Implemented |
 | C-020 | No CSS Framework             | The visual layer must be built from the project's own stylesheets; no CSS framework may be introduced, because every framework would have to be overridden to reach C-019, adds a dependency subject to NFR-035, and costs more transferred bytes than NFR-041 allows. | Technical   | Medium   | Verified    |
-| C-021 | No Client-Side Scripting on Public Pages | Navigation, disclosure and layout on pages reachable without an administrator session must work without JavaScript; scripting may be delivered only to the two administrator form pages that host the rich-text editor. | Technical   | High     | Verified    |
+| C-021 | No Client-Side Scripting on Public Pages | Navigation, disclosure and layout on pages reachable without an administrator session must work without JavaScript; scripting may be delivered only to the two administrator form pages that host the rich-text editor, and to the event page for the share control of FR-040 — a self-hosted script without a library, whose absence leaves the page fully usable and the public address readable. | Technical   | High     | Verified    |
 
 **Note on C-019, C-020, C-021 — decisions taken with the product owner on 2026-08-25.** A CSS
 framework, photographic imagery per record and a deeper restructuring of the navigation were all
@@ -284,6 +287,18 @@ C-021 records what has in fact been true since the editor was scoped to the two 
 (NFR-036); it is stated now because the redesign is where a JavaScript-driven menu or carousel
 would otherwise creep in. C-019 makes the brand binding, which also settles which fonts NFR-044
 names.
+
+**Note on FR-040, C-021, NFR-041 — the one exception, decided with the product owner on
+2026-11-06.** Neither the operating system's share dialog (Web Share API) nor writing to the
+clipboard is reachable without JavaScript, and the alternative without script — prepared links to
+single messengers — was declined because it serves only the channels it happens to list. C-021 and
+NFR-041 therefore admit exactly one script on exactly one public page, capped at 2 KB and without a
+library, so the rule still keeps menus, carousels and frameworks out. Progressive enhancement keeps
+C-021's purpose intact: without the script the page shows the public address as selectable text,
+and nothing else on the page depends on it. The Content-Security-Policy is unchanged
+(`script-src 'self'`, NFR-024), because the script is a file served from the application's own
+origin (NFR-042). The choice between share dialog and clipboard follows only what the browser
+offers, not a guess about the device: a desktop browser that offers the share dialog shows it.
 
 **Note on C-017, C-018 — what they rule out.** Both were applied implicitly and are recorded now
 because they decide the editor replacement: C-017 excludes CKEditor 5 and TipTap, which are

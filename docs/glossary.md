@@ -1,6 +1,6 @@
 # Glossary
 
-**Date:** 2026-11-06
+**Date:** 2026-11-06 (Share Dialog, Event Page added)
 **Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
 `docs/use_cases/UC-001` … `UC-008`
 
@@ -74,6 +74,8 @@ test cases.
 |----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | Start Page                 | The page at `/` that says in one screen what the platform offers and leads on to Events, Voluntary Service Offers and the working group (UC-008).                | Landing page, Home page |
 | Event List                 | The page under `/anlaesse` that lists all Upcoming Events in order of Display Date, nearest first.                                                                 |                        |
+| Event Page                 | The own page of one Event under its Public Address, showing the complete Description; the page the Visitor shares (FR-003, FR-040).                                |                        |
+| Share Dialog               | The operating system's own dialog for passing a link on to an app or contact, opened by the browser on request (Web Share API); offered on most phones and on some desktop browsers. | Share sheet            |
 | Offer List                 | The page that lists all Voluntary Service Offers, each linking to its Organisation.                                                                                |                        |
 | Information Page           | A public page about the platform itself: the Working Group Presentation and the Data Protection Page.                                                             |                        |
 | Working Group Presentation | The Information Page that introduces the International Working Group and groups its external sources by channel (BR-046).                                         |                        |
