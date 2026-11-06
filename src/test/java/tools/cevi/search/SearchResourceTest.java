@@ -227,10 +227,10 @@ class SearchResourceTest {
         assertThat(Pattern.compile("card--chosen").matcher(list).results().count(), is(1L));
     }
 
-    // --- Step 3: the excerpt (OQ-003) --------------------------------------------------------
+    // --- BR-008: the excerpt ----------------------------------------------------------------
 
     /**
-     * Step 3 (OQ-003): the excerpt is the passage around the first occurrence — at most 160
+     * BR-008: the excerpt is the passage around the first occurrence — at most 160
      * characters, with some text before the match and an ellipsis at each cut end.
      */
     @Test
@@ -248,7 +248,7 @@ class SearchResourceTest {
         assertThat(excerpt.length(), lessThanOrEqualTo(160 + 2));
     }
 
-    /** Step 3 (OQ-003): with several words, the passage is the one around the earliest of them. */
+    /** BR-008: with several words, the passage is the one around the earliest of them. */
     @Test
     void with_several_words_the_excerpt_shows_the_earliest_occurrence() {
         String filler = " Füllsatz ohne Bedeutung für die Suche.".repeat(10);
@@ -582,7 +582,7 @@ class SearchResourceTest {
         assertThat(titles(eventGroup(search("zqohne zürich"))), is(List.of("CLEANUP Zqohne Zurich")));
     }
 
-    /** BR-003 (OQ-004): ł, ø and đ match l, o and d; ß is not folded. */
+    /** BR-003: ł, ø and đ match l, o and d; ß is not folded. */
     @Test
     void letters_with_a_stroke_are_folded_but_sharp_s_is_not() {
         event("CLEANUP Zqstrich Łódź Ørsted Đakovo", "Text");
@@ -595,7 +595,7 @@ class SearchResourceTest {
     }
 
     /**
-     * BR-003 (OQ-004): every character other than a letter or a digit separates words, in the
+     * BR-003: every character other than a letter or a digit separates words, in the
      * entry and in the Search Term alike.
      */
     @Test

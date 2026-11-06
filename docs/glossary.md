@@ -1,6 +1,6 @@
 # Glossary
 
-**Date:** 2026-11-06 (Search Term, Search Results Page, Live Results added; Share Dialog, Event Page added)
+**Date:** 2026-11-06 (Search Term, Search Results Page, Live Results added; Share Dialog, Event Page added; Excerpt extended to the Search Results Page)
 **Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
 `docs/use_cases/UC-001` … `UC-010`
 
@@ -42,7 +42,7 @@ test cases.
 | Exchange Offer          | An exchange opportunity with a Partner Organisation. Present in the schema but used by no use case; scope undecided (FR-029).                                                               |                            |
 | Description             | The formatted text of an Event or offer, written in the rich-text editor and reduced to the Allow-List before it is stored.                                                                |                            |
 | Allow-List              | The documented set of HTML tags, attributes and URL schemes a Description may keep; everything else is removed on the server before storage (NFR-010).                                     | Whitelist                  |
-| Excerpt                 | The shortened beginning of a Description shown in a list entry; the full text is shown only on the own page of the entry (BR-040).                                                         | Teaser                     |
+| Excerpt                 | At most 160 characters of a Description's visible text shown instead of the full text: in a list entry its beginning (BR-040); on the Search Results Page the passage around the earliest occurrence of the Search Term, or the beginning when it does not occur there (UC-010 BR-008). | Teaser                     |
 
 ## Contact
 

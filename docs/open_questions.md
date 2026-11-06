@@ -47,7 +47,7 @@ resolves them behind the trusted proxy; the script uses the browser's own origin
 **Element:** UC-010 step 3
 **Raised by:** /use-case-implement, 2026-11-06
 **Blocking:** No
-**Status:** Answered
+**Status:** Resolved
 
 Step 3 shows "the passage around the first occurrence of the Search Term" in the Description, but states neither
 the length of the passage nor what "the first occurrence" is for a Search Term of several words, which BR-003
@@ -59,13 +59,14 @@ Search Term as typed.
 **Answer:** (a) — 160 characters around the earliest occurrence of any word of the Search Term, an ellipsis at
 each cut end, no highlighting.
 **Answered by:** Patrick Uhlmann, 2026-11-06
+**Resolved in:** UC-010 step 3, UC-010 BR-008
 
 ## OQ-004: Where does a word end, and which letters count as the same letter?
 
 **Element:** UC-010 BR-003
 **Raised by:** /use-case-implement, 2026-11-06
 **Blocking:** No
-**Status:** Answered
+**Status:** Resolved
 
 BR-003 matches a word of the Search Term against the beginning of a word of the entry and treats a letter with
 an accent or umlaut as the letter without it, but does not define what separates two words, nor whether letters
@@ -77,3 +78,4 @@ neither a letter nor a digit separates words, in the Search Term and in the entr
 **Answer:** (a) — any character other than a letter or a digit separates words; decomposition plus `ł`, `ø`,
 `đ`; `ß` is not folded.
 **Answered by:** Patrick Uhlmann, 2026-11-06
+**Resolved in:** UC-010 BR-003

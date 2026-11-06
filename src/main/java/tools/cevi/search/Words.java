@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
 
 /**
  * Splits text into words and folds them, the same way for a Search Term and for the text of an
- * entry, so that both sides of a comparison are always in the same form (UC-010 BR-003, OQ-004).
+ * entry, so that both sides of a comparison are always in the same form (UC-010 BR-003).
  */
 final class Words {
 
-    // UC-010 BR-003 (OQ-004): any character that is neither a letter nor a digit ends a word.
+    // UC-010 BR-003: any character that is neither a letter nor a digit ends a word.
     private static final Pattern WORD = Pattern.compile("[\\p{L}\\p{N}]+");
     private static final Pattern MARKS = Pattern.compile("\\p{M}+");
 
@@ -54,7 +54,7 @@ final class Words {
     static String fold(String word) {
         String decomposed = Normalizer.normalize(word, Normalizer.Form.NFD);
         String bare = MARKS.matcher(decomposed).replaceAll("");
-        // Letters whose stroke is part of the letter, not a separable mark (OQ-004).
+        // Letters whose stroke is part of the letter, not a separable mark (BR-003).
         return bare.toLowerCase(Locale.ROOT)
                 .replace('ł', 'l')
                 .replace('ø', 'o')

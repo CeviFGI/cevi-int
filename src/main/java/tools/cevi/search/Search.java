@@ -130,7 +130,7 @@ public final class Search {
     }
 
     /**
-     * UC-010 step 3 (OQ-003): 160 characters around the earliest occurrence of any word of the
+     * UC-010 BR-008: 160 characters around the earliest occurrence of any word of the
      * term, or the beginning of the Description as on the lists when it occurs only elsewhere.
      */
     static String excerpt(String description, String text, SearchTerm term) {

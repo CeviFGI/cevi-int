@@ -21,7 +21,7 @@
 
 1. The visitor enters a Search Term in the search field and starts the search.
 2. The system searches the Upcoming Events and all Voluntary Service Offers for the Search Term.
-3. The system presents the Search Results Page: the Search Term in the search field, the number of matches, and the matching Upcoming Events and the matching Voluntary Service Offers in two separate groups, each entry with its title or Organisation, its location, for an event its Date Text, and an excerpt of its Description: the passage around the first occurrence of the Search Term, or — when the Search Term occurs only outside the Description — the beginning of the Description as on the lists.
+3. The system presents the Search Results Page: the Search Term in the search field, the number of matches, and the matching Upcoming Events and the matching Voluntary Service Offers in two separate groups, each entry with its title or Organisation, its location, for an event its Date Text, and an excerpt of its Description that shows where the Search Term occurs in it (BR-008).
 4. The visitor picks the entry that interests them.
 5. The system leads the visitor to that entry: for an event to its Event Page, for an offer to its entry in the Offer List, brought into view, marked as the one chosen and with its complete Description shown in place (as in UC-003 A2).
 6. The visitor reads the event or offer they were looking for.
@@ -118,7 +118,7 @@ For an Event the search covers its title, Date Text, location and Description; f
 
 ### BR-003: All words must match, each from its beginning
 
-A Search Term of several words finds an entry only when every word occurs in it, in any field and in any order. A word matches a word of the entry that begins with it, so `pole` finds `Polen` and `freiwillig` finds `Freiwilligeneinsatz`. Upper and lower case are not distinguished, and a letter with an accent or umlaut matches the same letter without it (`Poděbrady` is found by `podebrady`, `Zürich` by `zurich`).
+A Search Term of several words finds an entry only when every word occurs in it, in any field and in any order. A word matches a word of the entry that begins with it, so `pole` finds `Polen` and `freiwillig` finds `Freiwilligeneinsatz`. Every character that is neither a letter nor a digit separates two words, in the Search Term and in the entry alike: `YMCA/YWCA` and `Cevi-Lager` are two words each, so `ywca` finds `YMCA/YWCA` and `lager` finds `Cevi-Lager`. Upper and lower case are not distinguished, and a letter with an accent, umlaut or other mark matches the same letter without it (`Poděbrady` is found by `podebrady`, `Zürich` by `zurich`); `ł`, `ø` and `đ` match `l`, `o` and `d`. `ß` is not replaced: it matches only `ß`.
 
 ### BR-004: Better matches first
 
@@ -135,3 +135,7 @@ Entering a Search Term, starting the search, reading the Search Results Page and
 ### BR-007: The search field is reachable from every public page
 
 Every public page offers the search field in the same place, so that a visitor can start a search wherever they are without first navigating to a search page.
+
+### BR-008: The excerpt shows where the Search Term occurs
+
+The excerpt of a match on the Search Results Page is at most 160 characters of the Description's visible text, as long as the excerpt on the lists (FR-035). It begins shortly before the earliest place in the Description at which any word of the Search Term occurs, and an ellipsis marks each end at which text was cut. When no word of the Search Term occurs in the Description, the excerpt is the beginning of the Description, as on the lists. The matching words are not highlighted.
