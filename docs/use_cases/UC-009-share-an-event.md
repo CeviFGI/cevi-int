@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor passes an event on to friends — in a chat, a message or an e-mail — without copying its address by hand, so that the people they want to bring along land directly on the event.
 **Trigger:** The visitor asks to share the event they are reading on its Event Page.
-**Status:** Draft
+**Status:** Tested
 **Introduced:** 2026-11-06 with requirements revision 6 (FR-040). Until then a visitor could pass an event on only by copying the address from the browser's address bar, which most visitors on a phone never see.
 
 **Requirements:** [FR-040, NFR-041, C-021](../requirements.md)
@@ -58,7 +58,7 @@
 **Trigger:** The visitor's browser has scripting switched off or did not load the share script (step 1)
 **Flow:**
 
-1. Instead of the share control, the Event Page shows the event's Public Address as selectable text, labelled as the link to the event.
+1. Instead of the share control, the Event Page shows the event's Public Address as selectable text, labelled as the link to the event; the system builds it from the address under which the visitor's request reached the platform (BR-003).
 2. The visitor copies the address themselves.
 3. Use case ends.
 
@@ -85,7 +85,7 @@ The Share Dialog receives the event's title, its date text and its Public Addres
 
 ### BR-003: The shared address is the event's Public Address
 
-The address passed on is always the event's Public Address: the scheme, host and port under which the visitor opened the Event Page, followed by the event's path built from its Short Name — with no parameters, no fragment, no session and nothing else about the visitor who shared it, even when the address the browser shows carries any of these. The host is the one the visitor's browser actually loaded the page from; the system takes no host from anything the request merely claims. A shared link therefore resolves for the recipient wherever it resolved for the visitor, as long as the event exists (UC-001 BR-003). No platform-wide base address needs to be configured for this.
+The address passed on is always the event's Public Address: the scheme, host and port under which the visitor opened the Event Page, followed by the address of the Event Page as the Event List links to it — the Event Page with the event's Short Name as its one and only parameter (`/anlaesse/detail?slug=<Short Name>`). Nothing else is added: no further parameter, no fragment, no session and nothing about the visitor who shared it, even when the address the browser shows carries any of these. Where the share control runs, the host is the one the visitor's browser actually loaded the page from. Where it does not (A4), the system names the scheme, host and port under which the visitor's request reached the platform, as the platform's own hosting in front of it reports them, and takes no host from anything the visitor's request merely claims. A shared link therefore resolves for the recipient wherever it resolved for the visitor, as long as the event exists (UC-001 BR-003). No platform-wide base address needs to be configured for this.
 
 ### BR-004: Sharing reveals nothing and reaches no third party
 

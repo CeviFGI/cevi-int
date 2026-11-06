@@ -14,8 +14,10 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.HtmlSanitizer;
@@ -33,7 +35,7 @@ public class EventResource {
         public static native TemplateInstance list(List<Event> events);
         public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(Event event);
-        public static native TemplateInstance detail(Event event);
+        public static native TemplateInstance detail(Event event, String publicAddress, String publicPath);
     }
 
     @GET
@@ -65,12 +67,29 @@ public class EventResource {
     @GET
     @Path("detail")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance detail(@QueryParam("slug") String slug) {
+    public TemplateInstance detail(@QueryParam("slug") String slug, @Context UriInfo uriInfo) {
         Event event = Event.findBySlug(slug);
         if (event == null) {
             throw new NotFoundException("Event with slug " + slug + " not found");
         }
-        return Templates.detail(event);
+        URI publicAddress = publicAddress(uriInfo, event);
+        return Templates.detail(event, publicAddress.toString(),
+                publicAddress.getRawPath() + "?" + publicAddress.getRawQuery());
+    }
+
+    /**
+     * The address the share control passes on and the page shows without script (UC-009 A4).
+     * The script replaces the origin with the one the browser actually loaded the page from, so
+     * the host taken from the request here only reaches a visitor whose browser runs no script.
+     */
+    // UC-009 BR-003: origin of the request, path from the Short Name, no other parameter.
+    static URI publicAddress(UriInfo uriInfo, Event event) {
+        return uriInfo.getBaseUriBuilder()
+                .replacePath("/anlaesse/detail")
+                .replaceQuery(null)
+                .fragment(null)
+                .queryParam("slug", event.slug)
+                .build();
     }
 
     /**

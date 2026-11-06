@@ -348,6 +348,21 @@ dl.panel dd:last-child { margin-bottom: 0; }
     margin-bottom: var(--space-5);
 }
 
+/* Share control of the event page (UC-009). Without script only the address field shows. */
+.share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+.share [hidden] { display: none; }
+.share__button svg { fill: currentColor; stroke: currentColor; stroke-width: 2; }
+.share__status { color: var(--success); font-family: var(--font-display); font-weight: 600; }
+.share__status:empty { display: none; }
+.share__address { flex: 1 1 100%; margin-bottom: 0; }
+.share__address input { font-family: var(--font-mono); }
+
 .teaser {
     display: flex;
     flex-wrap: wrap;

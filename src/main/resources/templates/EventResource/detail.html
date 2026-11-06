@@ -17,6 +17,26 @@
     {/let}
 </div>
 
+{!UC-009: the share control. Without script (A4) the visitor sees the Public Address as selectable
+text; share.js hides it, reveals the button and shows it again only when the clipboard refuses the
+address (A2). The address in the input comes from the request; the script replaces it with the
+origin the browser loaded the page from (BR-003).
+UC-009 BR-004: nothing here is recorded, and the script talks to no host — no counter, no log.
+UC-009 BR-005: the only script on a public page; nothing else on this page depends on it.!}
+<div class="share" data-share data-path="{publicPath}"
+     data-title="{event.title}" data-text="{event.title}, {event.date}">
+    <button class="btn btn--ghost share__button" type="button" hidden>
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        Teilen
+    </button>
+    <span class="share__status" role="status"></span>
+    <div class="share__address field">
+        <label for="share-address">Link zu diesem Anlass</label>
+        <input id="share-address" type="text" readonly value="{publicAddress}">
+        <span class="field__help share__hint" hidden>Kopiere den Link von Hand.</span>
+    </div>
+</div>
+
 <hr>
 
 {!The one place administrator-authored HTML is rendered unescaped. It was reduced to the
@@ -39,4 +59,6 @@ allow-list when it was stored (NFR-010); prose.css styles everything that list p
     <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
 </div>
 </div>
+
+{#scripts}<script src="/js/share.js" defer></script>{/scripts}
 {/include}
