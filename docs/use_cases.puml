@@ -18,6 +18,7 @@ rectangle "Cevi International" {
     usecase "UC-007\nView Site Information" as UC007
     usecase "UC-008\nEnter the Platform" as UC008
     usecase "UC-009\nShare an Event" as UC009
+    usecase "UC-010\nSearch Events and Offers" as UC010
 }
 
 visitor --> UC001
@@ -26,6 +27,7 @@ visitor --> UC005
 visitor --> UC007
 visitor --> UC008
 visitor --> UC009
+visitor --> UC010
 
 admin --> UC002
 admin --> UC004
@@ -59,6 +61,14 @@ note bottom of UC009
   (FR-040): Share-Dialog des Systems, wo
   der Browser ihn anbietet, sonst Adresse
   in die Zwischenablage.
+end note
+
+note bottom of UC010
+  Durchsucht kommende Anlaesse und
+  Volontariate (FR-041). Live-Resultate
+  beim Tippen (FR-042) sind eine
+  Ergaenzung desselben Ziels, kein
+  eigener Use Case.
 end note
 
 @enduml

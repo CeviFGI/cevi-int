@@ -63,6 +63,8 @@ international work, which shapes every goal below.
 | Sign in and out as administrator                                  | UC-006 |
 | Information pages (working group presentation, data protection) and a version page | UC-007 |
 | Enter the platform through a start page that says what it offers                   | UC-008 |
+| Share an event from its page                                                       | UC-009 |
+| Search events and voluntary service offers, including their descriptions           | UC-010 |
 
 ### Out of scope (deliberately not offered)
 

@@ -1,11 +1,13 @@
 # Requirements: Cevi International Platform
 
 **Document status:** Draft for review
-**Date:** 2026-11-06 (revision 6 — sharing an event from its page: FR-040, C-021 and NFR-041
-amended to admit one share script on the event page); revision 5 of 2026-08-25 — visual redesign:
+**Date:** 2026-11-06 (revision 7 — searching events and offers: FR-041, FR-042, NFR-046, NFR-047;
+C-021 and NFR-041 relaxed from "no script on public pages" to "script only as progressive
+enhancement"); revision 6 of 2026-11-06 — sharing an event from its page: FR-040, C-021 and NFR-041
+amended to admit one share script on the event page; revision 5 of 2026-08-25 — visual redesign:
 design system, brand conformity, entry page, scannable lists, form usability, responsiveness and
 accessibility made testable
-**Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-008`, `docs/entity_model.md`,
+**Source:** `docs/vision.md`, `docs/use_cases/UC-001` … `UC-010`, `docs/entity_model.md`,
 security review of 2026-08-15, `docs/ux_concept.md` and `docs/redesign_plan.md` of 2026-08-25,
 Cevi Schweiz Corporate Design Manual (2020)
 
@@ -60,6 +62,20 @@ here so the requirement is testable and are listed for confirmation in
 | FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Verified     |
 | FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Verified     |
 | FR-040 | Share an Event                 | As a visitor, I want a share control on an event's page that opens my device's share dialog with the event's title, date text and public address, or — where the browser offers no share dialog — copies the public address to the clipboard and confirms it, so that I can pass an event on to friends in a chat without copying the address by hand. | Medium   | Verified     |
+| FR-041 | Search Events and Offers       | As a visitor, I want to search the Upcoming Events and the Voluntary Service Offers for a Search Term found anywhere in their title, Organisation, location, Date Text or Description, and see the matches on a Search Results Page with an address of its own, so that I find an opportunity about a country, a topic or an organisation without reading through both lists. | High     | Open         |
+| FR-042 | See Results While Typing       | As a visitor, I want Live Results to appear below the search field while I type, where my browser runs scripts, so that I can narrow a search without submitting it and waiting for a new page. | Low      | Open         |
+
+**Note on FR-041, FR-042 — decisions taken with the product owner on 2026-11-06.** The search
+covers exactly what the public lists show: Upcoming Events only — an event whose Display Date has
+passed stays as hidden from the search as it is from the Event List (BR-001) — and every Voluntary
+Service Offer. Information Pages are not searched; their content is fixed text in the templates,
+not data. A Voluntary Service Offer has no page of its own, so a match on an offer leads to that
+offer's entry in the Offer List rather than to a new page. The search is a plain form submitted
+with `GET`, so it works without script, a Search Results Page can be bookmarked and shared, and it
+changes no data (NFR-021). FR-042 only adds to that form, which is why it is Low and kept apart: a
+visitor without script loses nothing but the convenience. "Anywhere in the Description" means the
+text a visitor reads, not the stored markup — a search for `strong` does not find every bold
+passage.
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -144,15 +160,17 @@ as the gap it is; scope and role model need confirmation.
 | NFR-033 | Host File Ownership            | Every file a tooling container writes into the working copy (`target/`, test reports, traces) is owned by the invoking host user — 0 root-owned artefacts that the IDE, git or a later run cannot delete.                        | Maintainability | Medium   | Implemented  |
 | NFR-034 | Warm Dependency Cache          | The tooling reuses the host Maven repository and the downloaded browser binary across invocations, so a repeated `verify` on an unchanged working copy downloads 0 dependencies and 0 browsers.                                  | Maintainability | Medium   | Implemented  |
 | NFR-035 | Frontend Dependency Maintenance | Every frontend library delivered to the browser has an upstream release not older than 12 months at the time of a release build, so that a reported vulnerability can be answered by upgrading instead of by patching a dead component locally. | Security        | High     | Open         |
-| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Verified     |
+| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, search results, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Verified     |
 | NFR-037 | Single Design System           | Every colour, type size, spacing step, corner radius and shadow used by the interface is declared once as a custom property in a single token stylesheet; 0 templates and 0 component stylesheets contain a literal colour value or a hard-coded font size. | Maintainability | High     | Verified     |
 | NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Verified     |
 | NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Verified     |
 | NFR-040 | Reduced Motion                 | When the browser reports `prefers-reduced-motion: reduce`, 100 % of transitions and animations are disabled; 0 animations are required to understand or operate the interface. | Usability       | Medium   | Verified     |
-| NFR-041 | Stylesheet and Font Budget     | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes 0 bytes of JavaScript — except the event page, which executes at most 2 KB (uncompressed) of share script for FR-040; the complete first view stays below 150 KB. | Performance     | High     | Verified     |
+| NFR-041 | Stylesheet, Font and Script Budget | A public page transfers at most 24 KB of stylesheet (gzipped) and at most 90 KB of web fonts, and executes at most 8 KB (uncompressed) of self-hosted script in total, of which 0 bytes belong to a third-party library or framework; the complete first view stays below 150 KB. **(assumed: 8 KB)** | Performance     | High     | In Progress  |
 | NFR-042 | No Third-Party Asset Requests  | A public page issues 0 requests to hosts other than the application's own origin — fonts, styles, scripts and images are served from it; this keeps the Content-Security-Policy of NFR-024 free of external sources and sends 0 visitor IP addresses to third parties. | Security        | High     | Verified     |
 | NFR-043 | Consistent Page Structure      | 100 % of pages render exactly one `h1`, a heading order with no skipped level, a skip link as the first focusable element, and the data protection link reachable without scrolling the navigation. | Usability       | Medium   | Verified     |
 | NFR-044 | Brand Conformity               | 100 % of brand colours and typefaces in the interface are those defined by the Cevi Schweiz Corporate Design Manual (2020): Cevi-Rot `#C41333`, Cevi-Blau `#323394`, Cevi-Schwarz `#141412`, Montserrat for titles and interface text, Lora for body copy; 0 further brand hues are introduced. | Usability       | Medium   | Implemented  |
+| NFR-046 | Search Response Time           | A search answers — as Search Results Page and as Live Results — within 300 ms at the 95th percentile on the production host, with 500 Upcoming Events and 200 Voluntary Service Offers stored, and needs 0 services besides the SQLite database file (NFR-019). **(assumed)** | Performance     | Medium   | Open         |
+| NFR-047 | Search Term Limits             | A Search Term is reduced to at most 100 characters before it reaches the database, and is passed to it only as a bound parameter, so that 0 search requests can change the shape of a database statement or make the database scan unbounded input. | Security        | High     | Open         |
 | NFR-045 | Dark Colour Scheme             | When the browser reports `prefers-color-scheme: dark`, every page renders in a dark palette that meets the same contrast thresholds as NFR-014, implemented solely by redefining the tokens of NFR-037. | Usability       | Low      | Open         |
 
 **Note on NFR-035 — the requirement the current editor fails.** Summernote 0.9.1 is the newest
@@ -224,7 +242,7 @@ checked by a real browser on every public route, and each found something (`docs
 | NFR-038 | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
 | NFR-039 | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
 | NFR-040 | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
-| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. |
+| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. Since revision 7 the tests still state the narrower revision-6 rule; they are to be restated as an 8 KB script total per public page when FR-042 is implemented. |
 
 A "Verified" here therefore means *the stated numbers are enforced by the build*, not that the
 interface is beyond criticism. The review with the product owner on a real phone remains part of
@@ -277,7 +295,7 @@ public pages faster than they are today instead of slower.
 | C-018 | Permissive Frontend Licences | Every frontend library delivered to a visitor's browser must be under a permissive licence (MIT, BSD or Apache-2.0), and every web font under a permissive font licence (SIL OFL-1.1, MIT, Apache-2.0); copyleft-licensed components must not be shipped, so that publishing the application never depends on satisfying copyleft obligations. | Regulatory  | High     | Implemented |
 | C-019 | Corporate Design Conformity  | The interface must follow the Cevi Schweiz Corporate Design Manual (2020) for logo, brand colours and typefaces; no alternative brand identity may be introduced for this platform.                                        | Business    | High     | Implemented |
 | C-020 | No CSS Framework             | The visual layer must be built from the project's own stylesheets; no CSS framework may be introduced, because every framework would have to be overridden to reach C-019, adds a dependency subject to NFR-035, and costs more transferred bytes than NFR-041 allows. | Technical   | Medium   | Verified    |
-| C-021 | No Client-Side Scripting on Public Pages | Navigation, disclosure and layout on pages reachable without an administrator session must work without JavaScript; scripting may be delivered only to the two administrator form pages that host the rich-text editor, and to the event page for the share control of FR-040 — a self-hosted script without a library, whose absence leaves the page fully usable and the public address readable. | Technical   | High     | Verified    |
+| C-021 | Script Only as Progressive Enhancement | Every function of a page reachable without an administrator session — navigation, disclosure, layout, reading, searching and sharing — must work without JavaScript. Script may be added to such a page only to enhance a function that already works without it, only as a self-hosted file without a third-party library or framework, and only within the budget of NFR-041; the rich-text editor stays limited to the two administrator form pages (NFR-036). | Technical   | High     | In Progress |
 
 **Note on C-019, C-020, C-021 — decisions taken with the product owner on 2026-08-25.** A CSS
 framework, photographic imagery per record and a deeper restructuring of the navigation were all
@@ -299,6 +317,18 @@ and nothing else on the page depends on it. The Content-Security-Policy is uncha
 (`script-src 'self'`, NFR-024), because the script is a file served from the application's own
 origin (NFR-042). The choice between share dialog and clipboard follows only what the browser
 offers, not a guess about the device: a desktop browser that offers the share dialog shows it.
+
+**Note on C-021, NFR-041 — relaxed with the product owner on 2026-11-06 (revision 7).** The
+product owner does not hold on to a site free of script; revision 6 had already admitted the share
+script as a single exception, and FR-042 would have needed a second one. Instead of collecting
+exceptions page by page, C-021 now states the rule that both exceptions followed: script may
+enhance a function, never carry it. What was worth keeping stays: every public page works without
+script (a visitor on a locked-down or slow phone loses nothing but convenience), no framework or
+library reaches a visitor (C-017, C-020, NFR-035 stay meaningful), the Content-Security-Policy keeps
+`script-src 'self'` (NFR-024), and nothing is loaded from another host (NFR-042). The 2 KB ceiling
+on one page becomes an 8 KB ceiling on any public page — room for the share script, the search
+script and one further small enhancement, and still less than a single photograph. C-021 and
+NFR-041 are In Progress because UC-009 meets the new wording and UC-010 does not yet exist in code.
 
 **Note on C-017, C-018 — what they rule out.** Both were applied implicitly and are recorded now
 because they decide the editor replacement: C-017 excludes CKEditor 5 and TipTap, which are
@@ -323,6 +353,7 @@ documents. Please confirm or replace them:
 | FR-035                   | Is a 160-character excerpt in the list acceptable to the administrators who write the descriptions? |
 | NFR-044                  | Is Lora as body typeface accepted, or should body copy use the CD's third face (Helvetica Neue / system sans)? |
 | NFR-045                  | Dark colour scheme in this redesign, or a later one?                                            |
+| NFR-041, NFR-046         | Is 8 KB of self-hosted script per public page the right ceiling, and are 300 ms p95 at 500 events and 200 offers the right target for the search? |
 
 **Decided since revision 4.** NFR-013 and NFR-014 are binding, not aspirational, and are verified by
 browser tests. C-019/C-020: the Cevi Corporate Design is binding and no CSS framework is

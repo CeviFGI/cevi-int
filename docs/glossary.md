@@ -1,8 +1,8 @@
 # Glossary
 
-**Date:** 2026-11-06 (Share Dialog, Event Page added)
+**Date:** 2026-11-06 (Search Term, Search Results Page, Live Results added; Share Dialog, Event Page added)
 **Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
-`docs/use_cases/UC-001` … `UC-008`
+`docs/use_cases/UC-001` … `UC-010`
 
 One name per domain concept. The specifications are written in English; where the German
 interface uses its own label, the definition names it so the screens can be matched to the terms.
@@ -77,6 +77,9 @@ test cases.
 | Event Page                 | The own page of one Event under its Public Address, showing the complete Description; the page the Visitor shares (FR-003, FR-040).                                |                        |
 | Share Dialog               | The operating system's own dialog for passing a link on to an app or contact, opened by the browser on request (Web Share API); offered on most phones and on some desktop browsers. | Share sheet            |
 | Offer List                 | The page that lists all Voluntary Service Offers, each linking to its Organisation.                                                                                |                        |
+| Search Term                | The words a Visitor enters to search the Upcoming Events and Voluntary Service Offers; matched against the text a Visitor reads, not against stored markup, and cut to 100 characters (NFR-047). | Keyword                |
+| Search Results Page        | The page under `/suche` that lists the Upcoming Events and Voluntary Service Offers matching a Search Term; its address carries the Search Term, so it can be bookmarked and shared (FR-041). |                        |
+| Live Results               | The matches shown below the search field while the Visitor is still typing, where the browser runs scripts; a convenience on top of the Search Results Page, never a replacement (FR-042). | Autocomplete, Suggestions |
 | Information Page           | A public page about the platform itself: the Working Group Presentation and the Data Protection Page.                                                             |                        |
 | Working Group Presentation | The Information Page that introduces the International Working Group and groups its external sources by channel (BR-046).                                         |                        |
 | Data Protection Page       | The Information Page explaining how personal data is handled; reachable from every page (BR-026).                                                                 | Privacy policy         |
