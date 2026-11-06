@@ -59,7 +59,7 @@ here so the requirement is testable and are listed for confirmation in
 | FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Verified     |
 | FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Verified     |
 | FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Verified     |
-| FR-040 | Share an Event                 | As a visitor, I want a share control on an event's page that opens my device's share dialog with the event's title, date text and public address, or — where the browser offers no share dialog — copies the public address to the clipboard and confirms it, so that I can pass an event on to friends in a chat without copying the address by hand. | Medium   | Open         |
+| FR-040 | Share an Event                 | As a visitor, I want a share control on an event's page that opens my device's share dialog with the event's title, date text and public address, or — where the browser offers no share dialog — copies the public address to the clipboard and confirms it, so that I can pass an event on to friends in a chat without copying the address by hand. | Medium   | Verified     |
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -224,7 +224,7 @@ checked by a real browser on every public route, and each found something (`docs
 | NFR-038 | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
 | NFR-039 | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
 | NFR-040 | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
-| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on a public page) | The 150 KB first view as a whole, which no test currently sums. |
+| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. |
 
 A "Verified" here therefore means *the stated numbers are enforced by the build*, not that the
 interface is beyond criticism. The review with the product owner on a real phone remains part of

@@ -42,10 +42,13 @@ class EditorAssetsTest {
 
     /**
      * The stronger form of the same rule, and the one C-021 actually states: a public page carries
-     * no script at all, not merely no editor. The navigation drawer and the disclosures are a
-     * checkbox and a {@code <details>} for exactly this reason, so the constraint is a property of
-     * the markup rather than an intention — and it is what keeps {@code script-src 'self'} free of
-     * the exceptions that make a Content-Security-Policy a formality (NFR-024).
+     * no script at all, not merely no editor. The one exception C-021 admits — the share script on
+     * an event's own page (FR-040) — is why no event page is listed here; {@code EventShareTest}
+     * holds that page to its single script of at most 2 KB. The navigation drawer and the
+     * disclosures are a checkbox and a {@code <details>} for exactly this reason, so the constraint
+     * is a property of the markup rather than an intention — and it is what keeps
+     * {@code script-src 'self'} free of the exceptions that make a Content-Security-Policy a
+     * formality (NFR-024).
      */
     @Test
     void a_public_page_carries_no_script_at_all() {
