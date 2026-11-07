@@ -10,7 +10,6 @@ import tools.cevi.infra.Slug;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +20,6 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
     private static final List<Integer> createdVoluntryServices = new LinkedList<>();
 
     public static long createVoluntaryService(String organization) {
-        return createVoluntaryService(organization, LocalDate.now());
-    }
-
-    public static long createVoluntaryService(String organization, LocalDate displayDate) {
         return createVoluntaryService(organization, "some description", "https://example.org/some-link");
     }
 

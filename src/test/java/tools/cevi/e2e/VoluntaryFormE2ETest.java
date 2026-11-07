@@ -14,7 +14,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Exercises the Jodit rich-text editor on the "add voluntary service" form —
+ * UC-004 Manage Voluntary Service Offers in a real browser: the main success scenario with the
+ * Jodit rich-text editor on the "add voluntary service" form —
  * behaviour the existing REST Assured tests can't cover since it's purely client-side JS.
  * Quarkus only indexes {@code @QuarkusTest} on the concrete class, not on an inherited base class.
  */
@@ -23,11 +24,18 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
 
     private final String organization = "CLEANUP e2e-" + UUID.randomUUID();
 
+    /**
+     * Main success scenario (steps 1-4 and 9): an administrator enters an offer with a formatted
+     * Description, submits it and finds it in the Offer List.
+     */
     @Test
     public void admin_can_create_voluntary_service_with_rich_text_description() {
         loginAsAdmin();
 
-        page.navigate(url("/volontariat/add"));
+        // Step 1: the Offer List offers adding an offer
+        page.navigate(url("/volontariat"));
+        page.locator("a[href='/volontariat/add']").first().click();
+        page.waitForURL("**/volontariat/add");
         page.locator("input[name='organization']").fill(organization);
         page.locator("input[name='organizationLink']").fill("https://example.org");
         page.locator("input[name='location']").fill("Bern");
@@ -47,7 +55,7 @@ public class VoluntaryFormE2ETest extends PlaywrightTestBase {
     }
 
     /**
-     * Phase 3 gave the editor a container that matches the other controls. Its frame is drawn by
+     * Main success scenario step 3: the Description is entered in the editor. Phase 3 gave the editor a container that matches the other controls. Its frame is drawn by
      * jodit.min.css, which is linked after the site stylesheet — so the rule that overrides it is
      * one specificity step away from silently losing, and nothing in the markup would show that.
      */

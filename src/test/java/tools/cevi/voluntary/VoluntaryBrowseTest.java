@@ -134,6 +134,31 @@ class VoluntaryBrowseTest {
     }
 
     /**
+     * Step 2: offers of the same Organisation stand in the order they were recorded. The three
+     * share one Organisation; only their location tells them apart.
+     */
+    @Test
+    void offers_of_the_same_organisation_are_listed_in_the_order_they_were_recorded() {
+        String organization = "CLEANUP UC-003 same organisation";
+        List<String> recorded = List.of("UC003 Zürich", "UC003 Aarau", "UC003 Mumbai");
+        recorded.forEach(location -> {
+            long id = VoluntaryFixture.createVoluntaryService(organization);
+            QuarkusTransaction.requiringNew().run(() ->
+                    VoluntaryService.<VoluntaryService>findById((int) id).location = location);
+        });
+
+        String page = list();
+        int first = page.lastIndexOf("<article", page.indexOf(">" + organization + "<"));
+        List<Integer> positions = recorded.stream()
+                .map(location -> page.indexOf(location, first))
+                .toList();
+
+        assertThat(positions.getFirst(), greaterThan(-1));
+        assertThat(positions.get(0), lessThan(positions.get(1)));
+        assertThat(positions.get(1), lessThan(positions.get(2)));
+    }
+
+    /**
      * A1: without any offer the list says so and offers the way to the working group. The demo
      * data is removed and put back around the assertion, as for the start page: the branch under
      * test is exactly "no offer recorded".
@@ -221,6 +246,27 @@ class VoluntaryBrowseTest {
         assertThat(offerPage(offer.slug), containsString("<a class=\"backlink\" href=\"/volontariat\">"));
     }
 
+    /**
+     * A4 (via the extract on the start page, UC-008 step 4): the offer's entry on the start page
+     * leads to its Offer Page, which offers the way to the complete Offer List.
+     */
+    @Test
+    void the_entry_on_the_start_page_leads_to_the_offer_page() {
+        String organization = "CLEANUP UC-003 start page";
+        VoluntaryService offer = offer(VoluntaryFixture.createVoluntaryService(organization));
+
+        String home = given().when().get("/").then().statusCode(HttpStatus.SC_OK).extract().asString();
+        Matcher href = Pattern.compile("<a href=\"(/volontariat/detail\\?slug=[^\"]+)\">" + organization + "</a>")
+                .matcher(card(home, organization));
+        assertThat(href.find(), is(true));
+        assertThat(href.group(1), is("/volontariat/detail?slug=" + offer.slug));
+
+        given().urlEncodingEnabled(false).when().get(href.group(1)).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("<h1>" + organization + "</h1>"))
+                .body(containsString("<a class=\"backlink\" href=\"/volontariat\">"));
+    }
+
     /** A5: an unknown Short Name leads to a page that says so and offers the way to the Offer List. */
     @Test
     void an_unknown_short_name_says_the_page_does_not_exist() {
@@ -272,15 +318,22 @@ class VoluntaryBrowseTest {
         assertThat(page, containsString("<a class=\"btn btn--primary\" href=\"https://example.org/some-link\""));
     }
 
-    /** Success postcondition: browsing changes no data. */
+    /** Success postcondition: browsing changes no data — no offer added or removed, the visited one unchanged. */
     @Test
     void browsing_changes_no_data() {
         long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-003 no change");
         long count = VoluntaryService.count();
+        VoluntaryService before = offer(id);
 
         list();
-        offerPage(offer(id).slug);
+        offerPage(before.slug);
 
+        VoluntaryService after = offer(id);
         assertThat(VoluntaryService.count(), is(count));
+        assertThat(after.slug, is(before.slug));
+        assertThat(after.organization, is(before.organization));
+        assertThat(after.organizationLink, is(before.organizationLink));
+        assertThat(after.location, is(before.location));
+        assertThat(after.description, is(before.description));
     }
 }

@@ -27,6 +27,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
@@ -272,6 +273,9 @@ class VoluntaryManageTest {
         offerPage(slug).then().statusCode(HttpStatus.SC_OK)
                 .body(containsString("<h1>CLEANUP UC-004 after</h1>"))
                 .body(containsString("Anderswo"));
+        offerList().then().statusCode(HttpStatus.SC_OK)
+                .body(containsString(">CLEANUP UC-004 after</a>"))
+                .body(not(containsString(">CLEANUP UC-004 before</a>")));
     }
 
     /**
@@ -467,7 +471,10 @@ class VoluntaryManageTest {
         assertThat(stored(slug), notNullValue());
     }
 
-    /** A3 step 4: a confirmed removal leads back to the updated Offer List. */
+    /**
+     * A3 step 4, success postcondition: a confirmed removal leads back to the updated Offer List;
+     * the offer is gone from it and its Offer Page no longer exists.
+     */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
     void a_confirmed_removal_leads_to_the_offer_list() {
@@ -482,6 +489,32 @@ class VoluntaryManageTest {
                 .header("location", containsString("/volontariat"));
 
         assertThat(stored(slug), nullValue());
+        offerList().then().statusCode(HttpStatus.SC_OK)
+                .body(not(containsString(">CLEANUP UC-004 removed</a>")));
+        offerPage(slug).then().statusCode(HttpStatus.SC_NOT_FOUND);
+    }
+
+    /**
+     * Main success scenario step 8: the system reduces the Description to the permitted formatting
+     * before it records the offer — script, event handlers and script addresses do not reach the
+     * store, the formatted text does.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void the_description_is_reduced_to_the_permitted_formatting() {
+        String slug = "cleanup-uc-004-bereinigt-" + UUID.randomUUID();
+        Map<String, String> entry = entry("CLEANUP UC-004 sanitised", slug);
+        entry.put("description", "<p onclick=\"steal()\">Sechs <strong>Monate</strong></p>"
+                + "<script>steal()</script><a href=\"javascript:steal()\">Link</a>");
+
+        submit(entry).then().statusCode(HttpStatus.SC_SEE_OTHER);
+
+        String description = stored(slug).description;
+        assertThat(description, containsString("Sechs <strong>Monate</strong>"));
+        assertThat(description, not(containsString("<script")));
+        assertThat(description, not(containsString("onclick")));
+        assertThat(description, not(containsString("javascript:")));
+        assertThat(description, not(containsString("steal()")));
     }
 
     private void createFailureTrigger(String name, String operation, String row, String organization) {
@@ -491,12 +524,17 @@ class VoluntaryManageTest {
                 .executeUpdate());
     }
 
-    /** Read in a transaction of its own, so the test never sees a copy its session cached earlier. */
     /** The Offer Page under {@code slug}, as a visitor opens it (UC-003 step 4). */
     private static io.restassured.response.Response offerPage(String slug) {
         return given().queryParam("slug", slug).when().get("/volontariat/detail");
     }
 
+    /** The Offer List, as a visitor opens it (UC-003 step 1). */
+    private static io.restassured.response.Response offerList() {
+        return given().when().get("/volontariat");
+    }
+
+    /** Read in a transaction of its own, so the test never sees a copy its session cached earlier. */
     private static VoluntaryService stored(String slug) {
         return QuarkusTransaction.requiringNew().call(() -> VoluntaryService.findBySlug(slug));
     }
