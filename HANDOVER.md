@@ -13,6 +13,7 @@ Nach Erledigung der Punkte diese Datei löschen oder nachführen.
   einen Fehler (Kurzname im Kartenlink nicht URL-kodiert – jetzt `{it.slug.queryValue}`, auch in
   der Anlass-Karte) und zwei Drifts (Hilfetext Organisations-Link; Reihenfolge der Liste, jetzt in
   UC-003 Schritt 2 festgehalten, vom Benutzer bestätigt). Alles behoben, Audit noch nicht wiederholt.
+  Für die Ergänzung von Schritt 2 ist `/spec-review UC-003` noch nicht gelaufen (optional).
 - UC-004 implementiert und getestet; die BR-008-Tests rufen jetzt alte/neue Adresse der
   Volontariatsseite ab. `/use-case-coverage UC-004`, dann `Tested`.
 - UC-010: Treffer führen bereits auf die Volontariatsseite (`Search.offerPage`), Tests angepasst;
