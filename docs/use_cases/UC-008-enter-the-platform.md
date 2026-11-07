@@ -6,8 +6,11 @@
 **Use Case Name:** Enter the Platform
 **Primary Actor:** Besucher
 **Goal:** A visitor who arrives on the platform, usually by following a link shared in a chat, understands within one screen what the site offers and reaches the part of it that concerns them.
-**Status:** Approved
+**Status:** Draft
 **Introduced:** 2026-08-25 with requirements revision 5 (FR-034, FR-023). Until then the start page forwarded to the event list and had no content of its own, so a visitor arriving from a shared link was given a bare list and never learned what the site was.
+**Revised:** 2026-11-07 for requirements revision 8 (FR-043): every entry of an extract leads to the entry's own page — an event to its Event Page, an offer to its Offer Page — as it does in the complete list (BR-004).
+
+**Requirements:** [FR-023, FR-034, FR-043](../requirements.md)
 
 ## Preconditions
 
@@ -17,8 +20,8 @@
 
 1. The visitor opens the start page.
 2. The system states in one screen what the platform is and who runs it.
-3. The system presents an extract of the events that are still ahead, with the way to the complete list.
-4. The system presents an extract of the recorded voluntary service offers, with the way to the complete overview.
+3. The system presents an extract of the events that are still ahead, each leading to its Event Page, with the way to the Event List.
+4. The system presents an extract of the recorded voluntary service offers, each leading to its Offer Page, with the way to the Offer List.
 5. The system offers the way to the working group for a visitor who does not yet know what suits them.
 6. The visitor chooses the part of the site that concerns them and continues there.
 
@@ -42,7 +45,7 @@
 
 ### A3: The visitor arrived at a section directly
 
-**Trigger:** The visitor opened the event list, the offer overview or an information page instead of the start page (step 1)
+**Trigger:** The visitor opened the Event List, the Offer List or an information page instead of the start page (step 1)
 **Flow:**
 
 1. The system presents that page directly, unchanged and under its own address.
@@ -80,3 +83,7 @@ The start page presents only a small extract of the events and of the offers, an
 ### BR-003: A section with nothing to show explains itself
 
 Where an extract has nothing to present, the section states why and offers a way onward. The platform announces what volunteers happen to have collected, so an empty section is a normal state, not a fault — but an empty area on the first screen tells the visitor the site is abandoned.
+
+### BR-004: An entry of an extract leads where the list entry leads
+
+Every entry of an extract leads to the same place as the same entry in its complete list: an event to its Event Page (UC-001), an offer to its Offer Page (UC-003). The start page offers no other way into an entry — no unfolding in place and no direct link to the Organisation — so that a visitor reads the complete event or offer before acting on it, wherever they started.

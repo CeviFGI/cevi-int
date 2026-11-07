@@ -1,7 +1,11 @@
 # Requirements: Cevi International Platform
 
 **Document status:** Draft for review
-**Date:** 2026-11-06 (revision 7 — searching events and offers: FR-041, FR-042, NFR-046, NFR-047;
+**Date:** 2026-11-07 (revision 8 — an own page for every voluntary service offer: FR-043, FR-044,
+FR-045, FR-010 moved to the Offer Page, FR-041 note, NFR-001 and NFR-036 extended to the Offer
+Page; the open points for confirmation moved to `open_questions.md` as OQ-005 … OQ-015; the
+progress status of every FR follows the use cases that link it again; FR-029 and FR-030 deferred
+until OQ-005 and OQ-006 are answered); revision 7 of 2026-11-06 — searching events and offers: FR-041, FR-042, NFR-046, NFR-047;
 C-021 and NFR-041 relaxed from "no script on public pages" to "script only as progressive
 enhancement"); revision 6 of 2026-11-06 — sharing an event from its page: FR-040, C-021 and NFR-041
 amended to admit one share script on the event page; revision 5 of 2026-08-25 — visual redesign:
@@ -22,60 +26,77 @@ here so the requirement is testable and are listed for confirmation in
 
 | ID     | Title                          | User Story                                                                                                                                                          | Priority | Status       |
 |--------|--------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------|
-| FR-001 | List Upcoming Events           | As a visitor, I want to see all events whose display date has not passed so that I only spend time on events I can still attend.                                      | High     | Verified     |
-| FR-002 | Order Events Chronologically   | As a visitor, I want the event list ordered by display date with the nearest event first so that the most urgent opportunity is at the top.                           | High     | Verified     |
-| FR-003 | Open an Event on Its Own Page  | As a visitor, I want to open an event on its own page under a stable readable address so that I can read the full details and share a link that still works later.    | High     | Verified     |
-| FR-004 | Create Event                   | As an administrator, I want to add an event with title, date text, location, display date and formatted description so that the working group can announce it publicly. | High     | Verified     |
-| FR-005 | Edit Event                     | As an administrator, I want to change an already published event so that corrections reach visitors without a developer being involved.                               | High     | Verified     |
-| FR-006 | Delete Event with Confirmation | As an administrator, I want to remove an event only after confirming on a separate page so that outdated content disappears but a misclick deletes nothing.           | High     | Verified     |
-| FR-007 | Derive Unique Short Name       | As an administrator, I want the system to derive a unique short name from the title when I supply none so that I do not have to invent public addresses myself.       | Medium   | Verified     |
-| FR-008 | Preserve Rejected Form Entries | As an administrator, I want a rejected form returned with my values and the faulty fields marked so that I do not have to retype a long description.                  | High     | Verified     |
-| FR-009 | Browse Voluntary Service Offers| As a visitor, I want to see all recorded voluntary service offers with organisation, location and description so that I can decide which organisation to approach.    | High     | Verified     |
-| FR-010 | Link Offer to Organisation     | As a visitor, I want every offer to link to the website of the organisation running it so that I can apply directly with that organisation.                           | High     | Verified     |
-| FR-011 | Create Voluntary Service Offer | As an administrator, I want to add an offer with organisation, organisation link, location and description so that visitors learn about a new opportunity.            | High     | Verified     |
-| FR-012 | Edit Voluntary Service Offer   | As an administrator, I want to change an existing offer so that the published information stays accurate.                                                            | High     | Verified     |
-| FR-013 | Delete Offer with Confirmation | As an administrator, I want to remove an offer only after confirming on a separate page so that offers that ended disappear without accidental deletions.            | High     | Verified     |
-| FR-014 | Send Contact Message           | As a visitor, I want to send a free-text message to the working group without creating an account so that I can ask a question with no barrier.                       | High     | Verified     |
-| FR-015 | Answer Spam Protection         | As an administrator, I want the contact form to accept a message only when the spam protection field contains the expected number so that automated submissions do not reach the working group. | High     | Verified     |
-| FR-016 | Notify Working Group by E-Mail | As an administrator, I want an e-mail notification at the configured address whenever a message arrives so that I can answer without checking the site.               | High     | Verified     |
-| FR-017 | Record Contact Message         | As an administrator, I want every accepted message also recorded in the database so that a message survives a failed e-mail delivery.                                 | Medium   | Verified     |
-| FR-018 | Confirm Message Submission     | As a visitor, I want a confirmation page after sending so that I know the message left my browser.                                                                    | High     | Verified     |
-| FR-019 | Sign In as Administrator       | As an administrator, I want to sign in with user name and password so that the maintenance functions for events and offers become available.                          | High     | Verified     |
-| FR-020 | Sign Out                       | As an administrator, I want to sign out so that the maintenance functions are no longer reachable from my browser.                                                    | High     | Verified     |
-| FR-021 | Redirect Unauthenticated Access| As an administrator, I want to be sent to the sign-in page when I open a maintenance function without a session so that I can sign in instead of seeing an error.     | High     | Verified     |
-| FR-022 | Hide Maintenance Links         | As a visitor, I want edit and delete links hidden unless a verified administrator session is present so that the public pages show only what concerns me.             | Medium   | Verified     |
-| FR-023 | Reach the Event List in One Step | As a visitor, I want the list of upcoming events reachable in one step from the start page and under its own stable address so that I get to the main content without navigating a hierarchy. | High     | Verified     |
-| FR-024 | View Working Group Presentation| As a visitor, I want a page presenting the international working group so that I know who is behind the platform before I contact them.                               | Medium   | Implemented  |
-| FR-025 | View Data Protection Page      | As a visitor, I want the data protection information reachable from every page so that I can check how my data is handled before I write a message.                   | High     | Implemented  |
-| FR-026 | View Version Page              | As an operator, I want a page naming the application version and the database schema version, reachable only with an administrator session, so that I can tell whether a deployment and its migrations match without publishing that detail to anonymous visitors. | Medium   | Verified     |
-| FR-027 | Show Not-Found Page            | As a visitor, I want an explanatory page with a way back when I open an unknown address so that a stale link does not end my visit.                                   | Medium   | Verified     |
-| FR-028 | Show General Error Page        | As a visitor, I want a plain error page when the system cannot produce the requested page so that I never see technical internals.                                    | Medium   | Implemented  |
-| FR-029 | Browse Exchange Offers         | As a visitor, I want to see exchange opportunities with partner organisations so that I can consider an exchange alongside events and voluntary service.              | Low      | Needs review |
-| FR-030 | Manage User Accounts           | As an operator, I want to create further administrator accounts and let administrators change their own password from within the application so that access does not depend on direct database edits.                | Medium   | Open         |
-| FR-031 | Bootstrap Initial Administrator| As an operator, I want the first administrator account created from a deployment secret when the user table is empty so that a fresh or restored production database never carries publicly known credentials.        | High     | Implemented  |
-| FR-032 | Reject Automated Submissions   | As an administrator, I want the contact form to discard submissions that fill a field no human can see so that simple spam bots do not reach the working group even though the arithmetic question is public.         | Medium   | Verified     |
-| FR-033 | Format Description in the Browser | As an administrator, I want to format a description in the browser with headings, bold, italic, underlined and struck-through text, superscript and subscript, font family and size, text colour, ordered and unordered lists, paragraph alignment, line height, tables, links, inline pictures and a source-code view so that I can lay out an announcement without writing HTML by hand. | High     | Implemented  |
-| FR-034 | Understand the Site on Arrival | As a visitor arriving on a link shared in a chat, I want the start page to tell me in one screen what this site offers and lead me on to events, voluntary service and the working group so that I can decide to stay before scrolling. | High     | Verified     |
-| FR-035 | Scan a List Before Reading     | As a visitor, I want every entry in the event and offer lists reduced to its title, date, place, a short excerpt and one action so that I can compare several entries on a phone screen instead of scrolling through full descriptions. | High     | Verified     |
-| FR-036 | See How Urgent an Event Is     | As a visitor, I want each event to show how much time is left before it drops off the list so that I notice an opportunity that is about to pass.                     | Medium   | Verified     |
-| FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Verified     |
-| FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Verified     |
-| FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Verified     |
+| FR-001 | List Upcoming Events           | As a visitor, I want to see all events whose display date has not passed so that I only spend time on events I can still attend.                                      | High     | Open         |
+| FR-002 | Order Events Chronologically   | As a visitor, I want the event list ordered by display date with the nearest event first so that the most urgent opportunity is at the top.                           | High     | Open         |
+| FR-003 | Open an Event on Its Own Page  | As a visitor, I want to open an event on its own page under a stable readable address so that I can read the full details and share a link that still works later.    | High     | Open         |
+| FR-004 | Create Event                   | As an administrator, I want to add an event with title, date text, location, display date and formatted description so that the working group can announce it publicly. | High     | Open         |
+| FR-005 | Edit Event                     | As an administrator, I want to change an already published event so that corrections reach visitors without a developer being involved.                               | High     | Open         |
+| FR-006 | Delete Event with Confirmation | As an administrator, I want to remove an event only after confirming on a separate page so that outdated content disappears but a misclick deletes nothing.           | High     | Open         |
+| FR-007 | Derive Unique Short Name       | As an administrator, I want the system to derive a unique short name from the title when I supply none so that I do not have to invent public addresses myself.       | Medium   | Open         |
+| FR-008 | Preserve Rejected Form Entries | As an administrator, I want a rejected form returned with my values and the faulty fields marked so that I do not have to retype a long description.                  | High     | Open         |
+| FR-009 | Browse Voluntary Service Offers| As a visitor, I want to see all recorded voluntary service offers with organisation, location and description so that I can decide which organisation to approach.    | High     | Open         |
+| FR-010 | Link Offer to Organisation     | As a visitor, I want the Offer Page of every offer to link to the website of the Organisation running it so that I can apply directly with that Organisation after reading the complete offer. | High     | Open         |
+| FR-011 | Create Voluntary Service Offer | As an administrator, I want to add an offer with organisation, organisation link, location and description so that visitors learn about a new opportunity.            | High     | Open         |
+| FR-012 | Edit Voluntary Service Offer   | As an administrator, I want to change an existing offer so that the published information stays accurate.                                                            | High     | Open         |
+| FR-013 | Delete Offer with Confirmation | As an administrator, I want to remove an offer only after confirming on a separate page so that offers that ended disappear without accidental deletions.            | High     | Open         |
+| FR-014 | Send Contact Message           | As a visitor, I want to send a free-text message to the working group without creating an account so that I can ask a question with no barrier.                       | High     | Open         |
+| FR-015 | Answer Spam Protection         | As an administrator, I want the contact form to accept a message only when the spam protection field contains the expected number so that automated submissions do not reach the working group. | High     | Open         |
+| FR-016 | Notify Working Group by E-Mail | As an administrator, I want an e-mail notification at the configured address whenever a message arrives so that I can answer without checking the site.               | High     | Open         |
+| FR-017 | Record Contact Message         | As an administrator, I want every accepted message also recorded in the database so that a message survives a failed e-mail delivery.                                 | Medium   | Open         |
+| FR-018 | Confirm Message Submission     | As a visitor, I want a confirmation page after sending so that I know the message left my browser.                                                                    | High     | Open         |
+| FR-019 | Sign In as Administrator       | As an administrator, I want to sign in with user name and password so that the maintenance functions for events and offers become available.                          | High     | Open         |
+| FR-020 | Sign Out                       | As an administrator, I want to sign out so that the maintenance functions are no longer reachable from my browser.                                                    | High     | Open         |
+| FR-021 | Redirect Unauthenticated Access| As an administrator, I want to be sent to the sign-in page when I open a maintenance function without a session so that I can sign in instead of seeing an error.     | High     | Open         |
+| FR-022 | Hide Maintenance Links         | As a visitor, I want edit and delete links hidden unless a verified administrator session is present so that the public pages show only what concerns me.             | Medium   | Open         |
+| FR-023 | Reach the Event List in One Step | As a visitor, I want the list of upcoming events reachable in one step from the start page and under its own stable address so that I get to the main content without navigating a hierarchy. | High     | Open         |
+| FR-024 | View Working Group Presentation| As a visitor, I want a page presenting the international working group so that I know who is behind the platform before I contact them.                               | Medium   | Open         |
+| FR-025 | View Data Protection Page      | As a visitor, I want the data protection information reachable from every page so that I can check how my data is handled before I write a message.                   | High     | Open         |
+| FR-026 | View Version Page              | As an operator, I want a page naming the application version and the database schema version, reachable only with an administrator session, so that I can tell whether a deployment and its migrations match without publishing that detail to anonymous visitors. | Medium   | Open         |
+| FR-027 | Show Not-Found Page            | As a visitor, I want an explanatory page with a way back when I open an unknown address so that a stale link does not end my visit.                                   | Medium   | Open         |
+| FR-028 | Show General Error Page        | As a visitor, I want a plain error page when the system cannot produce the requested page so that I never see technical internals.                                    | Medium   | Open         |
+| FR-029 | Browse Exchange Offers         | As a visitor, I want to see exchange opportunities with partner organisations so that I can consider an exchange alongside events and voluntary service.              | Low      | Deferred     |
+| FR-030 | Manage User Accounts           | As an operator, I want to create further administrator accounts and let administrators change their own password from within the application so that access does not depend on direct database edits.                | Medium   | Deferred     |
+| FR-031 | Bootstrap Initial Administrator| As an operator, I want the first administrator account created from a deployment secret when the user table is empty so that a fresh or restored production database never carries publicly known credentials.        | High     | Open         |
+| FR-032 | Reject Automated Submissions   | As an administrator, I want the contact form to discard submissions that fill a field no human can see so that simple spam bots do not reach the working group even though the arithmetic question is public.         | Medium   | Open         |
+| FR-033 | Format Description in the Browser | As an administrator, I want to format a description in the browser with headings, bold, italic, underlined and struck-through text, superscript and subscript, font family and size, text colour, ordered and unordered lists, paragraph alignment, line height, tables, links, inline pictures and a source-code view so that I can lay out an announcement without writing HTML by hand. | High     | Open         |
+| FR-034 | Understand the Site on Arrival | As a visitor arriving on a link shared in a chat, I want the start page to tell me in one screen what this site offers and lead me on to events, voluntary service and the working group so that I can decide to stay before scrolling. | High     | Open         |
+| FR-035 | Scan a List Before Reading     | As a visitor, I want every entry in the event and offer lists reduced to its title, date, place, a short excerpt and one action so that I can compare several entries on a phone screen instead of scrolling through full descriptions. | High     | Open         |
+| FR-036 | See How Urgent an Event Is     | As a visitor, I want each event to show how much time is left before it drops off the list so that I notice an opportunity that is about to pass.                     | Medium   | Open         |
+| FR-037 | Fill the Contact Form with Guidance | As a visitor, I want every field of the contact form to carry a visible label, an explanation of why it is asked and — when rejected — an error message at the field itself so that I can correct a mistake without hunting for it. | High     | Open         |
+| FR-038 | Tell Visitor and Maintenance Actions Apart | As a visitor, I want maintenance controls, when an administrator session shows them, presented as a clearly separate and quieter group so that the action meant for me stays the obvious one on the page. | Medium   | Open         |
+| FR-039 | Find a Link on the Information Page | As a visitor, I want the collected external sources grouped by channel and collapsible on a phone so that I can find one link without scrolling past fifty.          | Medium   | Open         |
 | FR-040 | Share an Event                 | As a visitor, I want a share control on an event's page that opens my device's share dialog with the event's title, date text and public address, or — where the browser offers no share dialog — copies the public address to the clipboard and confirms it, so that I can pass an event on to friends in a chat without copying the address by hand. | Medium   | Verified     |
 | FR-041 | Search Events and Offers       | As a visitor, I want to search the Upcoming Events and the Voluntary Service Offers for a Search Term found anywhere in their title, Organisation, location, Date Text or Description, and see the matches on a Search Results Page with an address of its own, so that I find an opportunity about a country, a topic or an organisation without reading through both lists. | High     | Open         |
 | FR-042 | See Results While Typing       | As a visitor, I want Live Results to appear below the search field while I type, where my browser runs scripts, so that I can narrow a search without submitting it and waiting for a new page. | Low      | Open         |
+| FR-043 | Open an Offer on Its Own Page  | As a visitor, I want to open a Voluntary Service Offer on its own Offer Page under a stable readable Public Address by selecting anywhere on its entry in the Offer List, so that I can read the complete Description and share a link that still works later. | High     | Open         |
+| FR-044 | Derive Unique Offer Short Name | As an administrator, I want the system to derive a unique Short Name for an offer from its Organisation and location when I supply none so that every offer gets a readable Public Address without me inventing one. | Medium   | Open         |
+| FR-045 | Share an Offer                 | As a visitor, I want a share control on an Offer Page that opens my device's Share Dialog with the offer's Organisation, location and Public Address, or — where the browser offers no Share Dialog — copies the Public Address to the clipboard and confirms it, so that I can pass an offer on to friends in a chat without copying the address by hand. | Medium   | Open         |
 
 **Note on FR-041, FR-042 — decisions taken with the product owner on 2026-11-06.** The search
 covers exactly what the public lists show: Upcoming Events only — an event whose Display Date has
 passed stays as hidden from the search as it is from the Event List (UC-001 BR-001) — and every Voluntary
 Service Offer. Information Pages are not searched; their content is fixed text in the templates,
-not data. A Voluntary Service Offer has no page of its own, so a match on an offer leads to that
-offer's entry in the Offer List rather than to a new page. The search is a plain form submitted
+not data. Revision 8 amends one decision: since every Voluntary Service Offer has an Offer Page
+(FR-043), a match on an offer leads to that page, as a match on an event leads to its Event Page,
+and no longer to the offer's entry in the Offer List. The search is a plain form submitted
 with `GET`, so it works without script, a Search Results Page can be bookmarked and shared, and it
 changes no data (NFR-021). FR-042 only adds to that form, which is why it is Low and kept apart: a
 visitor without script loses nothing but the convenience. "Anywhere in the Description" means the
 text a visitor reads, not the stored markup — a search for `strong` does not find every bold
 passage.
+
+**Note on FR-010, FR-043 … FR-045 — decisions taken with the product owner on 2026-11-07
+(revision 8).** A Voluntary Service Offer gets a page of its own, built like the Event Page: the
+whole entry in the Offer List leads to it — the one action of FR-035 — and the complete
+Description is read there instead of being unfolded in place in the list. The link to the
+Organisation moves from the list entry to the Offer Page, so a visitor reads the offer before
+leaving the site; FR-010 is therefore Open again although the link itself has existed since the
+redesign. The Public Address is built from a Short Name, as for an Event (FR-003, FR-007), not from
+the numeric id: an offer has no title, so the Short Name is derived from Organisation and location
+(FR-044), and an offer recorded before this revision receives one the same way when the schema is
+migrated. The share control of FR-045 is the one of FR-040 on a second page; it reuses the same
+script, so C-021 and NFR-041 need no further exception — the Share Dialog shows Organisation and
+location because an offer has neither title nor Date Text.
 
 **Note on FR-006, FR-013 — method change.** Both deletions keep the confirmation page, but the
 confirmed deletion itself is submitted as a form `POST` and no longer as a link `GET` (NFR-021).
@@ -125,7 +146,7 @@ as the gap it is; scope and role model need confirmation.
 
 | ID      | Title                          | Requirement                                                                                                                                              | Category        | Priority | Status       |
 |---------|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|--------------|
-| NFR-001 | Public Page Response Time      | Every public page (event list, event detail, offer list, information pages) responds within 1000 ms at the 95th percentile on the production host. **(assumed)** | Performance     | High     | Open         |
+| NFR-001 | Public Page Response Time      | Every public page (event list, event detail, offer list, offer page, information pages) responds within 1000 ms at the 95th percentile on the production host. **(assumed)** | Performance     | High     | Open         |
 | NFR-002 | Concurrent Visitors            | The system serves 50 concurrent visitors with a 95th-percentile page response time of at most 2000 ms. **(assumed)**                                          | Scalability     | Medium   | Open         |
 | NFR-003 | Availability                   | The site is reachable at least 99.0 % of the minutes of each calendar month. **(assumed)**                                                                    | Availability    | Medium   | Open         |
 | NFR-004 | Startup Readiness              | After the container starts, the application answers HTTP requests within 10 seconds, including Flyway schema migration. **(assumed)**                         | Availability    | Medium   | Open         |
@@ -160,7 +181,7 @@ as the gap it is; scope and role model need confirmation.
 | NFR-033 | Host File Ownership            | Every file a tooling container writes into the working copy (`target/`, test reports, traces) is owned by the invoking host user — 0 root-owned artefacts that the IDE, git or a later run cannot delete.                        | Maintainability | Medium   | Implemented  |
 | NFR-034 | Warm Dependency Cache          | The tooling reuses the host Maven repository and the downloaded browser binary across invocations, so a repeated `verify` on an unchanged working copy downloads 0 dependencies and 0 browsers.                                  | Maintainability | Medium   | Implemented  |
 | NFR-035 | Frontend Dependency Maintenance | Every frontend library delivered to the browser has an upstream release not older than 12 months at the time of a release build, so that a reported vulnerability can be answered by upgrading instead of by patching a dead component locally. | Security        | High     | Open         |
-| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, search results, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Verified     |
+| NFR-036 | Editor Assets Only Where Edited | The pages reachable without an administrator session (start, event list, event detail, offer list, offer page, search results, information pages, contact form, sign-in) transfer 0 bytes of rich-text editor script and stylesheet; those assets are requested only by the two administrator form pages. | Performance     | Medium   | Verified     |
 | NFR-037 | Single Design System           | Every colour, type size, spacing step, corner radius and shadow used by the interface is declared once as a custom property in a single token stylesheet; 0 templates and 0 component stylesheets contain a literal colour value or a hard-coded font size. | Maintainability | High     | Verified     |
 | NFR-038 | Touch Target Size              | At a 360 px viewport, 100 % of interactive elements (links, buttons, form controls, disclosure summaries) present a hit area of at least 44 × 44 CSS pixels.       | Usability       | High     | Verified     |
 | NFR-039 | Visible Keyboard Focus         | 100 % of focusable elements show a focus indicator with a contrast ratio of at least 3 : 1 against the adjacent background; 0 stylesheet rules suppress the focus outline without replacing it. | Usability       | High     | Verified     |
@@ -208,7 +229,7 @@ under 150 KB.
 
 **Note on NFR-041 — the stylesheet ceiling was raised again, from 16 KB to 24 KB, after phase 4.**
 The 16 KB was set when phases 3 and 4 were still unwritten; the finished interface — design system,
-frame, cards, prose, forms, status pages, start page and information pages — measures 16.5 KB
+frame, cards, prose, forms, Error Pages, start page and information pages — measures 16.5 KB
 gzipped with its comments. The product owner decided that the stylesheet's own size is not a figure
 worth optimising against at this scale, and 24 KB leaves the dark scheme of NFR-045 and the phase-5
 work room without another revision. What the ceiling is actually for is unchanged: it still forbids
@@ -237,12 +258,12 @@ checked by a real browser on every public route, and each found something (`docs
 
 | Requirement | Checked by | What is not machine-checked |
 |---|---|---|
-| NFR-013 | `ResponsiveLayoutE2ETest` at all six widths, `TypographyFloorE2ETest` at 320 and 360 px | — |
-| NFR-014 | `ContrastE2ETest` (contrast), `FocusVisibleE2ETest` (focus order, skip link), `NavigationDrawerE2ETest` (keyboard operation), `ContactResourceTest` (labels) | The judgement clauses of WCAG 2.1 AA — sensible link text, a heading structure that describes the page, an error message a person can act on. Those stay a review question. |
-| NFR-038 | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
-| NFR-039 | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
-| NFR-040 | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
-| NFR-041 | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. Since revision 7 the tests still state the narrower revision-6 rule; they are to be restated as an 8 KB script total per public page when FR-042 is implemented. |
+| **NFR-013** | `ResponsiveLayoutE2ETest` at all six widths, `TypographyFloorE2ETest` at 320 and 360 px | — |
+| **NFR-014** | `ContrastE2ETest` (contrast), `FocusVisibleE2ETest` (focus order, skip link), `NavigationDrawerE2ETest` (keyboard operation), `ContactResourceTest` (labels) | The judgement clauses of WCAG 2.1 AA — sensible link text, a heading structure that describes the page, an error message a person can act on. Those stay a review question. |
+| **NFR-038** | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
+| **NFR-039** | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
+| **NFR-040** | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
+| **NFR-041** | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. Since revision 7 the tests still state the narrower revision-6 rule; they are to be restated as an 8 KB script total per public page when FR-042 is implemented. |
 
 A "Verified" here therefore means *the stated numbers are enforced by the build*, not that the
 interface is beyond criticism. The review with the product owner on a real phone remains part of
@@ -338,22 +359,9 @@ narrower than C-009, which only demands that a component be free of charge.
 
 ## Open Points for Confirmation
 
-The following thresholds and scope decisions are proposals, not facts derived from the existing
-documents. Please confirm or replace them:
-
-| Ref                      | Question                                                                                      |
-|--------------------------|-----------------------------------------------------------------------------------------------|
-| FR-029                   | Complete exchange offers, or drop the `EXCHANGE` table and its display fragment?               |
-| FR-030                   | Should administrators manage accounts themselves, or does the operator do it at deployment level? |
-| NFR-001, NFR-002         | Are 1000 ms p95 and 50 concurrent visitors the right targets for the expected audience?         |
-| NFR-003, NFR-004, NFR-020| Which availability, startup and backup expectations are binding — the platform has no monitoring or documented backup today? |
-| NFR-026                  | Are 5 sign-in attempts and 1 contact submission per 10 seconds and source address the right limits? |
-| C-006                    | Which browsers must be supported, and down to which version?                                    |
-| FR-034                   | Should the working group supply the start page's headline and lead copy, or is a proposal enough? |
-| FR-035                   | Is a 160-character excerpt in the list acceptable to the administrators who write the descriptions? |
-| NFR-044                  | Is Lora as body typeface accepted, or should body copy use the CD's third face (Helvetica Neue / system sans)? |
-| NFR-045                  | Dark colour scheme in this redesign, or a later one?                                            |
-| NFR-041, NFR-046         | Is 8 KB of self-hosted script per public page the right ceiling, and are 300 ms p95 at 500 events and 200 offers the right target for the search? |
+The thresholds and scope decisions that are proposals rather than facts are recorded as open
+questions OQ-005 … OQ-015 in [`open_questions.md`](open_questions.md), each on the requirement it
+concerns. Please confirm or replace them there.
 
 **Decided since revision 4.** NFR-013 and NFR-014 are binding, not aspirational, and are verified by
 browser tests. C-019/C-020: the Cevi Corporate Design is binding and no CSS framework is

@@ -5,9 +5,11 @@
 **Use Case ID:** UC-003
 **Use Case Name:** Browse Voluntary Service Offers
 **Primary Actor:** Besucher
-**Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, so they can decide which organisation to approach.
-**Status:** Approved
-**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041): A5 describes how the Offer List presents an offer chosen from a search result (UC-010 step 5).
+**Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, reads the complete offer that interests them, and learns which Organisation to approach.
+**Status:** Draft
+**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041). Revised again on 2026-11-07 for requirements revision 8 (FR-010, FR-043): every offer has an Offer Page of its own, the whole entry in the Offer List leads to it, and the link to the Organisation moved from the list entry to that page. Unfolding the complete Description in place in the list is replaced by the Offer Page.
+
+**Requirements:** [FR-009, FR-010, FR-022, FR-027, FR-035, FR-038, FR-043](../requirements.md)
 
 ## Preconditions
 
@@ -15,12 +17,13 @@
 
 ## Main Success Scenario
 
-1. The visitor opens the voluntary service section of the site.
-2. The system presents all recorded offers, each with the offering organisation, the location, a shortened excerpt of the description and a control leading to the organisation's own website.
-3. The visitor compares the presented offers and picks the one that interests them.
-4. The visitor follows the control of that offer to the website of the organisation.
-5. The system opens the organisation's website separately, so the visitor keeps the overview they came from.
-6. The visitor knows which organisation to approach and how to reach it.
+1. The visitor opens the Offer List.
+2. The system presents all recorded offers, each entry with its Organisation, its location and an Excerpt of its Description; the whole entry leads to the offer's Offer Page.
+3. The visitor compares the presented offers and selects the one that interests them.
+4. The system presents the selected offer on its Offer Page under its Public Address: the Organisation, the location, the complete Description as the administrator formatted it, and a control leading to the Organisation's website.
+5. The visitor follows that control to the website of the Organisation.
+6. The system opens the Organisation's website separately, so the visitor keeps the Offer Page they came from.
+7. The visitor knows which Organisation to approach and how to reach it.
 
 ## Alternative Flows
 
@@ -32,48 +35,48 @@
 1. The system explains that no offer is currently recorded and offers the visitor the way to the working group instead.
 2. Use case ends.
 
-### A2: The visitor wants the full description
+### A2: Description too short to shorten
 
-**Trigger:** The visitor wants to read a description that was shortened (step 3)
+**Trigger:** An offer's Description is already shorter than the Excerpt (step 2)
 **Flow:**
 
-1. The system presents the complete description of that offer in place, without leaving the overview.
-2. Use case continues at step 4.
-
-### A3: Description too short to shorten
-
-**Trigger:** An offer's description is already shorter than the excerpt length (step 2)
-**Flow:**
-
-1. The system presents the description in full, without any indication that something was left out.
+1. The system presents the Description in full in the entry, without any indication that something was left out; the entry still leads to the Offer Page.
 2. Use case continues at step 3.
 
-### A4: The visitor is a signed-in administrator
+### A3: The visitor is a signed-in administrator
 
-**Trigger:** An administrator session exists when the list is presented (step 2)
+**Trigger:** An Administrator Session exists when the Offer List or an Offer Page is presented (step 2)
 **Flow:**
 
-1. The system additionally offers the maintenance controls for each offer, presented as a separate and quieter group than the control meant for visitors.
+1. The system additionally offers the Maintenance Links for each offer, in the Offer List and on its Offer Page, presented as a separate and quieter group than the action meant for visitors.
 2. Use case continues at step 3.
 
-### A5: The visitor arrives from a search result
+### A4: The visitor opens an Offer Page directly
 
-**Trigger:** The visitor picks an offer on the Search Results Page or among the Live Results (UC-010 step 5) instead of opening the voluntary service section (step 1)
+**Trigger:** The visitor follows a shared or bookmarked Public Address of an Offer Page, or picks an offer among the search results (UC-010 step 5), instead of opening the Offer List (step 1)
 **Flow:**
 
-1. The system presents all recorded offers as in step 2, brings the chosen offer into view, marks it as the one chosen and presents its complete description in place, as in A2.
-2. Use case continues at step 4.
+1. The system presents the offer on its Offer Page as in step 4, with the way to the complete Offer List.
+2. Use case continues at step 5.
+
+### A5: Offer Page no longer available
+
+**Trigger:** The visitor opens an Offer Page whose Short Name is unknown to the system (step 4)
+**Flow:**
+
+1. The system informs the visitor that the requested page does not exist and offers the way to the Offer List.
+2. Use case ends.
 
 ## Postconditions
 
 ### Success Postconditions
 
-- The visitor has seen all published voluntary service offers and has reached the website of the organisation they chose.
+- The visitor has read the complete offer on its Offer Page and has reached the website of the Organisation running it.
 - No data is changed.
 
 ### Failure Postconditions
 
-- No data is changed; the visitor sees an explanation instead of an empty overview.
+_None — the use case changes no data._
 
 ## Business Rules
 
@@ -81,14 +84,18 @@
 
 Voluntary service offers are not filtered by date or any other criterion — every recorded offer is visible to every visitor.
 
-### BR-002: Every offer points to its organisation
+### BR-002: Every offer points to its Organisation
 
-Each offer names the organisation that runs it and links to that organisation's own website, because the application only advertises the offer and does not administer applications.
+Each offer names the Organisation that runs it, and its Offer Page links to that Organisation's own website, because the application only advertises the offer and does not administer applications.
 
-### BR-003: The organisation is the offer's own control
+### BR-003: The entry leads to the Offer Page, the Offer Page to the Organisation
 
-The link to the organisation is presented as the offer's primary control, and it opens the organisation's site separately from the overview. An offer has no page of its own on this platform, so without that control the offer is a dead end — the visitor would learn that an opportunity exists but not where to pursue it.
+Each entry of the Offer List has exactly one action for the visitor: selecting anywhere on the entry opens the offer's Offer Page. The link to the Organisation is presented only there, as the Offer Page's primary control, and opens the Organisation's site separately from the Offer Page. A visitor therefore reads the complete offer before leaving the platform.
 
-### BR-004: Offers are shortened like events
+### BR-004: The list shows an Excerpt, the Offer Page the whole text
 
-An offer's description is shortened in the overview in the same way as an event's, so that offers can be compared rather than read one after another. Because an offer has no page of its own, the complete description is made available in place instead.
+An offer's Description is shortened in the Offer List in the same way as an event's on the Event List (UC-001 BR-004), so that offers can be compared rather than read one after another. The complete Description is presented only on the Offer Page.
+
+### BR-005: Every offer has a stable Public Address
+
+Each Offer Page is reachable under the offer's Short Name, which identifies the offer uniquely among the offers (UC-004 BR-006), so a link to an offer stays valid as long as the offer exists and its Short Name is unchanged. Sharing that address is UC-011.

@@ -5,8 +5,10 @@
 **Use Case ID:** UC-002
 **Use Case Name:** Manage Events
 **Primary Actor:** Administrator
-**Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that should no longer be shown.
-**Status:** Implemented
+**Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
+**Status:** Approved
+
+**Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033](../requirements.md)
 
 ## Preconditions
 
@@ -17,7 +19,7 @@
 
 1. The administrator opens the event list and chooses to add a new event.
 2. The system presents an empty event form with today's date pre-filled as the display date.
-3. The administrator enters the title, the date text as it should be read by visitors, the location, the display date and a formatted description, and optionally a short name for the event address.
+3. The administrator enters the title, the date text as visitors read it, the location, the display date and a formatted description, and optionally a short name for the event address.
 4. The administrator submits the form.
 5. The system confirms that the submission comes from a form it handed out to this administrator's own session.
 6. The system derives a short name from the title if none was entered.

@@ -9,6 +9,7 @@
 **Trigger:** The visitor asks to share the event they are reading on its Event Page.
 **Status:** Tested
 **Introduced:** 2026-11-06 with requirements revision 6 (FR-040). Until then a visitor could pass an event on only by copying the address from the browser's address bar, which most visitors on a phone never see.
+**Revised:** 2026-11-07: BR-005 no longer claims that the share control is the only script on a public page, which has not been true since the Live Results of UC-010 (C-021 as relaxed in requirements revision 7). The behaviour of the Event Page is unchanged.
 
 **Requirements:** [FR-040, NFR-041, C-021](../requirements.md)
 **Layers:** UI
@@ -93,7 +94,7 @@ The system records nothing about a share: no counter, no log entry of who shared
 
 ### BR-005: The page does not depend on sharing
 
-The share control is the only part of a public page that needs a script, and its absence takes nothing away but the convenience: without the script the Event Page shows the Public Address as selectable text, and every other part of the page reads and works exactly as before.
+Sharing is an enhancement of the Event Page, not part of reading it (C-021): without the share script the Event Page shows the Public Address as selectable text, and every other part of the page reads and works exactly as before. The Event Page needs no other script for sharing; the share script is the same one the Offer Page uses (UC-011 BR-005).
 
 ### BR-006: Copying is confirmed, cancelling is not
 

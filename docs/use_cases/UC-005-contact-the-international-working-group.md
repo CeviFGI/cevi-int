@@ -5,9 +5,12 @@
 **Use Case ID:** UC-005
 **Use Case Name:** Contact the International Working Group
 **Primary Actor:** Besucher
+**Secondary Actors:** Mail Service
 **Goal:** A visitor asks the international working group for advice or support and reaches a real person without needing an account.
 **Status:** Approved
 **Revised:** 2026-08-25 for requirements revision 5 (FR-037). Every input gains a visible label and an explanation of why it is asked, and a rejected submission names the fault at the field that caused it. No rule about what is accepted changes — the spam protection answer, the hidden field and the absence of sender fields are exactly as before.
+
+**Requirements:** [FR-014, FR-015, FR-016, FR-017, FR-018, FR-032, FR-037](../requirements.md)
 
 ## Preconditions
 

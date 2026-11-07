@@ -7,8 +7,9 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor finds the Upcoming Events and Voluntary Service Offers that mention what they are looking for — a country, a topic, an organisation — without reading through the Event List and the Offer List one entry after another.
 **Trigger:** The visitor enters a Search Term in the search field and starts the search.
-**Status:** Approved
+**Status:** Draft
 **Introduced:** 2026-11-06 with requirements revision 7 (FR-041, FR-042). Until then a visitor could find an event or offer only by reading both lists, and the full Description of an offer only by opening each one in place.
+**Revised:** 2026-11-07 for requirements revision 8 (FR-043): every offer has an Offer Page of its own, so a match on an offer now leads to that page, as a match on an event leads to its Event Page, instead of to the offer's entry in the Offer List.
 
 **Requirements:** [FR-041, FR-042, NFR-041, NFR-046, NFR-047, C-021](../requirements.md)
 **Layers:** UI
@@ -23,7 +24,7 @@
 2. The system searches the Upcoming Events and all Voluntary Service Offers for the Search Term.
 3. The system presents the Search Results Page: the Search Term in the search field, the number of matches, and the matching Upcoming Events and the matching Voluntary Service Offers in two separate groups, each entry with its title or Organisation, its location, for an event its Date Text, and an excerpt of its Description that shows where the Search Term occurs in it (BR-008).
 4. The visitor picks the entry that interests them.
-5. The system leads the visitor to that entry: for an event to its Event Page, for an offer to its entry in the Offer List, brought into view, marked as the one chosen and with its complete Description shown in place (UC-003 A5).
+5. The system leads the visitor to that entry: for an event to its Event Page, for an offer to its Offer Page (UC-003 A4).
 6. The visitor reads the event or offer they were looking for.
 
 ## Alternative Flows
@@ -79,12 +80,12 @@
 1. The system takes the Search Term from the address.
 2. Use case continues at step 2.
 
-### A7: The chosen offer no longer exists
+### A7: The chosen offer is no longer available
 
-**Trigger:** The offer the visitor picked was deleted after the Search Results Page was presented (step 5)
+**Trigger:** The offer the visitor picked was deleted, or its Short Name changed, after the Search Results Page was presented (step 5)
 **Flow:**
 
-1. The system presents the Offer List without marking an entry.
+1. The system informs the visitor that the requested page does not exist and offers the way to the Offer List, as UC-003 A5 does.
 2. Use case ends.
 
 ### A8: The chosen event is no longer available
@@ -99,7 +100,7 @@
 
 ### Success Postconditions
 
-- The visitor has reached the Event Page or the Offer List entry of a match for their Search Term.
+- The visitor has reached the Event Page or the Offer Page of a match for their Search Term.
 - No data is stored or changed; the Search Term is not recorded.
 
 ### Failure Postconditions

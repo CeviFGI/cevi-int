@@ -33,29 +33,47 @@ The event carries two dates on purpose: `date` is the human-readable period show
 ("15. - 24. Oktober 2023"), while `displayDate` is the single date the system compares against
 today to decide whether the event is still upcoming.
 
-**Constraints:** `description` holds HTML that is rendered unescaped on the public pages. It is
-therefore stored already reduced to the allow-list documented in
-[Rich Text Allow-List](#rich-text-allow-list); the stored value, not the submitted one, is the
-authority. The length limit applies after that reduction.
+#### Constraints
+
+- When the administrator supplies no `slug`, it is derived from `title` (FR-007) and then consists
+  only of lowercase letters `a`–`z`, digits and single hyphens, neither starting nor ending with a
+  hyphen. A `slug` the administrator supplies is stored as entered and only checked for uniqueness
+  and length (UC-002 step 7).
+- `description` holds HTML that is rendered unescaped on the public pages. It is therefore stored
+  already reduced to the allow-list documented in [Rich Text Allow-List](#rich-text-allow-list);
+  the stored value, not the submitted one, is the authority. The length limit applies after that
+  reduction.
 
 ### VOLUNTARY_SERVICE
 
 A voluntary service opportunity abroad that an organisation offers and that the working group recommends.
 
-| Attribute        | Description                                             | Data Type | Length/Precision | Validation Rules |
-|------------------|---------------------------------------------------------|-----------|------------------|------------------|
-| id               | Unique identifier                                       | Long      | 19               | Primary Key, Sequence |
-| organization     | Organisation running the voluntary service              | String    | 255              | Not Null         |
-| organizationLink | Address of the organisation's own website               | String    | 255              | Not Null         |
-| location         | Country or region of the assignment                     | String    | 255              | Not Null         |
-| description      | Formatted description with duration and further links   | String    | 65535            | Not Null         |
+| Attribute        | Description                                                  | Data Type | Length/Precision | Validation Rules      |
+|------------------|--------------------------------------------------------------|-----------|------------------|-----------------------|
+| id               | Unique identifier                                            | Long      | 19               | Primary Key, Sequence |
+| slug             | Short readable name forming the public address of the offer  | String    | 255              | Not Null, Unique      |
+| organization     | Organisation running the voluntary service                   | String    | 255              | Not Null              |
+| organizationLink | Address of the organisation's own website                    | String    | 255              | Not Null, Format: URL |
+| location         | Country or region of the assignment                          | String    | 255              | Not Null              |
+| description      | Formatted description with duration and further links        | String    | 65535            | Not Null              |
 
-The database stores these columns as unbounded text; the lengths above are the limits the
-application enforces before storing, not constraints the schema declares today.
+The database stores the text columns as unbounded text; the lengths above are the limits the
+application enforces before storing, not constraints the schema declares today. `slug` is new
+with requirements revision 8 (FR-043, FR-044): an offer has no title, so its public address is
+built from a short name of its own, unique among the offers. It does not have to differ from the
+`slug` of an event, because offer pages and event pages live under different address prefixes.
 
-**Constraints:** `organizationLink` must start with `http://` or `https://`, so that the value can
-never turn into a script-executing link once the field is rendered as a hyperlink. `description` is
-subject to the same [Rich Text Allow-List](#rich-text-allow-list) as `EVENT.description`.
+#### Constraints
+
+- `slug` follows the same rules as `EVENT.slug`; when the administrator supplies none it is
+  derived from `organization` followed by `location` (FR-044), and a clash with an existing offer
+  is resolved by appending a number (UC-004 BR-007, UC-004 BR-009).
+- An offer recorded before `slug` existed receives one, derived the same way, when the schema is
+  migrated, so that no row is left without a public address.
+- `organizationLink` must start with `http://` or `https://`, so that the value can never turn into
+  a script-executing link once the field is rendered as a hyperlink.
+- `description` is subject to the same [Rich Text Allow-List](#rich-text-allow-list) as
+  `EVENT.description`.
 
 ### EXCHANGE
 
@@ -65,7 +83,7 @@ An exchange opportunity with a partner organisation abroad.
 |------------------|-------------------------------------------------|-----------|------------------|-----------------------|
 | id               | Unique identifier                               | Long      | 19               | Primary Key, Sequence |
 | organization     | Organisation offering the exchange              | String    | 255              | Not Null              |
-| organizationLink | Address of the organisation's own website       | String    | 255              | Not Null              |
+| organizationLink | Address of the organisation's own website       | String    | 255              | Not Null, Format: URL |
 | description      | Formatted description of the exchange offer     | String    | 65535            | Not Null              |
 
 This entity exists in the database and a display fragment for it exists in the user interface,
@@ -85,9 +103,11 @@ A message a visitor sent to the international working group through the contact 
 The message is deliberately the only stored attribute: no sender data is requested, so a visitor
 who wants a reply includes their contact details in the message text itself.
 
-**Constraints:** the 5 000 character limit is validated before storage. It exists because the
-endpoint is anonymous: without it, a single request may write up to the HTTP body limit (10 MB) into
-the database file, and the file shares a filesystem with the host.
+#### Constraints
+
+- The 5 000 character limit of `message` is validated before storage. It exists because the
+  endpoint is anonymous: without it, a single request may write up to the HTTP body limit (10 MB)
+  into the database file, and the file shares a filesystem with the host.
 
 ### USER
 
@@ -103,8 +123,10 @@ An account that may sign in and maintain the published content.
 The schema for this table still allows empty and duplicate user names; the rules above are the
 ones the sign-in mechanism relies on and should be made explicit in the schema.
 
-**Constraints:** `password` holds a bcrypt hash and never a readable password. The hash is treated
-as a secret in its own right: no rendering, logging or `toString()` of the entity may reproduce it.
+#### Constraints
+
+- `password` holds a bcrypt hash and never a readable password. The hash is treated as a secret in
+  its own right: no rendering, logging or `toString()` of the entity may reproduce it.
 
 ## Rich Text Allow-List
 
@@ -122,7 +144,7 @@ anything else is dropped.
 | Images     | `img` with `src`, `alt`, `title`, `width`, `height`                                               |
 | Styling    | `style` attributes, reduced to a safe set of CSS properties                                       |
 
-**Constraints:** `a href` accepts `http`, `https` and `mailto` only. `img src` accepts `http`,
+`a href` accepts `http`, `https` and `mailto` only. `img src` accepts `http`,
 `https` and `data:image/…` — the latter because the editor embeds pasted pictures inline. Every
 event handler attribute (`onclick`, `onerror`, …), `script`, `iframe`, `object`, `embed`, `form` and
 every other URL scheme is removed. The reduction happens server-side: the editor's own filtering is

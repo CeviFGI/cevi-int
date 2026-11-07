@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "findings": [
+    {
+      "fingerprint": "c76618225dd81bad0f31b6685536365b5ee89bb1",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-009-share-an-event.md",
+      "element": "UC-009",
+      "message": "UC-009 is Tested, but the specification, C-021, NFR-041 changed after that status was set in 3b70e01; run the coverage audit again (state 88ee7577)"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ rectangle "Cevi International" {
     usecase "UC-008\nEnter the Platform" as UC008
     usecase "UC-009\nShare an Event" as UC009
     usecase "UC-010\nSearch Events and Offers" as UC010
+    usecase "UC-011\nShare a Voluntary Service Offer" as UC011
 }
 
 visitor --> UC001
@@ -28,6 +29,7 @@ visitor --> UC007
 visitor --> UC008
 visitor --> UC009
 visitor --> UC010
+visitor --> UC011
 
 admin --> UC002
 admin --> UC004
@@ -40,6 +42,7 @@ UC005 --> mail
 UC008 ..> UC001 : <<include>>
 UC008 ..> UC003 : <<include>>
 UC009 ..> UC001 : <<extend>>
+UC011 ..> UC003 : <<extend>>
 
 note bottom of UC007
   Besucher: nur die Informationsseiten.
@@ -65,10 +68,18 @@ end note
 
 note bottom of UC010
   Durchsucht kommende Anlaesse und
-  Volontariate (FR-041). Live-Resultate
+  Volontariate (FR-041); Treffer fuehren
+  auf die Anlass- bzw. Volontariatsseite. Live-Resultate
   beim Tippen (FR-042) sind eine
   Ergaenzung desselben Ziels, kein
   eigener Use Case.
+end note
+
+note bottom of UC011
+  Erweitert UC-003 auf der Volontariatsseite
+  (FR-045), gleich wie UC-009 auf der
+  Anlassseite: Share-Dialog mit Organisation,
+  Ort und Adresse, sonst Zwischenablage.
 end note
 
 @enduml
