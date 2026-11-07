@@ -178,6 +178,32 @@ class EventFormRulesTest {
         assertThat(Event.count(), equalTo(eventCount));
     }
 
+    /**
+     * A7, BR-009: a form token handed out to another browser, or one sent without this browser's
+     * token cookie, is refused; nothing is stored.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void add_with_token_of_another_browser_is_refused() {
+        long eventCount = Event.count();
+
+        submit(Csrf.givenWithTokenOfAnotherBrowser(), validEntry("CLEANUP A7 foreign token"))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST);
+        submit(Csrf.givenWithoutCookie(), validEntry("CLEANUP A7 no cookie"))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        assertThat(Event.count(), equalTo(eventCount));
+    }
+
+    /** BR-003: the form lets the administrator enter a short name of the full 255 characters. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void short_name_field_allows_255_characters() {
+        given().when().get(addEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("name=\"slug\" maxlength=\"255\""));
+    }
+
     /** A7, BR-009: a change without the token of the system's own form is refused, the event is unchanged. */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})

@@ -33,6 +33,10 @@ public class EventAddTest {
     @TestHTTPResource("add")
     URL addEndpoint;
 
+    /**
+     * BR-001, Pre-1: a visitor who is not signed in is sent to the sign-in page instead of the form,
+     * both when opening it and when submitting it.
+     */
     @Test
     public void login_form_when_add_anonymous() {
         // try to show form
@@ -57,6 +61,9 @@ public class EventAddTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /**
+     * Main success scenario, steps 1 and 2: the administrator gets the empty event form.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_form_when_logged_in() {
@@ -68,6 +75,10 @@ public class EventAddTest {
                 .body(containsString("Neuen Anlass anlegen"));
     }
 
+    /**
+     * Main success scenario, steps 6 and 9, BR-005: without a short name the event is recorded with
+     * one derived from the title.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_with_empty_slug() {
@@ -83,6 +94,9 @@ public class EventAddTest {
         assertThat(event.slug, equalTo("cleanup-add-with-empty-slug")); // if no slug is defined one will be generated
     }
 
+    /**
+     * Main success scenario, steps 3 and 9: a short name the administrator supplies is stored as entered.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_with_slug() {
@@ -98,6 +112,9 @@ public class EventAddTest {
         assertThat(event.slug, equalTo("add_with_slug")); // if no slug is defined one will be generated
     }
 
+    /**
+     * BR-004, A2: a short name already used by another event is rejected and nothing is recorded.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_with_slug_other_event_same_slug() {
@@ -126,6 +143,9 @@ public class EventAddTest {
         assertThat(event.slug, equalTo("add_with_slug")); // if no slug is defined one will be generated
     }
 
+    /**
+     * BR-003, A2: a title longer than 255 characters is rejected and nothing is recorded.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_with_too_long_title() {
@@ -147,6 +167,9 @@ public class EventAddTest {
         assertThat(Event.count(), equalTo(eventCount));
     }
 
+    /**
+     * BR-005: a derived short name that is already taken gets a counter appended.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_twice_with_same_title() {

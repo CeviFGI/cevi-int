@@ -4,6 +4,13 @@
 
 <h1>Anlass löschen</h1>
 
+{!UC-002 A8: the store refused the removal; the event is still there and may be removed again.!}
+{#if removalFailed}
+<div class="error-summary" role="alert" tabindex="-1" autofocus>
+    <p>Der Anlass konnte nicht gelöscht werden und bleibt bestehen. Bitte versuche es später noch einmal.</p>
+</div>
+{/if}
+
 {!A compact preview rather than the list card: on a confirmation page the visitor has to
 recognise the record, not be invited to navigate away from it.!}
 <article class="card card--preview">
@@ -21,8 +28,8 @@ recognise the record, not be invited to navigate away from it.!}
    rückgängig machen.</p>
 
 {!The quiet cancel comes first and the destructive control is outlined rather than filled:
-reachable, but never the inviting option. Deleting stays a POST with a CSRF token (NFR-021,
-NFR-011).!}
+reachable, but never the inviting option.!}
+{! UC-002 BR-009: deleting stays a POST with a CSRF token bound to this browser (NFR-021, NFR-011) !}
 <div class="cluster">
     <a class="btn btn--secondary" href="/anlaesse">Abbrechen</a>
     <form action="/anlaesse/delete" method="post" class="inline-form">

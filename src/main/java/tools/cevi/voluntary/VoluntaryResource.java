@@ -42,6 +42,8 @@ public class VoluntaryResource {
         return Templates.list(VoluntaryService.listAll(), chosen);
     }
 
+    // UC-004 BR-001: only an administrator may add, change or remove offers
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @GET
     @Path("add")
     @RolesAllowed("admin")
@@ -50,6 +52,8 @@ public class VoluntaryResource {
         return Templates.form(0, "", "", "", "", ValidationMessages.none());
     }
 
+    // UC-004 BR-001: only an administrator may add, change or remove offers
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @GET
     @Path("edit")
     @RolesAllowed("admin")
@@ -67,6 +71,8 @@ public class VoluntaryResource {
      * GET must not change data, or a prefetching browser, a link preview or a plain link from
      * another site is enough to remove an offer (UC-002 BR-009).
      */
+    // UC-004 BR-001: only an administrator may add, change or remove offers
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @GET
     @Path("delete")
     @RolesAllowed("admin")
@@ -79,6 +85,8 @@ public class VoluntaryResource {
         return Templates.delete(id, service);
     }
 
+    // UC-004 BR-001: only an administrator may add, change or remove offers
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @POST
     @Path("delete")
     @RolesAllowed("admin")
@@ -92,6 +100,8 @@ public class VoluntaryResource {
         return handleDelete(id);
     }
 
+    // UC-004 BR-001: only an administrator may add, change or remove offers
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @POST
     @RolesAllowed("admin")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

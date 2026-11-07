@@ -1,6 +1,7 @@
 package tools.cevi.auth;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.arc.profile.UnlessBuildProfile;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
@@ -12,10 +13,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.cevi.fixture.Csrf;
+import tools.cevi.infra.DemoData;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -160,6 +165,27 @@ class SignInRulesTest {
                 }
             });
         }
+    }
+
+    /**
+     * BR-008: demonstration accounts exist only outside production. No configuration file sets
+     * the administrator password for the prod profile — neither unprefixed nor with {@code %prod.}
+     * — and the demonstration data is excluded from the prod build.
+     */
+    @Test
+    void demonstration_accounts_exist_only_outside_production() throws IOException {
+        for (String file : List.of("application.properties", "application-prod.properties")) {
+            Properties properties = new Properties();
+            try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(file)) {
+                assertThat(file + " is on the classpath", in != null, is(true));
+                properties.load(in);
+            }
+            assertThat(file, properties.stringPropertyNames(), not(hasItem("application.admin.password")));
+            assertThat(file, properties.stringPropertyNames(), not(hasItem("%prod.application.admin.password")));
+        }
+
+        UnlessBuildProfile unless = DemoData.class.getAnnotation(UnlessBuildProfile.class);
+        assertThat(unless != null && List.of(unless.value()).contains("prod"), is(true));
     }
 
     private static void signIn(String username, String password) {

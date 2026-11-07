@@ -28,6 +28,7 @@ public class AdminAccountBootstrap {
     @ConfigProperty(name = "application.admin.password")
     Optional<String> password;
 
+    // UC-006 BR-008: the first administrator comes from the deployment; without one, no start
     @Transactional
     void startup(@Observes StartupEvent event) {
         if (User.count() > 0) {

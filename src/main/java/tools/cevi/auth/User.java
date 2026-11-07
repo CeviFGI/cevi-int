@@ -34,6 +34,7 @@ public class User extends PanacheEntityBase {
     public static void add(String username, String password, String role) {
         User user = new User();
         user.username = username;
+        // UC-006 BR-002: only an irreversible hash of the password is stored
         user.password = BcryptUtil.bcryptHash(password);
         user.role = role;
         user.persist();

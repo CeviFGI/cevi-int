@@ -6,7 +6,7 @@
 **Use Case Name:** Sign In as Administrator
 **Primary Actor:** Administrator
 **Goal:** An administrator identifies themselves so that the maintenance functions for events and voluntary service offers become available, and gives up that access again when finished.
-**Status:** Approved
+**Status:** Tested
 
 **Requirements:** [FR-019, FR-020, FR-021, FR-031](../requirements.md)
 
@@ -38,7 +38,7 @@
 
 ### A2: Already signed in
 
-**Trigger:** The administrator opens the sign-in page while a session is already established (step 1)
+**Trigger:** The administrator opens the sign-in page or one of the general administration entries while a session is already established (step 1)
 **Flow:**
 
 1. The system sends the administrator to the start page without asking for credentials.
@@ -49,7 +49,7 @@
 **Trigger:** The administrator chooses to sign out (step 7)
 **Flow:**
 
-1. The administrator submits the sign-out form shown in the navigation.
+1. The administrator submits the sign-out form shown in the navigation (see BR-009).
 2. The system ends the session and confirms that the administrator is signed out.
 3. Use case ends.
 
@@ -63,7 +63,7 @@
 
 ### A5: Maintenance function opened without a session
 
-**Trigger:** Instead of the sign-in page, someone who is not signed in opens a maintenance function (step 1)
+**Trigger:** Instead of the sign-in page, someone who is not signed in opens a maintenance function or one of the general administration entries (step 1)
 **Flow:**
 
 1. The system sends them to the sign-in page.
@@ -121,3 +121,11 @@ The session is handed to the browser in a way that keeps it out of unencrypted r
 ### BR-008: The first administrator account comes from the deployment
 
 Where no user account exists yet, the platform creates the first administrator account from credentials the deployment supplies. If a production deployment supplies none, the platform refuses to start rather than run without administration or with credentials that are publicly known. Demonstration accounts exist only outside production.
+
+### BR-009: Signing out is accepted only from the system's own form
+
+Signing out must be submitted through the sign-out form the system handed out to the same browser, not by following a link. Otherwise any other website could sign an administrator out merely by referring to the sign-out address.
+
+### BR-010: The general administration entries lead to the right page
+
+The platform offers two general administration entries that need no knowledge of the sign-in address — one under the sign-in area and one at the top level of the site. Both behave alike: they lead a visitor who is not signed in to the sign-in page and a signed-in administrator to the start page.

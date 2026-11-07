@@ -21,6 +21,7 @@ event's own page, never here.
             {/let}
         </div>
     </div>
+    {! UC-006 BR-003: maintenance links only for a signed-in administrator !}
     {#if inject:currentUser.admin && showActions}
     <div class="card__admin">
         <a href="/anlaesse/edit?id={it.id}">Bearbeiten</a>

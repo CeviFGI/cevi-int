@@ -29,6 +29,7 @@ fragment the search result's address scrolls to.
             </a>
         </div>
     </div>
+    {! UC-006 BR-003: maintenance links only for a signed-in administrator !}
     {#if inject:currentUser.admin && showActions}
     <div class="card__admin">
         <a href="/volontariat/edit?id={it.id}">Bearbeiten</a>

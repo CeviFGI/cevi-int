@@ -31,6 +31,40 @@ public final class Csrf {
 
     /** @return a form-urlencoded request specification with a matching CSRF cookie and form field */
     public static RequestSpecification given() {
+        String[] pair = loadTokenPair();
+        return RestAssured.given()
+                .contentType(ContentType.URLENC)
+                .cookie(FIELD, pair[0])
+                .formParam(FIELD, pair[1]);
+    }
+
+    /**
+     * Builds the request a foreign page would send: a form token handed out on one page load and
+     * the token cookie of another, as if the token had been obtained in a different browser.
+     *
+     * @return a form-urlencoded request specification whose CSRF cookie and form field do not match
+     */
+    public static RequestSpecification givenWithTokenOfAnotherBrowser() {
+        String[] thisBrowser = loadTokenPair();
+        String[] otherBrowser = loadTokenPair();
+        if (thisBrowser[1].equals(otherBrowser[1])) {
+            throw new IllegalStateException("Two page loads handed out the same CSRF token");
+        }
+        return RestAssured.given()
+                .contentType(ContentType.URLENC)
+                .cookie(FIELD, thisBrowser[0])
+                .formParam(FIELD, otherBrowser[1]);
+    }
+
+    /** @return a form-urlencoded request specification with a valid form token but no token cookie */
+    public static RequestSpecification givenWithoutCookie() {
+        return RestAssured.given()
+                .contentType(ContentType.URLENC)
+                .formParam(FIELD, loadTokenPair()[1]);
+    }
+
+    /** @return the token cookie and the hidden form field of one fresh page load */
+    private static String[] loadTokenPair() {
         Response page = RestAssured.given().when().get(TOKEN_SOURCE_PAGE).andReturn();
 
         String cookie = page.getCookie(FIELD);
@@ -39,11 +73,7 @@ public final class Csrf {
             throw new IllegalStateException("No CSRF token found on " + TOKEN_SOURCE_PAGE
                     + " - cookie=" + cookie);
         }
-
-        return RestAssured.given()
-                .contentType(ContentType.URLENC)
-                .cookie(FIELD, cookie)
-                .formParam(FIELD, matcher.group(1));
+        return new String[] {cookie, matcher.group(1)};
     }
 
     /** @return a form-urlencoded request specification deliberately without any CSRF token */

@@ -38,7 +38,7 @@ public class EventResource {
     public static class Templates {
         public static native TemplateInstance list(List<Event> events);
         public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
-        public static native TemplateInstance delete(Event event);
+        public static native TemplateInstance delete(Event event, boolean removalFailed);
         public static native TemplateInstance detail(Event event, String publicAddress, String publicPath);
     }
 
@@ -48,6 +48,8 @@ public class EventResource {
         return Templates.list(Event.upcomingEvents());
     }
 
+    // UC-002 BR-001: only an administrator may add, change or remove events
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @GET
     @Path("add")
     @RolesAllowed("admin")
@@ -56,6 +58,8 @@ public class EventResource {
         return Templates.form(0, "", "", "", LocalDate.now().toString(), "", "", ValidationMessages.none());
     }
 
+    // UC-002 BR-001: only an administrator may add, change or remove events
+    // UC-006 BR-001: the administrator role decides, not merely a session
     @GET
     @Path("edit")
     @RolesAllowed("admin")
@@ -99,8 +103,12 @@ public class EventResource {
     /**
      * Shows the confirmation page. Deleting itself happens in {@link #confirmDelete(long)}: a
      * GET must not change data, or a prefetching browser, a link preview or a plain link from
-     * another site is enough to remove an event (UC-002 BR-009).
+     * another site is enough to remove an event.
      */
+    // UC-002 BR-001: only an administrator may add, change or remove events
+    // UC-006 BR-001: the administrator role decides, not merely a session
+    // UC-002 BR-007: a removal is only asked for here; it happens after the confirmation is submitted
+    // UC-002 BR-009: a GET never changes data, so following a link cannot remove an event
     @GET
     @Path("delete")
     @RolesAllowed("admin")
@@ -110,9 +118,13 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        return Response.status(Response.Status.OK).entity(Templates.delete(event).render()).build();
+        return Response.status(Response.Status.OK).entity(Templates.delete(event, false).render()).build();
     }
 
+    // UC-002 BR-001: only an administrator may add, change or remove events
+    // UC-006 BR-001: the administrator role decides, not merely a session
+    // UC-002 BR-007: the removal happens only once the confirmation form is submitted
+    // UC-002 BR-009: a POST whose CSRF token matches this browser's token cookie (quarkus-rest-csrf)
     @POST
     @Path("delete")
     @RolesAllowed("admin")
@@ -123,9 +135,12 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        return handleDelete(id);
+        return handleDelete(event);
     }
 
+    // UC-002 BR-001: only an administrator may add, change or remove events
+    // UC-006 BR-001: the administrator role decides, not merely a session
+    // UC-002 BR-009: a POST whose CSRF token matches this browser's token cookie (quarkus-rest-csrf)
     @POST
     @RolesAllowed("admin")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -135,8 +150,8 @@ public class EventResource {
                                    @FormParam("displayDate") String displayDate,
                                    @FormParam("location") String location, @FormParam("description") String description) {
 
-        // Reduced here rather than in the templates: the description is rendered unescaped, so what
-        // is stored has to be safe regardless of how it got in (UC-002 BR-010).
+        // UC-002 BR-010: reduced here rather than in the templates: the description is rendered
+        // unescaped, so what is stored has to be safe regardless of how it got in
         String safeDescription = HtmlSanitizer.sanitize(description);
 
         if (id == 0) {
@@ -163,6 +178,7 @@ public class EventResource {
 
         Set<ValidationMessage> violations = new LinkedHashSet<>();
 
+        // UC-002 BR-004: no two events share a short name
         var eventBySlug = Event.findBySlug(slug);
         if (eventBySlug != null) {
             violations.add(ValidationMessage.of("slug", "Es existiert bereits ein anderer Eintrag mit demselben Slug"));
@@ -204,6 +220,7 @@ public class EventResource {
         return owner != null && owner.id != id;
     }
 
+    // UC-002 BR-008: a display date that cannot be read is ignored rather than stored
     private boolean tryParseDate(String date) {
         try {
             LocalDate.parse(date);
@@ -224,12 +241,18 @@ public class EventResource {
         try {
             QuarkusTransaction.begin();
 
+            // UC-002 BR-004: no two events share a short name
             var eventBySlug = Event.findBySlug(slug);
             if (eventBySlug != null && eventBySlug.id != id) {
                 violations.add(ValidationMessage.of("slug", "Es existiert bereits ein anderer Eintrag mit demselben Slug"));
             }
 
             event = Event.findById(id);
+            if (event == null) {
+                // UC-002 A5: the event was removed after the form was opened
+                Transactions.rollbackIfActive();
+                throw new NotFoundException("Event with id " + id + " not found");
+            }
             event.title = title;
             event.slug = slug;
             event.date = date;
@@ -248,6 +271,8 @@ public class EventResource {
             } else {
                 Transactions.rollbackIfActive();
             }
+        } catch (NotFoundException e) {
+            throw e;
         } catch (Exception e) {
             Log.error("Unable to save event [" + event  + "] to database.", e);
             Transactions.rollbackIfActive();
@@ -256,19 +281,20 @@ public class EventResource {
         return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
     }
 
-    private Response handleDelete(long id) {
-
-        Event event = null;
+    /**
+     * Removes the event. If the store refuses, the removal is rolled back and the confirmation page
+     * comes back with a notice instead of an error page (UC-002 A8).
+     */
+    private Response handleDelete(Event event) {
         try {
             QuarkusTransaction.begin();
-            event = Event.findById(id);
-            event.delete();
+            Event.deleteById(event.id);
             QuarkusTransaction.commit();
             return Response.seeOther(URI.create("/anlaesse")).build();
         } catch (Exception e) {
-            Log.error("Unable to delete event [" + id  + "] from database.", e);
+            Log.error("Unable to delete event [" + event.id + "] from database.", e);
             Transactions.rollbackIfActive();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(event)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(event, true).render()).build();
         }
     }
 }

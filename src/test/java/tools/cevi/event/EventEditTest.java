@@ -1,5 +1,6 @@
 package tools.cevi.event;
 
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -20,7 +21,8 @@ import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * UC-002 Manage Events, A1: changing an existing event, keeping or deriving its short name
- * (BR-004, BR-005), and BR-001 for a visitor who is not signed in.
+ * (BR-004, BR-005), A5 for an event that no longer exists, and BR-001 for a visitor who is not
+ * signed in.
  */
 @QuarkusTest
 public class EventEditTest {
@@ -32,6 +34,10 @@ public class EventEditTest {
     @TestHTTPResource("edit")
     URL editEndpoint;
 
+    /**
+     * BR-001, Pre-1: a visitor who is not signed in is sent to the sign-in page instead of the edit
+     * form, both when opening it and when submitting it.
+     */
     @Test
     public void login_when_edit_anonymous() {
         long firstId = ((Event) Event.listAll().stream().findFirst().orElseThrow()).id;
@@ -62,6 +68,9 @@ public class EventEditTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /**
+     * A1 step 1: the administrator gets the form for an existing event.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_form_when_logged_in() {
@@ -89,6 +98,9 @@ public class EventEditTest {
                 .body(containsString("Diese Seite gibt es nicht"));
     }
 
+    /**
+     * A1, BR-005: a short name emptied while changing is derived anew from the changed title.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_empty_slug() {
@@ -117,6 +129,9 @@ public class EventEditTest {
         assertThat(event.slug, equalTo("cleanup-edit-empty-slug-edited")); // generate a new slug
     }
 
+    /**
+     * A1, BR-005: a short name derived anew gets a counter when another event already uses it.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_empty_slug_other_event_with_same_title() {
@@ -146,6 +161,9 @@ public class EventEditTest {
         assertThat(event.slug, equalTo("cleanup-edit-empty-slug-edited0")); // generate a new slug with counter as there is already one for another event
     }
 
+    /**
+     * A1: changing the title keeps the short name the event already has.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_change_title_keep_slug() {
@@ -173,6 +191,9 @@ public class EventEditTest {
         assertThat(event.slug, equalTo(slug)); // keep the slug from insertion
     }
 
+    /**
+     * A1, A2, BR-004: a short name used by another event is rejected when changing.
+     */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_slug_same_as_other_event() {
@@ -193,5 +214,33 @@ public class EventEditTest {
                 .then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(containsString("Es existiert bereits ein anderer Eintrag mit demselben Slug"));
+    }
+
+    /**
+     * A5: a change submitted for an event that was removed after its form was opened is answered
+     * with the page saying the event does not exist, and no event is recorded in its place.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_submit_for_removed_event() {
+        long id = EventFixture.createEvent("CLEANUP edit_submit_for_removed_event");
+        QuarkusTransaction.requiringNew().run(() -> Event.deleteById((int) id));
+        long eventCount = Event.count();
+
+        Csrf.given()
+                .formParam("id", id)
+                .formParam("title", "CLEANUP edit_submit_for_removed_event changed")
+                .formParam("slug", "")
+                .formParam("date", "some date")
+                .formParam("displayDate", "2030-01-01")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_NOT_FOUND)
+                .body(containsString("Diese Seite gibt es nicht"));
+
+        assertThat(Event.count(), equalTo(eventCount));
     }
 }

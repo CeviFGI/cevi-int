@@ -6,9 +6,9 @@
 **Use Case Name:** Manage Events
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
-**Status:** Approved
+**Status:** Tested
 
-**Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033](../requirements.md)
+**Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, NFR-006, NFR-011, NFR-021](../requirements.md)
 
 ## Preconditions
 
@@ -68,7 +68,7 @@
 
 ### A5: Event no longer exists
 
-**Trigger:** The administrator opens the edit or delete page of an event that has meanwhile been removed (step 1)
+**Trigger:** The administrator opens the edit or delete page of an event, or submits a change or removal of an event, that has meanwhile been removed (step 1)
 **Flow:**
 
 1. The system informs the administrator that the requested event does not exist.
@@ -90,6 +90,15 @@
 
 1. The system refuses the change without inspecting the submitted values.
 2. Use case ends.
+
+### A8: Event cannot be removed
+
+**Trigger:** The removal the administrator confirmed in A3 cannot be completed (step 1)
+**Flow:**
+
+1. The system discards the incomplete removal so that the event is preserved.
+2. The system presents the confirmation page again and informs the administrator that the event could not be removed.
+3. Use case ends.
 
 ## Postconditions
 

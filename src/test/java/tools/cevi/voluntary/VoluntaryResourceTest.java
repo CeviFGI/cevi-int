@@ -20,6 +20,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-003 Browse Voluntary Service Offers and UC-004 Manage Voluntary Service Offers over HTTP, plus
+ * UC-006 BR-003: the maintenance links on the offer list appear only for a signed-in administrator.
+ */
 @QuarkusTest
 public class VoluntaryResourceTest {
     @TestHTTPEndpoint(VoluntaryResource.class)
@@ -77,6 +81,7 @@ public class VoluntaryResourceTest {
                 .body(containsString(tail));
     }
 
+    /** UC-006 BR-003: a visitor sees the offers but no maintenance links. */
     @Test
     public void list_no_auth() {
         List<VoluntaryService> voluntaryServices = VoluntaryService.listAll();
@@ -91,6 +96,7 @@ public class VoluntaryResourceTest {
                 .body(not(containsString("Bearbeiten")));
     }
 
+    /** UC-006 BR-003, main success scenario step 7: a signed-in administrator sees the maintenance links. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void list_with_auth() {

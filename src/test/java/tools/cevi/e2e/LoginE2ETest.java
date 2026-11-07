@@ -17,6 +17,11 @@ import static org.hamcrest.Matchers.is;
 @QuarkusTest
 public class LoginE2ETest extends PlaywrightTestBase {
 
+    /**
+     * Main success scenario, steps 1 to 7, and BR-004: the administrator signs in, lands on the
+     * start page, and the session carries over to it, showing the sign-out control and the
+     * maintenance links.
+     */
     @Test
     public void login_with_demo_credentials_shows_logout_button() {
         page.navigate(url("/auth/login"));
@@ -37,7 +42,7 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
     /**
      * Signing out changes state, so it is a form submission carrying a CSRF token rather than a
-     * link. This walks the whole round trip through a real browser (UC-002 BR-009).
+     * link. This walks the whole round trip through a real browser (UC-006 BR-009).
      * A3: afterwards the maintenance functions are no longer accessible.
      */
     @Test

@@ -18,12 +18,17 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-001 Browse Upcoming Events: the event list shows the upcoming events; and UC-006 BR-003: its
+ * maintenance links appear only for a signed-in administrator.
+ */
 @QuarkusTest
 public class EventUpcomingTest {
     @TestHTTPEndpoint(EventResource.class)
     @TestHTTPResource
     URL eventEndpoint;
 
+    /** UC-001 main success scenario, UC-006 BR-003: a visitor sees the events but no maintenance links. */
     @Test
     public void show_upcoming() {
         List<Event> events = Event.upcomingEvents();
@@ -73,6 +78,7 @@ public class EventUpcomingTest {
                 .body(containsString("Noch 3 Tage"));
     }
 
+    /** UC-006 BR-003, main success scenario step 7: a signed-in administrator sees the maintenance links. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_link_when_logged_in() {

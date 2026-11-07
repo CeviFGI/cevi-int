@@ -1,6 +1,7 @@
 package tools.cevi.e2e;
 
 import io.quarkus.narayana.jta.QuarkusTransaction;
+import com.microsoft.playwright.Locator;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +27,8 @@ public class EventFormE2ETest extends PlaywrightTestBase {
     private final String title = "CLEANUP e2e-" + UUID.randomUUID();
 
     /**
-     * Main success scenario, A1 and A3: add with today's display date pre-filled, see the event in
-     * the list, change it, then remove it after confirming.
+     * Main success scenario, A1, A3 and Post-S-1: add with today's display date pre-filled, see the
+     * event in the list, change it and see the change in the list, then remove it after confirming.
      */
     @Test
     public void admin_adds_changes_and_removes_an_event() {
@@ -62,6 +63,10 @@ public class EventFormE2ETest extends PlaywrightTestBase {
         assertThat(page.locator("[aria-invalid='true']").count(), is(0));
         assertThat(page.locator("h1").textContent(), is("Anlässe"));
         assertThat(reload(saved.id).location, is("Lausanne"));
+        // Post-S-1: the public list shows the change immediately
+        assertThat(page.locator("article.card")
+                .filter(new Locator.FilterOptions().setHasText(title))
+                .locator(".meta--place").textContent().trim(), is("Lausanne"));
 
         // A3: the removal is confirmed on its own page
         page.navigate(url("/anlaesse/delete?id=" + saved.id));

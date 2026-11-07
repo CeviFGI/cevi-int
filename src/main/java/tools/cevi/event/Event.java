@@ -24,9 +24,12 @@ public class Event extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     public int id;
+    // UC-002 BR-002: title, short name, date text, location, display date and description are mandatory
+    // UC-002 BR-003: 255 characters each, 65535 for the description
     @NotBlank
     @Size(max= 255)
     public String title;
+    // UC-002 BR-004: no two events share a short name
     @NotBlank
     @Column(unique = true)
     @Size(max= 255)

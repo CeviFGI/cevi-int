@@ -9,13 +9,19 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
+/**
+ * UC-002 BR-010 and UC-004, which adopts it: a description keeps the formatting the platform
+ * permits — emphasis, lists, tables, links, images, colours — and loses everything else.
+ */
 class HtmlSanitizerTest {
 
+    /** BR-010: an absent description stays absent. */
     @Test
     void null_stays_null() {
         assertThat(HtmlSanitizer.sanitize(null), is(nullValue()));
     }
 
+    /** BR-010: text emphasis and line breaks are permitted formatting and survive. */
     @Test
     void keeps_the_formatting_the_editor_produces() {
         String sanitized = HtmlSanitizer.sanitize(
@@ -26,6 +32,7 @@ class HtmlSanitizerTest {
         assertThat(sanitized, containsString("<br"));
     }
 
+    /** BR-010: lists, tables and colours are permitted formatting and survive. */
     @Test
     void keeps_lists_tables_and_colours() {
         String sanitized = HtmlSanitizer.sanitize(
@@ -37,6 +44,7 @@ class HtmlSanitizerTest {
         assertThat(sanitized, containsString("color"));
     }
 
+    /** BR-010: anything that could run as a program is discarded. */
     @Test
     void removes_script_elements() {
         String sanitized = HtmlSanitizer.sanitize("<p>hallo</p><script>alert(1)</script>");
@@ -46,6 +54,7 @@ class HtmlSanitizerTest {
         assertThat(sanitized, not(containsString("alert(1)")));
     }
 
+    /** BR-010: event handler attributes could run as a program and are discarded. */
     @Test
     void removes_event_handler_attributes() {
         String sanitized = HtmlSanitizer.sanitize("<img src=\"https://example.org/x.png\" onerror=\"alert(1)\">");
@@ -54,6 +63,7 @@ class HtmlSanitizerTest {
         assertThat(sanitized, containsString("https://example.org/x.png"));
     }
 
+    /** BR-010: embedded frames and objects are not permitted formatting and are discarded. */
     @Test
     void removes_iframes_and_objects() {
         String sanitized = HtmlSanitizer.sanitize(
@@ -63,6 +73,7 @@ class HtmlSanitizerTest {
         assertThat(sanitized, not(containsString("<object")));
     }
 
+    /** BR-010: links are permitted, but a link that would run a script is discarded. */
     @Test
     void keeps_web_links_but_drops_script_links() {
         assertThat(HtmlSanitizer.sanitize("<a href=\"https://cevi.ch\">Cevi</a>"),
@@ -74,6 +85,7 @@ class HtmlSanitizerTest {
                 not(containsString("data:text/html")));
     }
 
+    /** BR-010: images are permitted formatting and survive. */
     @Test
     void keeps_pictures_the_editor_embeds_inline() {
         String pixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -83,6 +95,7 @@ class HtmlSanitizerTest {
                 not(containsString("data:text/html")));
     }
 
+    /** BR-010: text without formatting is stored as entered. */
     @Test
     void plain_text_survives_unchanged() {
         assertThat(HtmlSanitizer.sanitize("Generalversammlung des YMCA"),

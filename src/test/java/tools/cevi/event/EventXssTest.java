@@ -30,6 +30,7 @@ class EventXssTest {
     @TestHTTPResource
     URL eventEndpoint;
 
+    /** BR-010, main success scenario step 8: a script in the description is discarded before storing. */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
     void script_in_description_is_not_stored() {
@@ -49,6 +50,7 @@ class EventXssTest {
                 .body(not(containsString("alert('xss')")));
     }
 
+    /** BR-010, main success scenario step 8: a link that would run a script is discarded before storing. */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
     void script_link_in_description_is_not_stored() {

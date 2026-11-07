@@ -20,6 +20,7 @@ public class AuthenticationEventLogger {
     private static final Logger LOG = Logger.getLogger(AuthenticationEventLogger.class);
     private static final String UNKNOWN = "<unknown>";
 
+    // UC-006 BR-005: a successful attempt is noted with its outcome
     void onLogin(@Observes FormAuthenticationEvent event) {
         String username = event.getSecurityIdentity() == null || event.getSecurityIdentity().getPrincipal() == null
                 ? UNKNOWN
@@ -28,6 +29,7 @@ public class AuthenticationEventLogger {
                 remoteAddress(routingContext(event.getEventProperties())));
     }
 
+    // UC-006 BR-005: a failed attempt is recorded at WARN, with the name tried and its origin
     void onFailure(@Observes AuthenticationFailureEvent event) {
         RoutingContext context = routingContext(event.getEventProperties());
         LOG.warnf("Sign-in failed for user '%s' from %s: %s", sanitize(attemptedUsername(context)),

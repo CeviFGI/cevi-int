@@ -43,7 +43,8 @@
             <li><a class="site-nav__link" href="/volontariat" {#if inject:vertxRequest.uri.startsWith("/volontariat")}aria-current="page"{/if}>Volontariat</a></li>
             <li><a class="site-nav__link" href="/fgi" {#if inject:vertxRequest.uri.startsWith("/fgi")}aria-current="page"{/if}>FGI</a></li>
             <li><a class="site-nav__link" href="/kontakt" {#if inject:vertxRequest.uri.startsWith("/kontakt")}aria-current="page"{/if}>Kontakt</a></li>
-            {#if inject:currentUser.signedIn}
+            {! UC-006 BR-009: signing out is a form with a CSRF token, never a link !}
+            {#if inject:currentUser.signOutAvailable}
             <li>
               <form action="/auth/logout" method="post" class="site-nav__form">
                 <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>

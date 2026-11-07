@@ -81,6 +81,7 @@ public class IndexResource {
         return Templates.version(version, flyway.info().current().getVersion().toString());
     }
 
+    // UC-006 BR-010: the general administration entry leads to sign-in or, when signed in, home
     @Path("/admin")
     @GET
     @Produces(MediaType.TEXT_HTML)

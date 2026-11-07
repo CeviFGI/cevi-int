@@ -20,6 +20,7 @@ import java.time.LocalDate;
  * a newly set up or restored production system. The administrator account is not created here but
  * by {@code AdminAccountBootstrap}, from a credential the deployment supplies.
  */
+// UC-006 BR-008: demonstration data and accounts exist only outside production
 @ApplicationScoped
 @UnlessBuildProfile("prod")
 @SuppressWarnings("unused")

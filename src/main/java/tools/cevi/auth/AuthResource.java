@@ -27,6 +27,7 @@ public class AuthResource {
     @Inject
     SecurityIdentity identity;
 
+    // UC-006 BR-010: the general administration entry leads to sign-in or, when signed in, home
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response auth() {
@@ -37,6 +38,7 @@ public class AuthResource {
         }
     }
 
+    // UC-006 A2: an established session skips the sign-in form
     @GET
     @Path("login")
     @Produces(MediaType.TEXT_HTML)
@@ -50,8 +52,9 @@ public class AuthResource {
 
     /**
      * Signing out changes state, so it is a form submission and not a link: as a GET, any other
-     * site could sign an administrator out simply by referencing the address (UC-002 BR-009).
+     * site could sign an administrator out simply by referencing the address.
      */
+    // UC-006 BR-009: a POST whose CSRF token matches this browser's token cookie (quarkus-rest-csrf)
     @POST
     @Path("logout")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

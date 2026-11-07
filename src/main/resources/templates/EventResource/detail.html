@@ -43,6 +43,8 @@ UC-009 BR-005: the only script on a public page; nothing else on this page depen
 allow-list when it was stored (NFR-010); prose.css styles everything that list permits.!}
 <div class="prose">{event.description.withScrollableTables.raw}</div>
 
+{! UC-006 BR-003: maintenance links only for a signed-in administrator !}
+
 {#if inject:currentUser.admin}
 <div class="admin-bar admin-bar--detached">
     <span class="admin-bar__who">Angemeldet als Administrator</span>

@@ -15,6 +15,7 @@
 {/if}
 
 <form class="panel form-card form-card--wide" action="/anlaesse" method="post">
+    {! UC-002 BR-009: changes come only from this form, with a CSRF token bound to this browser !}
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
 
@@ -34,7 +35,7 @@
             {#let error=validationMessages.messageFor('slug')}
             <div class="field {#if error}is-error{/if}">
                 <label for="slug">Slug</label>
-                <input type="text" id="slug" name="slug" maxlength="252" value="{slug}"
+                <input type="text" id="slug" name="slug" maxlength="255" value="{slug}"
                        aria-describedby="slug-help" {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
                 {!Permanent text, not a title tooltip: a tooltip is invisible on a touch device,

@@ -163,6 +163,7 @@ public class IndexResourceTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /** UC-006 BR-010, A5: without a session the general administration entry leads to the sign-in page. */
     @Test
     public void admin_redirect_to_login() {
         given().contentType(ContentType.URLENC)
@@ -174,6 +175,7 @@ public class IndexResourceTest {
                 .header("location", is("http://localhost:8081/auth/login"));
     }
 
+    /** UC-006 BR-010, A2: with a session the general administration entry leads to the start page. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void admin_redirect_to_home_if_logged_in() {
