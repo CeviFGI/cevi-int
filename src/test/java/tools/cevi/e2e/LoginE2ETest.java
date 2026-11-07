@@ -10,7 +10,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 
-/** Quarkus only indexes {@code @QuarkusTest} on the concrete class, not on an inherited base class. */
+/**
+ * UC-006 Sign In as Administrator in a real browser: main success scenario, A1 and A3.
+ * Quarkus only indexes {@code @QuarkusTest} on the concrete class, not on an inherited base class.
+ */
 @QuarkusTest
 public class LoginE2ETest extends PlaywrightTestBase {
 
@@ -27,11 +30,15 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
         assertThat(page.url(), endsWith("/"));
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ausloggen")).isVisible(), is(true));
+        // Main success scenario step 7: the maintenance links are now visible
+        assertThat(page.locator("a[href='/anlaesse/add']").isVisible(), is(true));
+        assertThat(page.locator("a[href='/volontariat/add']").isVisible(), is(true));
     }
 
     /**
      * Signing out changes state, so it is a form submission carrying a CSRF token rather than a
      * link. This walks the whole round trip through a real browser (UC-002 BR-009).
+     * A3: afterwards the maintenance functions are no longer accessible.
      */
     @Test
     public void logout_ends_the_session() {
@@ -48,8 +55,12 @@ public class LoginE2ETest extends PlaywrightTestBase {
 
         page.navigate(url("/anlaesse"));
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ausloggen")).isVisible(), is(false));
+
+        page.navigate(url("/anlaesse/add"));
+        assertThat(page.url(), containsString("/auth/login"));
     }
 
+    /** A1: a failed attempt leads to the error page and establishes no session. */
     @Test
     public void failed_login_shows_error_page() {
         page.navigate(url("/auth/login"));

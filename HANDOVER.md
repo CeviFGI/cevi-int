@@ -39,8 +39,8 @@ Forwarding, belegt durch `SessionCookieAttributesTest`), UC-005 A2 / UC-002 A6 (
 rollbackIfActive()` in allen Resources), UC-001 BR-006 (Wartungsknopf `btn--ghost`, auch auf der
 Volontariatsliste). UC-007 BR-004: Spec auf „einklappbar, offen beim Aufruf“ gelockert.
 
-Offen: Status von UC-002/UC-006 erst nach erneutem Coverage-Audit wieder auf Implemented setzen
-(Testlücken in Abschnitt 3 zuerst schliessen).
+Offen: Status von UC-002/UC-006 nach erneutem Coverage-Audit (`/use-case-coverage`) nachführen;
+die Testlücken beider Use Cases sind geschlossen.
 
 ## 3. Testlücken (`/use-case-test UC-XXX`)
 
@@ -49,9 +49,7 @@ Offen: Status von UC-002/UC-006 erst nach erneutem Coverage-Audit wieder auf Imp
 - **UC-002:** erledigt 2026-11-07 (`EventFormRulesTest`, `EventFormE2ETest`, A4/A5-Tests, Javadoc-Marker).
 - **UC-005:** A2, A3 (Mailfehler), BR-007 (Nachricht nicht im Log), leere Spam-Antwort,
   Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
-- **UC-006:** Log der Anmeldeversuche (BR-005), Idle-Timeout (BR-006), bcrypt (BR-002),
-  Cookie-Attribute (BR-007), Fehlerseitentext (A1), Nicht-Admin → 403 (BR-001),
-  Bootstrap-Abbruch (BR-008), Wartungsfunktion nach Logout.
+- **UC-006:** erledigt 2026-11-07 (`SignInRulesTest`, `SessionIdleTimeoutTest`, `LoginE2ETest` erweitert).
 - **UC-007:** A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite,
   Inhalt Datenschutzseite, „keine Daten geändert“.
 - Alle: Marker `// UC-XXX BR-YYY:` im Code und UC-ID im Test-Javadoc fehlen weitgehend
