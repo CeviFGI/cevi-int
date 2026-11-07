@@ -102,6 +102,7 @@ public class IndexResourceTest {
 
     private static void restore(VoluntaryService source) {
         VoluntaryService copy = new VoluntaryService();
+        copy.slug = source.slug;
         copy.organization = source.organization;
         copy.organizationLink = source.organizationLink;
         copy.location = source.location;

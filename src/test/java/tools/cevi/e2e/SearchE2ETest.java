@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tools.cevi.event.Event;
 import tools.cevi.fixture.EventFixture;
+import tools.cevi.fixture.VoluntaryFixture;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.time.LocalDate;
@@ -51,6 +52,7 @@ public class SearchE2ETest extends PlaywrightTestBase {
         QuarkusTransaction.begin();
         VoluntaryService offer = new VoluntaryService();
         offer.organization = OFFER;
+        offer.slug = VoluntaryFixture.uniqueSlug(OFFER);
         offer.organizationLink = "https://example.org/";
         offer.location = "Lima";
         offer.description = "<p>" + "Ein Jahr in Peru mit vielen Aufgaben im Quartier. ".repeat(8)

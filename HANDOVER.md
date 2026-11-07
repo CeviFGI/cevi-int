@@ -2,9 +2,10 @@
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Revision 8 implementieren (Abschnitt „Danach“, Punkt 1), beginnend mit UC-004.
-Die Abweichungen zwischen Code und Spec der letzten Handover sind entschieden und erledigt
-(Commit `f26b515`).
+**Nächster Schritt:** Revision 8 weiter implementieren (Abschnitt „Danach“, Punkt 1) mit UC-003.
+UC-004 ist implementiert und getestet (10. Session), Status bleibt `Approved`, bis die Offer Page
+(UC-003) steht: erst dann lassen sich die Postcondition „Offer Page spiegelt die Änderung“ und
+BR-008 „alte Adresse führt nicht mehr zum Angebot“ über HTTP prüfen; danach Coverage-Audit.
 
 ## Stand
 
@@ -57,12 +58,13 @@ Die Abweichungen zwischen Code und Spec der letzten Handover sind entschieden un
 
 ## Danach
 
-1. Revision 8 implementieren: UC-004 (Kurzname, Flyway-Migration inkl. Kurznamen für bestehende
-   Volontariate), UC-003 (Volontariatsseite), UC-011 (`share.js` wiederverwenden), UC-010
+1. Revision 8 implementieren: UC-003 (Volontariatsseite; in `VoluntaryManageTest` die Tests zu BR-008
+   um einen Abruf der alten/neuen Adresse ergänzen; Hilfetext zur Beschreibung im Formular
+   „Ein Angebot hat keine eigene Seite…“ anpassen), UC-011 (`share.js` wiederverwenden), UC-010
    (Treffer → Volontariatsseite), UC-008 (Links im Auszug). Sonar-Check für neuen Code.
-   Nicht spezifiziert (in der Review als Info liegen gelassen, sinnvollen Default wählen und
-   melden): Ableitungsform des Kurznamens (UC-004 BR-007, wie bei Anlässen), Kurzname nur aus
-   Leerzeichen (UC-004 BR-009), Reihenfolge der Volontariatsliste (UC-003 Schritt 2), Umfang des
+   UC-004 gewählte Defaults (gemeldet): Kurzname = `Slug.unique(Organisation + " " + Ort)`, Kurzname
+   nur aus Leerzeichen wird wie leer behandelt und abgeleitet; Migration vergibt bei nichts
+   Ableitbarem die id. Noch offen: Reihenfolge der Volontariatsliste (UC-003 Schritt 2), Umfang des
    Auszugs auf der Startseite (UC-008 BR-002, wie bisher).
 2. Coverage-Audits und Status / FR- und NFR-Status nachführen (optional auch ein voller Audit für
    UC-001 und UC-002, siehe „Stand“).

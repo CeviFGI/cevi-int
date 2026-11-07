@@ -96,7 +96,7 @@ The app follows the Quarkus resource/template pattern:
 - **Resources** (`src/main/java/tools/cevi/`) — Quarkus REST endpoints that render Qute templates. Each resource has a nested `@CheckedTemplate` inner class (`Templates`) that maps method names to template files. The stack is Quarkus REST (`quarkus-rest-qute`), not RESTEasy Classic — `quarkus-rest-csrf` is only available there.
 - **Entities** — Panache entities (`PanacheEntityBase`) with public fields and static query methods. No separate repository layer.
 - **Templates** (`src/main/resources/templates/`) — Qute HTML templates organized by resource class name. `base.qute.html` is the shared layout. Tags in `templates/tags/` are reusable template fragments.
-- **DB Migrations** (`src/main/resources/db/migration/`) — Flyway SQL scripts, versioned `V<major>.<minor>.<patch>__<Description>.sql`. Schema uses SQLite.
+- **DB Migrations** (`src/main/resources/db/migration/`) — Flyway SQL scripts, versioned `V<major>.<minor>.<patch>__<Description>.sql`. Schema uses SQLite. A migration that needs application logic (e.g. deriving Short Names with `Slug`, which SQLite cannot do) is a Flyway Java migration in `src/main/java/db/migration/` (`V1_0_5__VoluntaryServiceSlug`), tested against its own database file in `src/test/java/db/migration/`.
 
 ### Packages
 | Package | Contents |

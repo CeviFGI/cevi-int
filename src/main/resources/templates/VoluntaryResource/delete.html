@@ -4,6 +4,13 @@
 
 <h1>Volontariat löschen</h1>
 
+{!UC-004 A8: the store refused the removal; the offer is still there and may be removed again.!}
+{#if removalFailed}
+<div class="error-summary" role="alert" tabindex="-1" autofocus>
+    <p>Das Volontariat konnte nicht gelöscht werden und bleibt bestehen. Bitte versuche es später noch einmal.</p>
+</div>
+{/if}
+
 <article class="card card--preview">
     <div class="card__band card__band--v{service.id.accentVariant}">
         <p class="card__band-kicker">Volontariat</p>
@@ -17,11 +24,12 @@
 <p class="confirm-question">Soll dieses Volontariat wirklich gelöscht werden? Das lässt sich nicht
    rückgängig machen.</p>
 
+{! UC-004 BR-003: the removal needs this confirmation; it stays a POST with a CSRF token (UC-002 BR-009) !}
 <div class="cluster">
     <a class="btn btn--secondary" href="/volontariat">Abbrechen</a>
     <form action="/volontariat/delete" method="post" class="inline-form">
         <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-        <input type="hidden" name="id" value="{id}"/>
+        <input type="hidden" name="id" value="{service.id}"/>
         <button class="btn btn--danger" type="submit">Endgültig löschen</button>
     </form>
 </div>

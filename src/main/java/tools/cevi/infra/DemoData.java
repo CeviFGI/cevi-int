@@ -44,6 +44,7 @@ public class DemoData {
 
     private void createVoluntaryService(String organization, String organizationLink, String location, String description) {
         VoluntaryService entity = new VoluntaryService();
+        entity.slug = Slug.of(organization + " " + location).toString();
         entity.organization = organization;
         entity.organizationLink = organizationLink;
         entity.location = location;

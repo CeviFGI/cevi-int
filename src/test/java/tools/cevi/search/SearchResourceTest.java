@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import tools.cevi.contact.ContactFormEntry;
 import tools.cevi.event.Event;
 import tools.cevi.fixture.EventFixture;
+import tools.cevi.fixture.VoluntaryFixture;
 import tools.cevi.infra.Slug;
 import tools.cevi.voluntary.VoluntaryService;
 
@@ -83,6 +84,7 @@ class SearchResourceTest {
         QuarkusTransaction.begin();
         VoluntaryService offer = new VoluntaryService();
         offer.organization = organization;
+        offer.slug = VoluntaryFixture.uniqueSlug(organization);
         offer.organizationLink = link;
         offer.location = location;
         offer.description = description;

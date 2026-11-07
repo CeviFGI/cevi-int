@@ -68,6 +68,7 @@ class SearchResponseTimeTest {
         for (int i = 0; i < OFFERS; i++) {
             VoluntaryService offer = new VoluntaryService();
             offer.organization = PREFIX + "Verein " + i;
+            offer.slug = "cleanup-last-verein-" + i;
             offer.organizationLink = "https://example.org/" + i;
             offer.location = "Land " + i;
             offer.description = DESCRIPTION + (i % 20 == 0 ? "<p>Zqlast</p>" : "");

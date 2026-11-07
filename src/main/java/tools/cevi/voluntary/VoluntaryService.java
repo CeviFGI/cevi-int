@@ -3,6 +3,7 @@ package tools.cevi.voluntary;
 import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +22,19 @@ public class VoluntaryService extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     public int id;
+    // UC-004 BR-002: Organisation, Organisation Link, location, Short Name and Description are mandatory
+    // UC-004 BR-004: 255 characters each, 65535 for the description
+    // UC-004 BR-006: no two offers share a Short Name; an event may carry the same one
+    @NotBlank
+    @Column(unique = true)
+    @Size(max = 255)
+    public String slug;
     @NotBlank
     @Size(max = 255)
     public String organization;
     @NotBlank
     @Size(max = 255)
-    // The offer will eventually be rendered as a hyperlink, so the value must not be able to carry
+    // UC-004 BR-005: the offer is rendered as a hyperlink, so the value must not be able to carry
     // another scheme (javascript:, data:) into the page.
     @Pattern(regexp = "^https?://.+", message = "muss mit http:// oder https:// beginnen")
     public String organizationLink;
@@ -46,10 +54,16 @@ public class VoluntaryService extends PanacheEntityBase {
         return findAll(Sort.by("id", Sort.Direction.Descending)).page(0, limit).list();
     }
 
+    /** The offer stored under {@code slug}, or {@code null} (UC-004 BR-006). */
+    public static VoluntaryService findBySlug(String slug) {
+        return find("slug = :slug", Parameters.with("slug", slug)).firstResult();
+    }
+
     @Override
     public String toString() {
         return "VoluntaryService{" +
                 "id=" + id +
+                ", slug='" + slug + '\'' +
                 ", organization='" + organization + '\'' +
                 ", organizationLink='" + organizationLink + '\'' +
                 ", location='" + location + '\'' +

@@ -15,6 +15,7 @@
 {/if}
 
 <form class="panel form-card form-card--wide" action="/volontariat" method="post">
+    {! UC-002 BR-009: changes come only from this form, with a CSRF token bound to this browser !}
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
     <input type="hidden" name="id" value="{id}" />
 
@@ -50,6 +51,19 @@
                 <input type="text" id="location" name="location" maxlength="255" value="{location}"
                        required {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
+            </div>
+            {/let}
+
+            {! UC-004 BR-007: optional here; left empty, it is derived from Organisation and location !}
+            {#let error=validationMessages.messageFor('slug')}
+            <div class="field {#if error}is-error{/if}">
+                <label for="slug">Slug</label>
+                <input type="text" id="slug" name="slug" maxlength="255" value="{slug}"
+                       aria-describedby="slug-help" {#if error}aria-invalid="true"{/if}>
+                {#if error}<p class="field__error">{error}</p>{/if}
+                <span class="field__help" id="slug-help">Teil der Adresse dieses Volontariats und
+                      deshalb einmalig. Leer lassen, dann wird er aus Organisation und Ort gebildet.
+                      Wer ihn ändert, macht bereits geteilte Links ungültig.</span>
             </div>
             {/let}
         </div>

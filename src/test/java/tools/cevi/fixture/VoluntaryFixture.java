@@ -6,12 +6,14 @@ import io.quarkus.test.junit.callback.QuarkusTestAfterEachCallback;
 import io.quarkus.test.junit.callback.QuarkusTestMethodContext;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
+import tools.cevi.infra.Slug;
 import tools.cevi.voluntary.VoluntaryService;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 
@@ -31,6 +33,7 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
         QuarkusTransaction.begin();
         VoluntaryService voluntaryService = new VoluntaryService();
         voluntaryService.organization = organization;
+        voluntaryService.slug = uniqueSlug(organization);
         voluntaryService.description = description;
         voluntaryService.location = "some location";
         voluntaryService.organizationLink = organizationLink;
@@ -39,6 +42,19 @@ public class VoluntaryFixture implements QuarkusTestAfterEachCallback {
         createdVoluntryServices.add(voluntaryService.id);
         Log.info("VoluntaryFixture created " + voluntaryService);
         return voluntaryService.id;
+    }
+
+    /**
+     * A Short Name no other offer carries: readable from the Organisation, made unique by a random
+     * tail, so that tests running against the shared database never collide (UC-004 BR-006).
+     */
+    public static String uniqueSlug(String organization) {
+        return Slug.of(organization) + "-" + UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    /** Remembers an offer a test created another way, so that it is removed after the test. */
+    public static void trackForCleanup(int id) {
+        createdVoluntryServices.add(id);
     }
 
     public static long createVoluntaryServiceWithRest(URL voluntaryServiceEndpoint, String organization) {

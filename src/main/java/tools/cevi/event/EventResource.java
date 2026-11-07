@@ -28,14 +28,14 @@ import tools.cevi.infra.ValidationMessages;
 
 @Path("anlaesse")
 public class EventResource {
-    private static final int MAX_SLUG_LENGTH = 255;
-    private static final int MAX_DERIVED_SLUG_LENGTH = 252;
-
     @Inject
     Validator validator;
 
     @CheckedTemplate
     public static class Templates {
+        private Templates() {
+        }
+
         public static native TemplateInstance list(List<Event> events);
         public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(Event event, boolean removalFailed);
@@ -204,15 +204,7 @@ public class EventResource {
     // UC-002 BR-005: a short name derived from the title gets a counter until it is free
     // UC-002 BR-006: the derived name is cut to 252 characters, so name and counter stay within 255
     static String generateUniqueSlug(long id, String title) {
-        String base = Slug.of(title).toString();
-        base = base.substring(0, Math.min(base.length(), MAX_DERIVED_SLUG_LENGTH));
-        String slug = base;
-        int counter = 0;
-        while (isTakenByAnother(slug, id)) {
-            String suffix = Integer.toString(counter++);
-            slug = base.substring(0, Math.min(base.length(), MAX_SLUG_LENGTH - suffix.length())) + suffix;
-        }
-        return slug;
+        return Slug.unique(title, slug -> isTakenByAnother(slug, id));
     }
 
     private static boolean isTakenByAnother(String slug, long id) {

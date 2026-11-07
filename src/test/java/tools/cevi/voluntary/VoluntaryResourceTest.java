@@ -113,6 +113,7 @@ public class VoluntaryResourceTest {
                 .body(containsString("Bearbeiten"));
     }
 
+    /** UC-004 BR-001, Pre-1: a visitor who is not signed in is sent to the sign-in page instead of the empty form. */
     @Test
     public void add_form_no_auth() {
         given()
@@ -125,6 +126,7 @@ public class VoluntaryResourceTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /** UC-004 main success scenario steps 1 and 2: the administrator gets an empty offer form. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_form_with_auth() {
@@ -136,6 +138,7 @@ public class VoluntaryResourceTest {
                 .body(containsString("Neues Volontariat eintragen"));
     }
 
+    /** UC-004 BR-001, Pre-1 (NFR-006): adding an offer without a session leads to the sign-in page. */
     @Test
     public void add_submit_no_auth() {
         Csrf.given().formParam("organization", "test org vol")
@@ -150,6 +153,7 @@ public class VoluntaryResourceTest {
                 .cookie("quarkus-redirect-location", containsString(voluntaryEndpoint.toString()));
     }
 
+    /** UC-004 main success scenario: a complete entry is recorded and the Offer List presented. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_submit_with_auth() {
@@ -161,6 +165,7 @@ public class VoluntaryResourceTest {
         assertThat(voluntaryService.get(voluntaryService.size()-1).organization, equalTo(organization));
     }
 
+    /** UC-004 BR-001, Pre-1: a visitor who is not signed in gets no edit form. */
     @Test
     public void edit_form_no_auth() {
         String title = "CLEANUP edit_form_no_auth";
@@ -177,6 +182,7 @@ public class VoluntaryResourceTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /** UC-004 A1 step 1: the administrator gets the filled form of an existing offer. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_form_with_auth() {
@@ -192,6 +198,7 @@ public class VoluntaryResourceTest {
                 .body(containsString("Volontariat bearbeiten"));
     }
 
+    /** UC-004 BR-001, Pre-1 (NFR-006): changing an offer without a session leads to the sign-in page. */
     @Test
     public void edit_submit_no_auth() {
         String title = "CLEANUP edit_submit_no_auth";
@@ -210,6 +217,7 @@ public class VoluntaryResourceTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /** UC-004 A1: the changed offer is recorded and no further offer is added. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void edit_submit_with_auth() {
@@ -237,6 +245,7 @@ public class VoluntaryResourceTest {
         QuarkusTransaction.rollback();
     }
 
+    /** UC-004 BR-001, Pre-1: a visitor who is not signed in gets no Confirmation Page. */
     @Test
     public void delete_no_auth() {
         String title = "CLEANUP delete_no_auth";
@@ -253,6 +262,7 @@ public class VoluntaryResourceTest {
                 .header("location", containsString("/auth/login"));
     }
 
+    /** UC-004 A3 step 1, BR-003: the removal is first asked for on a Confirmation Page. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void delete_with_auth() {
@@ -268,6 +278,7 @@ public class VoluntaryResourceTest {
                 .body(containsString("Volontariat löschen"));
     }
 
+    /** UC-004 A3: the confirmed removal removes the offer. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void delete_confirmed_with_auth() {
@@ -288,7 +299,7 @@ public class VoluntaryResourceTest {
     }
 
     /**
-     * A GET must not delete: a prefetching browser, a link preview or a plain link from another
+     * UC-004 A4, BR-003: a GET must not delete: a prefetching browser, a link preview or a plain link from another
      * site would otherwise be enough to remove an offer (UC-002 BR-009, NFR-021).
      */
     @Test
@@ -311,7 +322,7 @@ public class VoluntaryResourceTest {
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
     }
 
-    /** Without a CSRF token the change is refused before it reaches the endpoint (NFR-011). */
+    /** UC-004 A7: without a CSRF token the change is refused before it reaches the endpoint (NFR-011). */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_submit_without_csrf_token_is_rejected() {
@@ -330,7 +341,7 @@ public class VoluntaryResourceTest {
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
     }
 
-    /** The organisation link has to be a web address so it can never become a script link. */
+    /** UC-004 A2, BR-005: the Organisation Link has to be a web address so it can never become a script link. */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void add_submit_rejects_non_web_organization_link() {
@@ -344,9 +355,107 @@ public class VoluntaryResourceTest {
                 .when()
                 .post(voluntaryEndpoint)
                 .then()
-                .statusCode(HttpStatus.SC_OK)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(containsString("muss mit http:// oder https:// beginnen"));
 
         assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+    }
+
+    /** UC-004 BR-001, Pre-2 (NFR-006): a signed-in user without the administrator role cannot add or change an offer. */
+    @Test
+    @TestSecurity(user = "visitor", roles = { "user"})
+    public void submit_without_administrator_role_is_refused() {
+        long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-004 role check");
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.given()
+                .formParam("organization", "CLEANUP UC-004 role check added")
+                .formParam("organizationLink", "https://example.org")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_FORBIDDEN);
+
+        Csrf.given()
+                .formParam("id", id)
+                .formParam("organization", "CLEANUP UC-004 role check changed")
+                .formParam("organizationLink", "https://example.org")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_FORBIDDEN);
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+        assertThat(QuarkusTransaction.requiringNew().call(() -> VoluntaryService.<VoluntaryService>findById((int) id).organization),
+                equalTo("CLEANUP UC-004 role check"));
+    }
+
+    /** UC-004 BR-001, Pre-2 (NFR-006): a signed-in user without the administrator role cannot remove an offer. */
+    @Test
+    @TestSecurity(user = "visitor", roles = { "user"})
+    public void confirm_delete_without_administrator_role_is_refused() {
+        long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-004 role check delete");
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.given()
+                .formParam("id", id)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_FORBIDDEN);
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+    }
+
+    /** UC-004 BR-001, Pre-1 (NFR-006): confirming a removal without a session leads to the sign-in page. */
+    @Test
+    public void confirm_delete_without_session_is_refused() {
+        long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-004 anonymous delete");
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.given()
+                .formParam("id", id)
+                .redirects().follow(false)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
+                .header("location", containsString("/auth/login"));
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+    }
+
+    /** UC-004 A7: a change or removal without a CSRF token is refused and stores nothing (NFR-011). */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void change_and_removal_without_csrf_token_are_rejected() {
+        long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-004 csrf");
+        long voluntaryServiceCount = VoluntaryService.count();
+
+        Csrf.givenWithoutToken()
+                .formParam("id", id)
+                .formParam("organization", "CLEANUP UC-004 csrf changed")
+                .formParam("organizationLink", "https://example.org")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(voluntaryEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        Csrf.givenWithoutToken()
+                .formParam("id", id)
+                .when()
+                .post(deleteEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        assertThat(VoluntaryService.count(), equalTo(voluntaryServiceCount));
+        assertThat(QuarkusTransaction.requiringNew().call(() -> VoluntaryService.<VoluntaryService>findById((int) id).organization),
+                equalTo("CLEANUP UC-004 csrf"));
     }
 }
