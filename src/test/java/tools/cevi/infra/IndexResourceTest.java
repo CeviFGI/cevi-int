@@ -20,6 +20,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * The routes of {@link IndexResource} that belong to UC-008 (start page) and UC-006 (administration
+ * entry). The information pages and the version page of UC-007 are tested in {@link SiteInformationTest}.
+ */
 @QuarkusTest
 public class IndexResourceTest {
     @TestHTTPEndpoint(IndexResource.class)
@@ -27,37 +31,8 @@ public class IndexResourceTest {
     URL indexEndpoint;
 
     @TestHTTPEndpoint(IndexResource.class)
-    @TestHTTPResource("fgi")
-    URL fgiEndpoint;
-
-    @TestHTTPEndpoint(IndexResource.class)
-    @TestHTTPResource("version")
-    URL versionEndpoint;
-
-    @TestHTTPEndpoint(IndexResource.class)
     @TestHTTPResource("admin")
     URL adminEndpoint;
-
-    @Test
-    public void fgi_page() {
-        given().when().get(fgiEndpoint).then().statusCode(HttpStatus.SC_OK)
-                .body(containsString("Fachgruppe International"));
-    }
-
-    /**
-     * The collected sources are grouped by channel, and each group is a native disclosure so that
-     * one link can be found without scrolling past fifty (FR-039, UC-007 BR-001).
-     */
-    @Test
-    public void fgi_page_groups_the_sources_by_channel() {
-        String body = fetch(fgiEndpoint);
-
-        assertThat(body, containsString("id=\"instagram\""));
-        assertThat(body, containsString("id=\"newsletter\""));
-        assertThat(body, containsString("<details class=\"channel\""));
-        // The index at the top is what makes the grouping usable on a phone
-        assertThat(body, containsString("href=\"#webseiten\""));
-    }
 
     /**
      * The start page answers instead of forwarding (UC-008 BR-001, FR-023 as amended, UC-008). Until
@@ -137,30 +112,6 @@ public class IndexResourceTest {
     private static String fetch(URL endpoint) {
         return given().when().get(endpoint).then().statusCode(HttpStatus.SC_OK)
                 .extract().body().asString();
-    }
-
-    @Test
-    @TestSecurity(user = "admin", roles = { "admin"})
-    public void version_working() {
-        given().when().get(versionEndpoint).then()
-                .statusCode(HttpStatus.SC_OK)
-                // The page names both the application and the schema version (UC-007 BR-003). The two
-                // German labels are content, not markup, so this survives the page being relaid
-                // out — which the previous assertion on the literal "Version:" did not.
-                .body(containsString("Anwendung"))
-                .body(containsString("Datenbankschema"));
-    }
-
-    /** The version page names application and schema version and is therefore not public (UC-007 BR-005). */
-    @Test
-    public void version_requires_authentication() {
-        given()
-                .redirects().follow(false)
-                .when()
-                .get(versionEndpoint)
-                .then()
-                .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
-                .header("location", containsString("/auth/login"));
     }
 
     /** UC-006 BR-010, A5: without a session the general administration entry leads to the sign-in page. */

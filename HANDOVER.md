@@ -2,8 +2,7 @@
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** UC-007: `/use-case-test UC-007` (Lücken siehe Abschnitt 2), dann
-`/use-case-coverage UC-007`, Drift mit dem Product Owner klären, bei grünem Audit Status auf
+**Nächster Schritt:** UC-007: `/use-case-coverage UC-007` (Tests geschrieben, siehe Abschnitt 2), Drift mit dem Product Owner klären, bei grünem Audit Status auf
 `Tested` und FR-Status nachführen (`/requirements`; Spec-Lint `REQ_STATUS_DRIFT` zeigt die Zielwerte).
 
 ## Stand
@@ -11,10 +10,10 @@
 | Use Case | Status |
 |---|---|
 | UC-001, UC-002, UC-005, UC-006, UC-009 | `Tested` (Coverage-Audits ohne Lücke, FR-Status nachgeführt) |
-| UC-007 | `Approved`, implementiert, Testlücken offen |
+| UC-007 | `Approved`, implementiert, Tests geschrieben, Coverage-Audit offen |
 | UC-003, UC-004, UC-008, UC-010, UC-011 | `Draft` (Revision 8, noch nicht implementiert) |
 
-- `tooling/docker.sh verify` grün (313 Unit-, 96 e2e-Tests, Coverage-Gate erfüllt). Alles committet.
+- `tooling/docker.sh verify` grün (322 Unit-, 99 e2e-Tests, Coverage-Gate erfüllt). Alles committet.
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
@@ -59,16 +58,17 @@ Vom Product Owner am 2026-11-07 bestätigt (noch nicht via `/spec-review` freige
 - Adresse der Volontariatsseite: `/volontariat/detail?slug=<Kurzname>` (UC-011 BR-003).
 - Startseite: Einträge im Auszug führen auf die Detailseite (UC-008 BR-004).
 
-## 2. Testlücken UC-007 (`/use-case-test UC-007`)
+## 2. Tests UC-007 (erledigt, Audit offen)
 
-A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite, Inhalt Datenschutzseite,
-„keine Daten geändert“. Code-Marker und UC-ID im Test-Javadoc fehlen noch.
+`SiteInformationTest` (alle Flows, BR-001 … BR-005, „keine Daten geändert“) und
+`SiteInformationE2ETest`. A3 läuft über `FailingPageResource` (nur unter `src/test`, Pfad
+`/test-only/failing-page`). Die UC-007-Tests aus `IndexResourceTest` und `NotFoundExceptionMapperTest`
+sind dorthin umgezogen; Code-Marker in `IndexResource`, `base.qute.html`, `fgi.html` ergänzt.
 
 ## 3. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
 - **UC-007:** `/version` wird in `PublicPages.java`, `NoThirdPartyAssetsTest`, `EditorAssetsTest`
-  als öffentliche Seite geführt (misst anonym nur die Login-Seite). Veralteter Marker
-  `IndexResourceTest.java:49` (BR-001 → BR-004).
+  als öffentliche Seite geführt (misst anonym nur die Login-Seite).
 - **UC-001 (für `/spec-review UC-001`):** BR-003 („Link bleibt gültig“) widerspricht UC-002, wo der
   Kurzname beim Bearbeiten geändert werden kann – der alte Link gibt dann 404. BR-004 sagt nicht,
   was ohne brauchbare Wortgrenze passiert (der Code schneidet hart, `ExcerptTest` dokumentiert das).

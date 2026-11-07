@@ -75,9 +75,11 @@ public class IndexResource {
      */
     @Path("/version")
     @GET
+    // UC-007 BR-005: only with an established administrator session
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance version() {
+        // UC-007 BR-003: application version and the schema version Flyway applied
         return Templates.version(version, flyway.info().current().getVersion().toString());
     }
 

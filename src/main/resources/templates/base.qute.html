@@ -37,6 +37,7 @@
           </label>
         </div>
 
+        {! UC-007 BR-001: the information pages are offered in the navigation of every page !}
         <nav class="site-nav__panel" aria-label="Hauptnavigation">
           <ul class="site-nav__list">
             <li><a class="site-nav__link" href="/anlaesse" {#if inject:vertxRequest.uri.startsWith("/anlaesse")}aria-current="page"{/if}>Anlässe</a></li>
@@ -52,7 +53,7 @@
               </form>
             </li>
             {/if}
-            <!-- Reachable from every page (UC-007 BR-002, C-011); on desktop from the footer instead -->
+            {! UC-007 BR-002: reachable from every page without signing in (C-011); on desktop from the footer instead !}
             <li><a class="site-nav__link site-nav__link--minor" href="/datenschutzinformation" {#if inject:vertxRequest.uri.startsWith("/datenschutzinformation")}aria-current="page"{/if}>Datenschutzinformation</a></li>
           </ul>
         </nav>
