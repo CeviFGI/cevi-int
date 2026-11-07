@@ -2,59 +2,22 @@
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Rest von Revision 8 (Abschnitt „Danach“, Punkt 1): UC-011 (Teilen auf der
-Volontariatsseite).
+**Nächster Schritt:** UC-011 implementieren (Teilen auf der Volontariatsseite, Revision 8).
 
 ## Stand
 
-- UC-001, 002, 003, 004, 005, 006, 007, 009 `Tested`.
-- 12. Session: Coverage-Audits für UC-003 und UC-004 wiederholt, die gefundenen Testlücken
-  geschlossen (UC-003: Reihenfolge innerhalb einer Organisation, Auszug der Startseite → Volontariatsseite,
-  Felder nach dem Besuch unverändert; UC-004: Bereinigung der Beschreibung über den Endpunkt, Liste
-  und Volontariatsseite nach Hinzufügen/Ändern/Löschen, UC-004-Marker im `VoluntaryFormE2ETest`).
-  Zweiter Audit: UC-003 20/20, UC-004 bis auf Post-S-1 „Volontariatsseite eines neuen Angebots“,
-  danach ergänzt. Beide auf `Tested`; FR-008 … FR-013, FR-022, FR-027, FR-033, FR-035, FR-038,
-  FR-044 und NFR-006, NFR-011, NFR-021 auf `Verified`; FR-043 `In Progress` (UC-008 fehlt noch).
-- UC-008: der Test, dass der Auszug der Startseite zur Volontariatsseite führt, existiert jetzt
-  (`VoluntaryBrowseTest.the_entry_on_the_start_page_leads_to_the_offer_page`, unter UC-003 A4).
-  Audit für UC-008 fehlt. UC-010: Treffer führen auf die Volontariatsseite, Audit fehlt. UC-011
-  (Teilen) noch offen.
-- Audit-Hinweis ohne Handlungsbedarf: `VoluntaryResourceTest` und `VoluntaryManageTest` überlappen
-  in drei Testpaaren (Hinzufügen, Bearbeitungsformular, Löschen) – Zusammenlegen optional.
-- `tooling/docker.sh verify` grün, alles committet.
+- UC-001, 002, 003, 004, 005, 006, 007, 009 `Tested`. `tooling/docker.sh verify` grün, alles
+  committet.
+- UC-008: Code fertig; der Test, dass der Auszug der Startseite zur Volontariatsseite führt, steht in
+  `VoluntaryBrowseTest.the_entry_on_the_start_page_leads_to_the_offer_page` (unter UC-003 A4).
+  Audit fehlt; danach FR-043 (jetzt `In Progress`) auf `Verified`.
+- UC-010: Treffer führen auf die Volontariatsseite (`Search.offerPage`). Audit fehlt.
 - Spec-Lint grün mit `--strict` (3 Befunde `SPEC_CHANGED_AFTER_STATUS` in
-  `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Für UC-001/002 wurden in der
-  9. Session nur die geänderten Elemente geprüft (Delta-Audit), kein voller `/use-case-coverage`.
-  Nach einer Spec-Änderung an einem `Tested`-Use-Case: Audit, dann `--update-baseline`.
+  `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Nach einer Spec-Änderung an
+  einem `Tested`-Use-Case: Audit, dann `--update-baseline`.
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
-- Optional: `/spec-review UC-003` für die Ergänzung von Schritt 2 (Reihenfolge der Liste).
-
-## Was die 11. Session an UC-003 gemacht hat
-
-- `VoluntaryResource.detail` unter `/volontariat/detail?slug=…` (A5: 404), Template
-  `VoluntaryResource/detail.html` (Wartungslinks A6 als `admin-bar`, „Zur Organisation“ nach der
-  Beschreibung). Liste via `VoluntaryService.offerList()` (de-CH-Collator, dann id).
-- Karte `tags/voluntaryService.html` wie die Anlass-Karte; Ausklappen, `chosen`, `?angebot=` und das
-  zugehörige CSS (`.disclosure`, `.card--chosen`) sowie die Extension `shortened` entfernt.
-- 404-Seite bietet zusätzlich „Zum Volontariat“. Tests: `VoluntaryBrowseTest`,
-  `VoluntaryBrowseE2ETest`; die Demo-Seite `/volontariat/detail?slug=horyzon-kolumbien-palastina`
-  steht in `PublicPages` und den Seitenlisten der Qualitätstests.
-
-## Was die 10. Session an UC-004 gemacht hat
-
-- `VoluntaryService.slug` (`NOT NULL UNIQUE`) + `findBySlug`; Ableitung über den gemeinsamen Helfer
-  `Slug.unique(text, taken)`, den jetzt auch `EventResource` nutzt.
-- Flyway-**Java**-Migration `src/main/java/db/migration/V1_0_5__VoluntaryServiceSlug.java` (leitet
-  Kurznamen bestehender Volontariate mit `Slug` ab; SQLite kann keine Diakritika entfernen). Test
-  gegen eigene DB-Datei: `src/test/java/db/migration/VoluntaryServiceSlugMigrationTest`.
-- `VoluntaryResource` auf das Muster von `EventResource` gebracht: Weiterleitung 303 nach dem
-  Speichern, 400 bei abgelehnter Eingabe, A5 (404), A6 (Formular zurück), A8 (Bestätigungsseite mit
-  Hinweis, 500).
-- Tests: `VoluntaryManageTest` (Kurzname, A1, A2, A5, A6, A8), `VoluntaryResourceTest` ergänzt
-  (Benutzer ohne Admin-Rolle, CSRF bei Ändern/Löschen, Javadocs), `SlugTest` (`unique`).
-- Gewählte Defaults (der Benutzer weiss davon): Kurzname = `Slug.unique(Organisation + " " + Ort)`;
-  Kurzname nur aus Leerzeichen gilt als leer und wird abgeleitet (wie bei Anlässen); die Migration
-  vergibt die id, wenn nichts Lesbares ableitbar ist.
+- FR-/NFR-Status: `Verified`, sobald alle Use Cases, die die Anforderung verlinken, `Tested` sind;
+  `In Progress`, solange erst ein Teil davon `Tested` ist.
 
 ## Konventionen und Fallen
 
@@ -73,6 +36,8 @@ Volontariatsseite).
 - Header und Footer verlinken `/anlaesse` und `/kontakt` auf jeder Seite: ein Assert auf
   `href="/kontakt"` beweist nichts – immer auf den Link der Seite selbst ankern
   (z. B. `href="/kontakt">Schreib uns</a>`).
+- In der Volontariatskarte steht der Ort vor dem Namen der Organisation: Suchen in der Karte ab
+  `<article` beginnen, nicht ab dem Namen.
 - Der Mock-Mailer (dev/test) loggt jede Mail inkl. Text unter dem Logger `quarkus-mailer`; Log-Tests
   müssen diese Zeile ausnehmen.
 - Fehlschlagende Speicherung testen: SQLite-Trigger mit `RAISE` (Beispiele `uc005_a2_insert` in
@@ -95,10 +60,11 @@ Volontariatsseite).
 
 ## Danach
 
-1. Revision 8 implementieren:
-   - **UC-011** Teilen auf der Volontariatsseite (`share.js` wiederverwenden, Muster
-     `EventResource/detail.html` und `EventResource.publicAddress`; Dialog mit Organisation und Ort).
-   - Sonar-Check für neuen Code.
-2. Coverage-Audits und Status / FR- und NFR-Status nachführen (UC-008, 010, 011; optional
-   auch ein voller Audit für UC-001 und UC-002, siehe „Stand“).
-3. Offene Fragen OQ-005 … OQ-015 mit dem Product Owner klären (`/open-questions`).
+1. **UC-011** Teilen auf der Volontariatsseite (`share.js` wiederverwenden, Muster
+   `EventResource/detail.html` und `EventResource.publicAddress`; Dialog mit Organisation und Ort).
+   Tests, Sonar-Check für neuen Code.
+2. Coverage-Audits, dann Status und FR-/NFR-Status nachführen: UC-008, UC-010, UC-011.
+3. Optional: voller Audit für UC-001 und UC-002 (in der 9. Session nur Delta-Audit);
+   `/spec-review UC-003` für die Ergänzung von Schritt 2 (Reihenfolge der Liste); die drei
+   überlappenden Testpaare in `VoluntaryResourceTest`/`VoluntaryManageTest` zusammenlegen.
+4. Offene Fragen OQ-005 … OQ-015 mit dem Product Owner klären (`/open-questions`).
