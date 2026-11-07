@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 /**
  * UC-010 Search Events and Offers in a real browser: the Live Results while typing (A1), the way
@@ -48,7 +47,7 @@ public class SearchE2ETest extends PlaywrightTestBase {
         return Event.<Event>findById(id).slug;
     }
 
-    private int anOffer() {
+    private String anOffer() {
         QuarkusTransaction.begin();
         VoluntaryService offer = new VoluntaryService();
         offer.organization = OFFER;
@@ -60,7 +59,7 @@ public class SearchE2ETest extends PlaywrightTestBase {
         offer.persist();
         QuarkusTransaction.commit();
         offers.add(offer.id);
-        return offer.id;
+        return offer.slug;
     }
 
     private Locator field() {
@@ -181,29 +180,19 @@ public class SearchE2ETest extends PlaywrightTestBase {
         assertThat(page.locator("h1")).hasText(EVENT);
     }
 
-    /**
-     * Step 5 and UC-003 A5: picking an offer leads to its entry in the Offer List — brought into view, marked as
-     * the one chosen, with its complete Description open.
-     */
+    /** Step 5 and UC-003 A4: picking an offer leads to its Offer Page with the complete Description. */
     @Test
-    void picking_an_offer_shows_its_marked_and_opened_entry() {
+    void picking_an_offer_shows_its_offer_page() {
         page.setViewportSize(360, 740);
         page.navigate(url("/"));
-        int id = anOffer();
+        String slug = anOffer();
         typeInSearchField("zqbrowser");
 
         liveResults().getByText(OFFER).click();
 
-        page.waitForURL(Pattern.compile(".*/volontariat\\?angebot=" + id + "#angebot-" + id));
-        Locator card = page.locator("#angebot-" + id);
-        assertThat(card).hasClass(Pattern.compile("card--chosen"));
-        assertThat(card).containsText("Dein Suchtreffer");
-        assertThat(card.locator("details")).hasAttribute("open", "");
-        assertThat(card.getByText("Ende der Beschreibung.")).isVisible();
-        assertThat(card).isInViewport();
-        double top = ((Number) card.evaluate("e => e.getBoundingClientRect().top")).doubleValue();
-        double header = ((Number) page.locator(".site-header").evaluate("e => e.getBoundingClientRect().bottom")).doubleValue();
-        assertThat("the sticky header does not cover the chosen entry", top >= header, is(true));
+        page.waitForURL(Pattern.compile(".*/volontariat/detail\\?slug=" + slug));
+        assertThat(page.locator("h1")).hasText(OFFER);
+        assertThat(page.getByText("Ende der Beschreibung.")).isVisible();
     }
 
     /** A1 step 4: starting the search instead of picking a Live Result opens the Search Results Page. */

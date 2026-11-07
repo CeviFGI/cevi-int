@@ -175,6 +175,27 @@ public class EventUpcomingTest {
     }
 
     /**
+     * UC-001 BR-003: a Short Name the administrator entered is kept as typed and may hold
+     * characters with a meaning in an address; the entry's link still leads to exactly that event.
+     */
+    @Test
+    public void an_entry_leads_to_its_event_page_whatever_the_short_name_holds() {
+        String title = "CLEANUP odd_short_name";
+        long id = EventFixture.createEvent(title, LocalDate.now().plusDays(20));
+        String slug = "cleanup-odd a&b#c+d%e";
+        QuarkusTransaction.requiringNew().run(() -> Event.<Event>findById((int) id).slug = slug);
+
+        String page = given().when().get(eventEndpoint).then().statusCode(HttpStatus.SC_OK).extract().asString();
+        java.util.regex.Matcher href = java.util.regex.Pattern
+                .compile("<a href=\"(/anlaesse/detail\\?slug=[^\"]+)\">" + title + "</a>").matcher(page);
+        assertThat(href.find(), is(true));
+
+        given().urlEncodingEnabled(false).when().get(href.group(1)).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("<h1>" + title + "</h1>"));
+    }
+
+    /**
      * UC-001 BR-001: the display date decides — an event whose display date is today is still
      * listed, one whose display date was yesterday is not.
      */

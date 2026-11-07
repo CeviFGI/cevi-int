@@ -9,7 +9,7 @@ event's own page, never here.
         <p class="card__band-date">{it.date}</p>
     </div>
     <div class="card__body">
-        <h2 class="card__title"><a href="/anlaesse/detail?slug={it.slug}">{it.title}</a></h2>
+        <h2 class="card__title"><a href="/anlaesse/detail?slug={it.slug.queryValue}">{it.title}</a></h2>
         <p class="meta meta--place">{it.location}</p>
         <p class="card__excerpt">{it.description.excerpt}</p>
         <div class="card__actions">

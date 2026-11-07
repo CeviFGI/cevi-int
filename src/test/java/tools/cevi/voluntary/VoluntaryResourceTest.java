@@ -21,8 +21,9 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.StringContains.containsString;
 
 /**
- * UC-003 Browse Voluntary Service Offers and UC-004 Manage Voluntary Service Offers over HTTP, plus
- * UC-006 BR-003: the maintenance links on the offer list appear only for a signed-in administrator.
+ * UC-004 Manage Voluntary Service Offers over HTTP, plus UC-006 BR-003: the maintenance links on
+ * the offer list appear only for a signed-in administrator. Browsing the offers (UC-003) is
+ * {@link VoluntaryBrowseTest}.
  */
 @QuarkusTest
 public class VoluntaryResourceTest {
@@ -41,45 +42,6 @@ public class VoluntaryResourceTest {
     @TestHTTPEndpoint(VoluntaryResource.class)
     @TestHTTPResource("delete")
     URL deleteEndpoint;
-
-    /**
-     * FR-010 and UC-003 BR-003. The field was captured and validated from the beginning, but no template
-     * ever rendered it, so an offer told the visitor an opportunity existed and not where to
-     * pursue it. This is the regression test that was missing while the requirement stood at
-     * "Verified".
-     */
-    @Test
-    public void an_offer_leads_to_the_organisation_running_it() {
-        String organization = "CLEANUP offer_links_to_organisation";
-        String link = "https://ymca-spitak.example.org/volunteering";
-        VoluntaryFixture.createVoluntaryService(organization, "Sechs Monate im Jugendzentrum.", link);
-
-        given()
-                .when()
-                .get(voluntaryEndpoint)
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body(containsString(link))
-                // A new tab must not be able to reach back into this page through window.opener.
-                .body(containsString("rel=\"noopener noreferrer\""));
-    }
-
-    /** UC-003 BR-004: the overview compares offers; the whole text is opened in place, not elsewhere. */
-    @Test
-    public void a_long_offer_is_shortened_but_its_full_text_stays_reachable() {
-        String organization = "CLEANUP offer_is_shortened";
-        String tail = "SCHLUSSDESANGEBOTS";
-        String description = "<p>" + "Wort ".repeat(60) + tail + "</p>";
-        VoluntaryFixture.createVoluntaryService(organization, description, "https://example.org/x");
-
-        given()
-                .when()
-                .get(voluntaryEndpoint)
-                .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body(containsString("Ganzen Text lesen"))
-                .body(containsString(tail));
-    }
 
     /** UC-006 BR-003: a visitor sees the offers but no maintenance links. */
     @Test

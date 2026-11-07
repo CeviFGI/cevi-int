@@ -50,7 +50,7 @@ class NoThirdPartyAssetsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi",
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi",
                             "/datenschutzinformation", "/auth/login"})
     void a_public_page_fetches_nothing_from_another_host(String path) {
         List<String> external = new ArrayList<>();

@@ -249,8 +249,9 @@ class VoluntaryManageTest {
     }
 
     /**
-     * A1, BR-008: changing the Organisation and the location leaves the Short Name — and with it
-     * the Public Address visitors have passed on — as it was.
+     * A1, BR-008, success postcondition: changing the Organisation and the location leaves the
+     * Short Name — and with it the Public Address visitors have passed on — as it was, and the
+     * Offer Page under that address shows the change at once.
      */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
@@ -268,9 +269,15 @@ class VoluntaryManageTest {
         assertThat(changed.id, equalTo(id));
         assertThat(changed.organization, equalTo("CLEANUP UC-004 after"));
         assertThat(changed.location, equalTo("Anderswo"));
+        offerPage(slug).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("<h1>CLEANUP UC-004 after</h1>"))
+                .body(containsString("Anderswo"));
     }
 
-    /** A1, BR-008: an administrator who edits the Short Name changes it; the old one is free again. */
+    /**
+     * A1, BR-008: an administrator who edits the Short Name changes it; the old one is free again
+     * and its address no longer leads to the offer.
+     */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
     void an_edited_short_name_replaces_the_previous_one() {
@@ -285,6 +292,8 @@ class VoluntaryManageTest {
 
         assertThat(stored(before), nullValue());
         assertThat(stored(after).id, equalTo(id));
+        offerPage(before).then().statusCode(HttpStatus.SC_NOT_FOUND);
+        offerPage(after).then().statusCode(HttpStatus.SC_OK).body(containsString("<h1>CLEANUP UC-004 renamed</h1>"));
     }
 
     /**
@@ -304,7 +313,10 @@ class VoluntaryManageTest {
         submit(change).then().statusCode(HttpStatus.SC_SEE_OTHER);
 
         assertThat(stored(before), nullValue());
-        assertThat(stored(Slug.of(organization + " Genf").toString()).id, equalTo(id));
+        String derived = Slug.of(organization + " Genf").toString();
+        assertThat(stored(derived).id, equalTo(id));
+        offerPage(before).then().statusCode(HttpStatus.SC_NOT_FOUND);
+        offerPage(derived).then().statusCode(HttpStatus.SC_OK);
     }
 
     /**
@@ -480,6 +492,11 @@ class VoluntaryManageTest {
     }
 
     /** Read in a transaction of its own, so the test never sees a copy its session cached earlier. */
+    /** The Offer Page under {@code slug}, as a visitor opens it (UC-003 step 4). */
+    private static io.restassured.response.Response offerPage(String slug) {
+        return given().queryParam("slug", slug).when().get("/volontariat/detail");
+    }
+
     private static VoluntaryService stored(String slug) {
         return QuarkusTransaction.requiringNew().call(() -> VoluntaryService.findBySlug(slug));
     }

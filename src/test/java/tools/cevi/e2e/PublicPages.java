@@ -10,7 +10,8 @@ import java.util.List;
  * of by whichever tests someone remembered to extend.
  *
  * <p>The event detail page is deliberately not here — it needs a record, so the tests that want it
- * create one of their own with the content they are testing for.
+ * create one of their own with the content they are testing for. The Offer Page is, on an offer of
+ * the demo data: offers do not expire, so that record stays.
  */
 final class PublicPages {
 
@@ -18,6 +19,8 @@ final class PublicPages {
             "/",
             "/anlaesse",
             "/volontariat",
+            // UC-003: the Offer Page of an offer of the demo data
+            "/volontariat/detail?slug=horyzon-kolumbien-palastina",
             "/kontakt",
             "/fgi",
             "/datenschutzinformation",

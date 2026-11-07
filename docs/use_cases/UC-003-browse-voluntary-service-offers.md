@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, reads the complete offer that interests them, and learns which Organisation to approach.
 **Status:** Approved
-**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041). Revised again on 2026-11-07 for requirements revision 8 (FR-010, FR-043): every offer has an Offer Page of its own, the whole entry in the Offer List leads to it, and the link to the Organisation moved from the list entry to that page. Unfolding the complete Description in place in the list is replaced by the Offer Page.
+**Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041). Revised again on 2026-11-07 for requirements revision 8 (FR-010, FR-043): every offer has an Offer Page of its own, the whole entry in the Offer List leads to it, and the link to the Organisation moved from the list entry to that page. Unfolding the complete Description in place in the list is replaced by the Offer Page. 2026-11-07: step 2 states the order of the Offer List — by Organisation, as the search orders equally ranked offers (UC-010 BR-004) — as decided by the product owner.
 
 **Requirements:** [FR-009, FR-010, FR-022, FR-027, FR-035, FR-038, FR-043](../requirements.md)
 
@@ -18,7 +18,7 @@
 ## Main Success Scenario
 
 1. The visitor opens the Offer List.
-2. The system presents all recorded offers, each entry with its Organisation, its location and an Excerpt of its Description; the whole entry leads to the offer's Offer Page.
+2. The system presents all recorded offers in alphabetical order of their Organisation, offers of the same Organisation in the order they were recorded, each entry with its Organisation, its location and an Excerpt of its Description; the whole entry leads to the offer's Offer Page.
 3. The visitor compares the presented offers and selects the one that interests them.
 4. The system presents the selected offer on its Offer Page under its Public Address: the Organisation, the location, the complete Description as the administrator formatted it, and a control leading to the Organisation's website.
 5. The visitor follows that control to the website of the Organisation.

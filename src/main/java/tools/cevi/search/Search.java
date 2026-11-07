@@ -72,12 +72,12 @@ public final class Search {
                 .thenComparing(r -> r.entry().organization, collator)
                 .thenComparingInt(r -> r.entry().id));
         return hits(ranked, limit, r -> new Hit(r.entry().organization, r.entry().location, "",
-                excerpt(r.entry().description, r.text(), term), chosenOffer(r.entry().id), String.valueOf(r.entry().id)));
+                excerpt(r.entry().description, r.text(), term), offerPage(r.entry().slug), String.valueOf(r.entry().id)));
     }
 
-    /** UC-010 step 5: the offer's entry in the Offer List, marked, opened and scrolled to. */
-    public static String chosenOffer(int id) {
-        return "/volontariat?angebot=" + id + "#angebot-" + id;
+    /** UC-010 step 5, UC-003 A4: a match on an offer leads to its Offer Page. */
+    public static String offerPage(String slug) {
+        return "/volontariat/detail?slug=" + encode(slug);
     }
 
     private static <T> List<Hit> hits(List<Ranked<T>> ranked, int limit, Function<Ranked<T>, Hit> toHit) {

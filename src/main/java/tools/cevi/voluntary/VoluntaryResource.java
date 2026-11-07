@@ -40,20 +40,34 @@ public class VoluntaryResource {
         private Templates() {
         }
 
-        public static native TemplateInstance list(List<VoluntaryService> services, int chosen);
+        public static native TemplateInstance list(List<VoluntaryService> services);
+        public static native TemplateInstance detail(VoluntaryService service);
         public static native TemplateInstance form(long id, String slug, String organization, String organizationLink, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(VoluntaryService service, boolean removalFailed);
     }
-    /**
-     * The Offer List. {@code angebot} names the offer a search result led to (UC-010 step 5,
-     * UC-003 A5): that
-     * entry is marked and shows its complete Description; the address's fragment brings it into
-     * view without script. An id that no longer exists marks nothing (UC-010 A7).
-     */
+    /** The Offer List: every recorded offer, each entry leading to its Offer Page (UC-003 steps 1-2). */
+    // UC-003 BR-001: every recorded offer, no filter
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance list(@QueryParam("angebot") int chosen) {
-        return Templates.list(VoluntaryService.listAll(), chosen);
+    public TemplateInstance list() {
+        return Templates.list(VoluntaryService.offerList());
+    }
+
+    /**
+     * The Offer Page of one offer (UC-003 step 4, A4). The list, the start page and the search all
+     * link here, so an offer is read in one place only.
+     */
+    // UC-003 BR-005: the Short Name is the offer's Public Address
+    @GET
+    @Path("detail")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance detail(@QueryParam("slug") String slug) {
+        VoluntaryService service = slug == null ? null : VoluntaryService.findBySlug(slug);
+        if (service == null) {
+            // UC-003 A5: an unknown Short Name, e.g. a removed offer or a changed Short Name
+            throw new NotFoundException("VoluntaryService with slug " + slug + " not found");
+        }
+        return Templates.detail(service);
     }
 
     // UC-004 BR-001: only an administrator may add, change or remove offers

@@ -25,7 +25,7 @@ class PageStructureTest {
     private static final Pattern HEADING = Pattern.compile("<h([1-6])[\\s>]");
 
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi",
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi",
                             "/datenschutzinformation", "/auth/login"})
     void every_public_page_has_exactly_one_top_level_heading(String path) {
         String body = fetch(path);
@@ -35,7 +35,7 @@ class PageStructureTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi",
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi",
                             "/datenschutzinformation", "/auth/login"})
     void every_public_page_skips_no_heading_level(String path) {
         String body = fetch(path);
@@ -53,7 +53,7 @@ class PageStructureTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi",
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi",
                             "/datenschutzinformation", "/auth/login"})
     void every_public_page_offers_a_skip_link_before_anything_else(String path) {
         String body = fetch(path);
@@ -71,7 +71,7 @@ class PageStructureTest {
      * (UC-007 BR-002, C-011). It sits in the navigation drawer and in the footer; either satisfies this.
      */
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi", "/auth/login"})
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi", "/auth/login"})
     void every_public_page_links_to_the_data_protection_information(String path) {
         assertTrue(fetch(path).contains("/datenschutzinformation"),
                 path + " should link to the data protection information");

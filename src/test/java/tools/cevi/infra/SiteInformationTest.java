@@ -40,7 +40,7 @@ public class SiteInformationTest {
      * navigation of every page, not only on an entry page.
      */
     @ParameterizedTest
-    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/kontakt", "/fgi", "/datenschutzinformation"})
+    @ValueSource(strings = {"/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/kontakt", "/fgi", "/datenschutzinformation"})
     void the_navigation_of_every_page_offers_both_information_pages(String path) {
         String navigation = navigationOf(fetch(path));
 

@@ -28,7 +28,7 @@ class EditorAssetsTest {
     private static final String EDITOR_STYLESHEET = "/webjars/jodit/es2021/jodit.min.css";
     private static final String EDITOR_INIT = "/js/editor-init.js";
 
-    private static final String[] PUBLIC_PAGES = { "/", "/anlaesse", "/volontariat", "/fgi",
+    private static final String[] PUBLIC_PAGES = { "/", "/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina", "/fgi",
             "/kontakt", "/datenschutzinformation", "/auth/login" };
 
     /** A script element, with its {@code src} when it has one. */

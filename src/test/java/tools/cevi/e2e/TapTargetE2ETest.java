@@ -100,7 +100,7 @@ public class TapTargetE2ETest extends PlaywrightTestBase {
         signInAsAdministrator();
         page.setViewportSize(PHONE_WIDTH, 800);
 
-        for (String route : List.of("/anlaesse", "/volontariat")) {
+        for (String route : List.of("/anlaesse", "/volontariat", "/volontariat/detail?slug=horyzon-kolumbien-palastina")) {
             page.navigate(url(route));
             openEverythingThatCollapses();
 
@@ -112,9 +112,9 @@ public class TapTargetE2ETest extends PlaywrightTestBase {
     }
 
     /**
-     * The navigation is a drawer at this width and the offer descriptions sit in a
-     * {@code <details>}. A control nobody can see is a control nobody measured, which is how an
-     * undersized menu row survives a test like this one.
+     * The navigation is a drawer at this width, and any {@code <details>} a page carries is opened
+     * too. A control nobody can see is a control nobody measured, which is how an undersized menu
+     * row survives a test like this one.
      */
     @Test
     void the_controls_hidden_behind_a_disclosure_are_measured_too() {

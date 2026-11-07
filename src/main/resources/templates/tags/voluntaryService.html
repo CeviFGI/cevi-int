@@ -1,35 +1,24 @@
 {!
-An offer in a list (UC-003 BR-003, UC-003 BR-004). An offer has no page of its own, so the control leading to the
-organisation is the card's own action and the card itself is not a link. Because there is nowhere
-to send the visitor for the rest of the text, it opens in place instead.
-UC-010 step 5: the offer a search result led to (`chosen`) is marked and opened; its id is the
-fragment the search result's address scrolls to.
+An offer in a list (UC-003 step 2, BR-003, BR-004; UC-008 BR-004). The whole card is the target;
+the Organisation carries the link to the Offer Page and the "Details" pill is the affordance, not a
+second link. The complete Description and the link to the Organisation are on the Offer Page, never
+here.
 !}
-<article class="card{#if it.id == chosen} card--chosen{/if}" id="angebot-{it.id}">
+<article class="card">
     <div class="card__band card__band--v{it.id.accentVariant}">
         <p class="card__band-kicker">Volontariat</p>
         <p class="card__band-date">{it.location}</p>
     </div>
     <div class="card__body">
-        {#if it.id == chosen}<p class="chip">Dein Suchtreffer</p>{/if}
-        <h2 class="card__title">{it.organization}</h2>
+        {! UC-003 BR-003: one action per entry, selecting anywhere on it opens the Offer Page !}
+        <h2 class="card__title"><a href="/volontariat/detail?slug={it.slug.queryValue}">{it.organization}</a></h2>
+        {! UC-003 BR-004: an Excerpt only; A2: a short Description stands in full, without an ellipsis !}
         <p class="card__excerpt">{it.description.excerpt}</p>
-        {#if it.description.shortened}
-        <details class="disclosure"{#if it.id == chosen} open{/if}>
-            <summary>Ganzen Text lesen</summary>
-            <div class="prose">{it.description.withScrollableTables.raw}</div>
-        </details>
-        {/if}
         <div class="card__actions">
-            {!FR-010: the offer names the organisation and leads to it. rel keeps the new
-            tab from reaching back into this page.!}
-            <a class="btn btn--primary" href="{it.organizationLink}" target="_blank" rel="noopener noreferrer">
-                Zur Organisation<span aria-hidden="true"> ↗</span>
-                <span class="visually-hidden">(öffnet in einem neuen Tab)</span>
-            </a>
+            <span class="btn btn--primary card__cta" aria-hidden="true">Details</span>
         </div>
     </div>
-    {! UC-006 BR-003: maintenance links only for a signed-in administrator !}
+    {! UC-003 A3, UC-006 BR-003: maintenance links only for a signed-in administrator, in their own quieter group !}
     {#if inject:currentUser.admin && showActions}
     <div class="card__admin">
         <a href="/volontariat/edit?id={it.id}">Bearbeiten</a>

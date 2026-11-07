@@ -1,0 +1,45 @@
+{#include base}
+<div class="page-column">
+{! UC-003 A4: the way to the complete Offer List !}
+<a class="backlink" href="/volontariat"><span aria-hidden="true">←</span> Alle Angebote</a>
+
+<div class="card__band detail-band card__band--v{service.id.accentVariant}">
+    <p class="card__band-kicker">Volontariat</p>
+    <p class="card__band-date">{service.location}</p>
+</div>
+
+<h1>{service.organization}</h1>
+<div class="detail-head">
+    <p class="meta meta--place">{service.location}</p>
+</div>
+
+{! UC-003 A6, UC-006 BR-003: maintenance links only for a signed-in administrator, apart from the visitor's control !}
+{#if inject:currentUser.admin}
+<div class="admin-bar">
+    <span class="admin-bar__who">Angemeldet als Administrator</span>
+    <a class="btn btn--ghost" href="/volontariat/edit?id={service.id}">Bearbeiten</a>
+    <a class="btn btn--ghost" href="/volontariat/delete?id={service.id}">Löschen</a>
+</div>
+{/if}
+
+<hr>
+
+{!The one place administrator-authored HTML of an offer is rendered unescaped. It was reduced to the
+allow-list when it was stored (NFR-010); prose.css styles everything that list permits.
+UC-003 BR-004: the complete Description, only here.!}
+<div class="prose">{service.description.withScrollableTables.raw}</div>
+
+{! UC-003 BR-002, BR-003: after the complete offer, the page's primary control leads to the
+Organisation. It opens separately (step 6); rel keeps the new tab from reaching back into this page. !}
+<div class="teaser">
+    <div>
+        <h2>Interessiert?</h2>
+        <p>Bewerben kannst du dich direkt bei {service.organization}.</p>
+    </div>
+    <a class="btn btn--primary" href="{service.organizationLink}" target="_blank" rel="noopener noreferrer">
+        Zur Organisation<span aria-hidden="true"> ↗</span>
+        <span class="visually-hidden">(öffnet in einem neuen Tab)</span>
+    </a>
+</div>
+</div>
+{/include}

@@ -152,13 +152,3 @@
 }
 
 .empty .cluster { justify-content: center; }
-
-/* --- The offer a search led to (step 5) --------------------------------------------------- */
-
-/* The sticky header would otherwise cover the top of the card the address scrolled to. */
-.card[id] { scroll-margin-top: 10rem; }
-
-.card--chosen {
-    border-color: var(--cevi-blue);
-    box-shadow: 0 0 0 2px var(--cevi-blue), var(--shadow-2);
-}

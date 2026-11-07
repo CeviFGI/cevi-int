@@ -377,32 +377,6 @@ dl.panel dd:last-child { margin-bottom: 0; }
 .teaser h2 { font-size: var(--step-1); margin-bottom: var(--space-1); }
 .teaser p { color: var(--ink-soft); margin: 0; }
 
-/* --- Disclosure ---------------------------------------------------------------------------- */
-
-/* Native <details>, so opening the rest of a text costs no script (C-021) */
-.disclosure > summary {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: var(--tap-target);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--step--1);
-    color: var(--cevi-blue);
-    cursor: pointer;
-    list-style: none;
-    position: relative;
-    z-index: 1;
-}
-.disclosure > summary::-webkit-details-marker { display: none; }
-.disclosure > summary::after {
-    content: "▾";
-    transition: transform var(--dur-fast) var(--ease);
-}
-.disclosure[open] > summary::after { transform: rotate(180deg); }
-.disclosure > summary:hover { text-decoration: underline; }
-.disclosure .prose { margin-top: var(--space-3); font-size: var(--step--1); }
-
 /* --- Confirmation pages -------------------------------------------------------------------- */
 
 /* A preview of the record about to be removed: recognisable, not inviting to click away */

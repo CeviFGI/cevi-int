@@ -1,6 +1,9 @@
 package tools.cevi.voluntary;
 
+import java.text.Collator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Parameters;
@@ -52,6 +55,20 @@ public class VoluntaryService extends PanacheEntityBase {
      */
     public static List<VoluntaryService> newest(int limit) {
         return findAll(Sort.by("id", Sort.Direction.Descending)).page(0, limit).list();
+    }
+
+    /**
+     * Every recorded offer for the Offer List (UC-003 step 2, BR-001), by Organisation in
+     * alphabetical order as a reader of de-CH expects it (umlauts beside their base letter, case
+     * ignored), then in the order recorded. The same order the search uses among equally ranked
+     * offers (UC-010 BR-004), so an offer stands in the same place in both.
+     */
+    public static List<VoluntaryService> offerList() {
+        Collator collator = Collator.getInstance(Locale.forLanguageTag("de-CH"));
+        return VoluntaryService.<VoluntaryService>listAll().stream()
+                .sorted(Comparator.<VoluntaryService, String>comparing(s -> s.organization, collator)
+                        .thenComparingInt(s -> s.id))
+                .toList();
     }
 
     /** The offer stored under {@code slug}, or {@code null} (UC-004 BR-006). */

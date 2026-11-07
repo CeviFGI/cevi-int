@@ -39,8 +39,8 @@
                        value="{organizationLink}" placeholder="https://..." required
                        aria-describedby="organizationLink-help" {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
-                {!Without this the offer is a dead end — it is the card's own action (FR-010).!}
-                <span class="field__help" id="organizationLink-help">Ziel des Knopfs auf der Karte.
+                {!Without this the offer is a dead end — it is the Offer Page's primary control (FR-010, UC-003 BR-003).!}
+                <span class="field__help" id="organizationLink-help">Ziel des Knopfs auf der Seite des Angebots.
                       Am besten direkt auf die Seite, die das Angebot beschreibt.</span>
             </div>
             {/let}
@@ -75,9 +75,9 @@
                 <textarea id="description" name="description" maxlength="65535" required
                           {#if error}aria-invalid="true"{/if}>{description}</textarea>
                 {#if error}<p class="field__error">{error}</p>{/if}
-                <span class="field__help">Ein Angebot hat keine eigene Seite: was hier steht, wird
-                      auf der Karte gekürzt und lässt sich dort ausklappen. Kurz halten lohnt
-                      sich.</span>
+                <span class="field__help">Auf der Karte in der Liste erscheint nur der Anfang; den
+                      ganzen Text zeigt die Seite des Angebots. Der erste Satz sollte deshalb
+                      schon sagen, worum es geht.</span>
             </div>
             {/let}
         </div>

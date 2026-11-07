@@ -2,6 +2,8 @@ package tools.cevi.infra;
 
 import io.quarkus.qute.TemplateExtension;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 /**
@@ -18,14 +20,19 @@ public final class TemplateExtensions {
     private TemplateExtensions() {
     }
 
+    /**
+     * The value as one query parameter of a link, as the search encodes it. An entered Short Name is
+     * stored as typed (UC-004 BR-009), so it may hold {@code &}, {@code #}, {@code +} or
+     * {@code %}; Qute escapes it for HTML only, which would let such a name break the link.
+     */
+    // UC-001 BR-003, UC-003 BR-005: the entry leads to the page under exactly its Short Name
+    public static String queryValue(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
     /** Shortens a stored description for a list (UC-001 BR-004, UC-003 BR-004). Rendered escaped, never raw. */
     public static String excerpt(String description) {
         return Excerpt.from(description);
-    }
-
-    /** Whether the excerpt left something out, so the card can offer to show the rest. */
-    public static boolean shortened(String description) {
-        return !Excerpt.from(description).equals(Excerpt.from(description, Integer.MAX_VALUE));
     }
 
     /**

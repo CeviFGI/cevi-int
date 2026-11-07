@@ -194,39 +194,22 @@ class SearchResourceTest {
     }
 
     /**
-     * Main success scenario, step 5 and UC-003 A5: an offer leads to its entry in the Offer List — brought into
-     * view by the address's fragment, marked as the one chosen, its complete Description open.
+     * Main success scenario, step 5 and UC-003 A4: an offer leads to its Offer Page, which shows
+     * the complete Description.
      */
     @Test
-    void an_offer_hit_leads_to_its_marked_and_opened_entry_in_the_offer_list() {
+    void an_offer_hit_leads_to_its_offer_page() {
         String longDescription = "<p>" + "Zqvoll ist der Anfang einer langen Beschreibung. ".repeat(10)
                 + "Und hier steht das Ende des Textes.</p>";
         VoluntaryService offer = offer("Zqwahl Verein", longDescription);
-        String address = "/volontariat?angebot=" + offer.id + "#angebot-" + offer.id;
+        String address = "/volontariat/detail?slug=" + offer.slug;
 
         assertThat(offerGroup(search("zqwahl")), containsString("href=\"" + address + "\""));
 
-        String list = given().when().get("/volontariat?angebot=" + offer.id).then()
+        given().when().get(address).then()
                 .statusCode(HttpStatus.SC_OK)
-                .extract().body().asString();
-        assertThat(list, containsString("<article class=\"card card--chosen\" id=\"angebot-" + offer.id + "\">"));
-        assertThat(list, containsString("Dein Suchtreffer"));
-        assertThat(list, containsString("<details class=\"disclosure\" open>"));
-        assertThat(list, containsString("Und hier steht das Ende des Textes."));
-    }
-
-    /** Step 5: only the chosen offer is marked; the others stay as they are on the Offer List. */
-    @Test
-    void only_the_chosen_offer_is_marked() {
-        VoluntaryService chosen = offer("Zqnur Eins", "Text");
-        VoluntaryService other = offer("Zqnur Zwei", "Text");
-
-        String list = given().when().get("/volontariat?angebot=" + chosen.id).then()
-                .statusCode(HttpStatus.SC_OK)
-                .extract().body().asString();
-
-        assertThat(list, containsString("<article class=\"card\" id=\"angebot-" + other.id + "\">"));
-        assertThat(Pattern.compile("card--chosen").matcher(list).results().count(), is(1L));
+                .body(containsString("<h1>Zqwahl Verein</h1>"))
+                .body(containsString("Und hier steht das Ende des Textes."));
     }
 
     // --- BR-008: the excerpt ----------------------------------------------------------------
@@ -306,7 +289,7 @@ class SearchResourceTest {
         String body = live("zqlivelink");
 
         assertThat(body, containsString("href=\"/anlaesse/detail?slug=" + event.slug + "\""));
-        assertThat(body, containsString("href=\"/volontariat?angebot=" + offer.id + "#angebot-" + offer.id + "\""));
+        assertThat(body, containsString("href=\"/volontariat/detail?slug=" + offer.slug + "\""));
     }
 
     /** A1 step 3: fewer than two letters or digits give no Live Results; punctuation does not count. */
@@ -423,20 +406,24 @@ class SearchResourceTest {
         assertThat(titles(eventGroup(search("zqspaeter"))), is(List.of("CLEANUP Zqspaeter Anlass")));
     }
 
-    /** A7: the chosen offer was deleted — the Offer List is shown without a marked entry. */
+    /**
+     * A7: the chosen offer was deleted — the visitor learns that the page does not exist and gets
+     * the way to the Offer List, as in UC-003 A5.
+     */
     @Test
-    void a_deleted_offer_shows_the_offer_list_without_a_marked_entry() {
+    void a_deleted_offer_shows_that_the_page_does_not_exist() {
         VoluntaryService offer = offer("Zqweg Verein", "Text");
-        String address = "/volontariat?angebot=" + offer.id;
+        String href = "/volontariat/detail?slug=" + offer.slug;
+        assertThat(offerGroup(search("zqweg")), containsString(href));
         QuarkusTransaction.begin();
         VoluntaryService.deleteById(offer.id);
         QuarkusTransaction.commit();
 
-        given().when().get(address).then()
-                .statusCode(HttpStatus.SC_OK)
-                .body(containsString("<h1>Volontariat</h1>"))
-                .body(not(containsString("card--chosen")))
-                .body(not(containsString("Dein Suchtreffer")));
+        given().when().get(href).then()
+                .statusCode(HttpStatus.SC_NOT_FOUND)
+                .body(containsString("Diese Seite gibt es nicht"))
+                // the error page's own way, not the navigation link every page has
+                .body(containsString("href=\"/volontariat\">Zum Volontariat</a>"));
     }
 
     /**
@@ -748,9 +735,10 @@ class SearchResourceTest {
     @Test
     void every_public_page_offers_the_search_field() {
         Event event = event("CLEANUP Zqueberall Anlass", "Text");
+        VoluntaryService offer = offer("Zqueberall Verein", "Text");
         List<String> pages = List.of("/", "/anlaesse", "/volontariat", "/fgi", "/kontakt",
                 "/datenschutzinformation", "/auth/login", "/suche?q=zq",
-                "/anlaesse/detail?slug=" + event.slug);
+                "/anlaesse/detail?slug=" + event.slug, "/volontariat/detail?slug=" + offer.slug);
         for (String path : pages) {
             String body = given().redirects().follow(true).when().get(path).then()
                     .statusCode(HttpStatus.SC_OK).extract().body().asString();

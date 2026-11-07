@@ -1,18 +1,23 @@
-# Handover — Stand 2026-11-07 (nach der 10. Session)
+# Handover — Stand 2026-11-07 (nach der 11. Session)
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** UC-003 implementieren (eigene Volontariatsseite), dann der Rest von
-Revision 8 (Abschnitt „Danach“, Punkt 1).
+**Nächster Schritt:** `/use-case-coverage UC-003` erneut laufen lassen (Gap 1 und beide Drifts der
+11. Session sind behoben), dann UC-003 und UC-004 auf `Tested`; danach der Rest von Revision 8
+(Abschnitt „Danach“, Punkt 1).
 
 ## Stand
 
 - UC-001, 002, 005, 006, 007, 009 `Tested`.
-- UC-004 implementiert und getestet (Commit `ac6ef6e`), Status bleibt `Approved`, bis UC-003 steht:
-  Erst mit der Volontariatsseite lassen sich die Postcondition „Offer Page spiegelt die Änderung
-  sofort“ und BR-008 „die alte Adresse führt nicht mehr zum Angebot“ über HTTP prüfen. Danach
-  `/use-case-coverage UC-004`, dann `Tested`.
-- UC-003, 008, 010, 011 `Approved`, noch nicht implementiert.
+- UC-003 implementiert und getestet (11. Session), Status noch `Approved`. Der erste Audit fand
+  einen Fehler (Kurzname im Kartenlink nicht URL-kodiert – jetzt `{it.slug.queryValue}`, auch in
+  der Anlass-Karte) und zwei Drifts (Hilfetext Organisations-Link; Reihenfolge der Liste, jetzt in
+  UC-003 Schritt 2 festgehalten, vom Benutzer bestätigt). Alles behoben, Audit noch nicht wiederholt.
+- UC-004 implementiert und getestet; die BR-008-Tests rufen jetzt alte/neue Adresse der
+  Volontariatsseite ab. `/use-case-coverage UC-004`, dann `Tested`.
+- UC-010: Treffer führen bereits auf die Volontariatsseite (`Search.offerPage`), Tests angepasst;
+  Audit fehlt. UC-008: der Auszug nutzt dieselbe Karte und führt damit schon zur Seite, aber kein
+  Test der Startseite prüft das. UC-011 (Teilen) noch offen.
 - `tooling/docker.sh verify` grün, alles committet.
 - Spec-Lint grün mit `--strict` (3 Befunde `SPEC_CHANGED_AFTER_STATUS` in
   `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Für UC-001/002 wurden in der
@@ -21,6 +26,17 @@ Revision 8 (Abschnitt „Danach“, Punkt 1).
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
 - NFR-006, NFR-011, NFR-021 stehen auf `In Progress`, weil UC-004 sie verlinkt; wieder `Verified`,
   sobald UC-004 `Tested` ist.
+
+## Was die 11. Session an UC-003 gemacht hat
+
+- `VoluntaryResource.detail` unter `/volontariat/detail?slug=…` (A5: 404), Template
+  `VoluntaryResource/detail.html` (Wartungslinks A6 als `admin-bar`, „Zur Organisation“ nach der
+  Beschreibung). Liste via `VoluntaryService.offerList()` (de-CH-Collator, dann id).
+- Karte `tags/voluntaryService.html` wie die Anlass-Karte; Ausklappen, `chosen`, `?angebot=` und das
+  zugehörige CSS (`.disclosure`, `.card--chosen`) sowie die Extension `shortened` entfernt.
+- 404-Seite bietet zusätzlich „Zum Volontariat“. Tests: `VoluntaryBrowseTest`,
+  `VoluntaryBrowseE2ETest`; die Demo-Seite `/volontariat/detail?slug=horyzon-kolumbien-palastina`
+  steht in `PublicPages` und den Seitenlisten der Qualitätstests.
 
 ## Was die 10. Session an UC-004 gemacht hat
 
@@ -65,7 +81,9 @@ Revision 8 (Abschnitt „Danach“, Punkt 1).
   (`/test-only/failing-page`), existiert nur im Testprofil.
 - `PublicPages.java` und die Seitenlisten in `EditorAssetsTest`, `NoThirdPartyAssetsTest`,
   `SearchResourceTest` enthalten nur anonym erreichbare Seiten – eine Seite hinter `@RolesAllowed`
-  misst dort ohne Sitzung nur die Login-Seite. Die neue Volontariatsseite gehört dort hinein.
+  misst dort ohne Sitzung nur die Login-Seite.
+- Links mit Kurznamen in Templates immer über `.queryValue` bauen (Kurznamen werden wie eingegeben
+  gespeichert und dürfen `&`, `#`, `+` enthalten).
 - Entität im Test vor einem POST mit `findById` geladen? Danach liefert `findById` die
   zwischengespeicherte alte Kopie (Sitzung des Tests). Ergebnis über HTTP oder in eigener
   Transaktion prüfen (`QuarkusTransaction.requiringNew().call(...)`, siehe
@@ -76,16 +94,9 @@ Revision 8 (Abschnitt „Danach“, Punkt 1).
 ## Danach
 
 1. Revision 8 implementieren:
-   - **UC-003** Volontariatsseite unter dem Kurznamen (Muster: `EventResource.detail`,
-     `/anlaesse/detail?slug=…`). Ganze Karte in der Liste führt zur Seite; „Zur Organisation“ nur
-     noch auf der Seite (BR-003); Ausklappen in der Liste entfällt (`tags/voluntaryService.html`,
-     Tests `a_long_offer_is_shortened_…` und `an_offer_leads_to_the_organisation_…` in
-     `VoluntaryResourceTest` anpassen). Hilfetext zur Beschreibung im Formular („Ein Angebot hat
-     keine eigene Seite…“) anpassen. In `VoluntaryManageTest` die BR-008-Tests um einen Abruf der
-     alten/neuen Adresse ergänzen. Noch offen: Reihenfolge der Liste (UC-003 Schritt 2) – sinnvollen
-     Default wählen und melden.
-   - **UC-011** Teilen (`share.js` wiederverwenden), **UC-010** (Treffer → Volontariatsseite statt
-     `/volontariat?angebot=id`), **UC-008** (Links im Auszug; Umfang des Auszugs wie bisher).
+   - **UC-011** Teilen auf der Volontariatsseite (`share.js` wiederverwenden, Muster
+     `EventResource/detail.html` und `EventResource.publicAddress`; Dialog mit Organisation und Ort).
+   - **UC-008** Test, dass der Auszug der Startseite zur Volontariatsseite führt.
    - Sonar-Check für neuen Code.
 2. Coverage-Audits und Status / FR- und NFR-Status nachführen (UC-003, 004, 008, 010, 011; optional
    auch ein voller Audit für UC-001 und UC-002, siehe „Stand“).
