@@ -12,12 +12,17 @@ import java.net.URL;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-001 Browse Upcoming Events: the event's own page (main success scenario steps 5-6, A2,
+ * BR-003, BR-004).
+ */
 @QuarkusTest
 public class EventDetailTest {
     @TestHTTPEndpoint(EventResource.class)
     @TestHTTPResource("detail")
     URL detailEndpoint;
 
+    /** Main success scenario step 5, BR-003: the event is reachable under its short name. */
     @Test
     public void show_detail() {
         String title = "CLEANUP show_detail";
@@ -54,6 +59,10 @@ public class EventDetailTest {
                 .body(containsString("<li>Prag</li>"));
     }
 
+    /**
+     * A2: an unknown short name leads to a page that says the page does not exist and offers the
+     * way back to the event list.
+     */
     @Test
     public void show_detail_non_existing() {
         given()
@@ -62,6 +71,29 @@ public class EventDetailTest {
                 .get(detailEndpoint)
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
-                .body(containsString("Diese Seite gibt es nicht"));
+                .body(containsString("Diese Seite gibt es nicht"))
+                .body(containsString("href=\"/anlaesse\""));
+    }
+
+    /**
+     * Main success scenario steps 5-6: the page presents what a visitor needs to decide — date
+     * text and location — and the address under which it can be passed on.
+     */
+    @Test
+    public void detail_presents_date_location_and_its_address() {
+        String title = "CLEANUP detail_presents_date_location";
+        long id = EventFixture.createEvent(title, java.time.LocalDate.now().plusDays(5),
+                "3. - 9. August 2099", "Lissabon", "<p>Ein Sommerlager</p>");
+        String slug = ((Event) Event.findById(id)).slug;
+
+        given()
+                .queryParam("slug", slug)
+                .when()
+                .get(detailEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("3. - 9. August 2099"))
+                .body(containsString("Lissabon"))
+                .body(containsString("/anlaesse/detail?slug=" + slug + "\""));
     }
 }
