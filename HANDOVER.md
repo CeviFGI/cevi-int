@@ -1,8 +1,9 @@
-# Handover — Stand 2026-11-07 (nach der 6. Session)
+# Handover — Stand 2026-11-07 (nach der 7. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Revision-8-Specs freigeben (Abschnitt 1: `/spec-review UC-XXX`), danach
+**Nächster Schritt:** Revision-8-Specs freigeben (Abschnitt 1), beginnend mit `/spec-review UC-004`
+(dort wird der Kurzname definiert, auf dem die übrigen aufbauen), danach
 die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klären.
 
 ## Stand
@@ -42,6 +43,11 @@ die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klär
 - Fehlschlagende Speicherung testen: SQLite-Trigger mit `RAISE` (Beispiel `uc005_a2_insert` in
   `ContactResourceTest`); fehlschlagenden Mailversand: eigenes Testprofil mit echtem Mailer gegen
   `127.0.0.1:1` (`ContactNotificationFailureTest`).
+- Unerwarteten Fehler (500-Seite) testen: `FailingPageResource` unter `src/test`
+  (`/test-only/failing-page`), existiert nur im Testprofil.
+- `PublicPages.java` und die Seitenlisten in `EditorAssetsTest`, `NoThirdPartyAssetsTest`,
+  `SearchResourceTest` enthalten nur anonym erreichbare Seiten – eine Seite hinter `@RolesAllowed`
+  misst dort ohne Sitzung nur die Login-Seite (deshalb ist `/version` nicht mehr drin).
 
 ## 1. Freigabe der Revision-8-Specs (Product Owner)
 
