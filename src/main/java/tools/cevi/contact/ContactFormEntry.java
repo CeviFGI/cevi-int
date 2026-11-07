@@ -22,8 +22,8 @@ public class ContactFormEntry extends PanacheEntityBase {
     private int id;
     @Column(columnDefinition = "TEXT", nullable = false)
     @NotBlank
-    // The endpoint is anonymous. Without a limit a single request could write up to the HTTP body
-    // limit into the database file, which shares a filesystem with the host.
+    // UC-005 BR-006: the endpoint is anonymous. Without a limit a single request could write up to
+    // the HTTP body limit into the database file, which shares a filesystem with the host.
     @Size(max = MAX_MESSAGE_LENGTH)
     public String message;
 
@@ -33,8 +33,8 @@ public class ContactFormEntry extends PanacheEntityBase {
 
     @Override
     public String toString() {
-        // The message is personal data and must not leak into the logs through a concatenated
-        // entity; the id is what makes an entry traceable.
+        // UC-005 BR-007: the message is personal data and must not leak into the logs through a
+        // concatenated entity; the id is what makes an entry traceable.
         return "ContactFormEntry{id=" + id + '}';
     }
 }

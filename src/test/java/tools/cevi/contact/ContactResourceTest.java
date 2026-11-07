@@ -119,18 +119,18 @@ public class ContactResourceTest {
      */
     @Test
     public void form_saved() {
-        Csrf.given().formParam("message", "my message").formParam("spam", "50")
+        Csrf.given().formParam("message", PREFIX + "main success scenario").formParam("spam", "50")
                 .when().post(contactEndpoint).then().statusCode(HttpStatus.SC_OK)
                 .body(containsString("Nachricht ist unterwegs"));
 
         List<ContactFormEntry> messages = ContactFormEntry.listAll();
         assertThat(messages, is(not(empty())));
-        assertThat(messages.get(messages.size()-1).message, equalTo("my message"));
+        assertThat(messages.get(messages.size()-1).message, equalTo(PREFIX + "main success scenario"));
 
         List<Mail> sent = mailbox.getMailsSentTo(to);
         assertThat(sent, hasSize(1));
         Mail actual = sent.get(0);
-        assertThat(actual.getText(), stringContainsInOrder("my message"));
+        assertThat(actual.getText(), stringContainsInOrder(PREFIX + "main success scenario"));
         assertThat(actual.getSubject(), equalTo("[Cevi International Webseite] Kontaktformular ausgefüllt"));
 
         assertThat(mailbox.getTotalMessagesSent(), equalTo(1));
@@ -446,7 +446,7 @@ public class ContactResourceTest {
                 .body(containsString("class=\"field__error\""));
     }
 
-    /** A1: a rejected submission gives the typed text back rather than asking for it again (FR-008). */
+    /** A1: a rejected submission gives the typed text back rather than asking for it again. */
     @Test
     public void a_rejected_submission_keeps_the_written_message() {
         Csrf.given().formParam("message", "Ich moechte an ein Lager").formParam("spam", "10")

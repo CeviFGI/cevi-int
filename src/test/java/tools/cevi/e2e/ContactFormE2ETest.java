@@ -27,6 +27,7 @@ public class ContactFormE2ETest extends PlaywrightTestBase {
 
     private final String message = "CLEANUP e2e-" + UUID.randomUUID();
 
+    /** UC-005 main success scenario: write, submit, see the confirmation; the message is recorded. */
     @Test
     public void a_visitor_can_write_and_send_a_message() {
         page.navigate(url("/kontakt"));

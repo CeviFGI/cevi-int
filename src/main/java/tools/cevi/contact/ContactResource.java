@@ -30,6 +30,7 @@ public class ContactResource {
     @Inject
     Validator validator;
 
+    // UC-005 BR-003: one fixed recipient, taken from the configuration, never from the submission.
     @ConfigProperty(name = "application.contactform.to")
     String to;
 
@@ -50,16 +51,17 @@ public class ContactResource {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance submit(@FormParam("message") String message, @FormParam("spam") String spam,
                                    @FormParam("website") String honeypot) {
-        // The honeypot field is hidden from anyone using a browser normally, so a value in it means
-        // the submission was produced automatically (UC-005 BR-005). Answering exactly as for an accepted
+        // UC-005 BR-005: the honeypot field is hidden from anyone using a browser normally, so a value
+        // in it means the submission was produced automatically. Answering exactly as for an accepted
         // message keeps the sender from tuning around the check.
         if (honeypot != null && !honeypot.isBlank()) {
             Log.info("Discarded a contact form submission that filled the honeypot field");
             return Templates.submitted();
         }
 
-        // A wrong answer is a fault of the spam field like any other, so it is carried the same
-        // way and the form can name it where it happened rather than in a banner (UC-005 BR-008).
+        // UC-005 BR-001: only the expected number is accepted.
+        // UC-005 BR-008: a wrong answer is a fault of the spam field like any other, so it is carried
+        // the same way and the form can name it where it happened rather than in a banner.
         if (spam == null || !spam.equals("50")) {
             return Templates.form(message, ValidationMessages.of(List.of(
                     ValidationMessage.of("spam", "Bitte trage die Zahl 50 ein."))));
@@ -74,12 +76,14 @@ public class ContactResource {
             return Templates.form(message, ValidationMessages.of(violations));
         }
 
+        // UC-005 BR-002: recording and forwarding are independent, so a failure of one path does
+        // not lose the message on the other.
         try {
             QuarkusTransaction.begin();
             entry.persist();
             QuarkusTransaction.commit();
-            // The message text is personal data and would additionally allow forged log lines to be
-            // injected, so only the reference is recorded (UC-005 BR-007).
+            // UC-005 BR-007: the message text is personal data and would additionally allow forged log
+            // lines to be injected, so only the reference is recorded.
             Log.info("Contact form entry persisted, id=" + entry.getId());
         } catch (Exception e) {
             Log.error("Unable to save a contact form entry to database. Trying to send the mail anyway", e);

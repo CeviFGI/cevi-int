@@ -5,7 +5,7 @@ independent of how the team documents its architecture. The Layers table says wh
 each technical layer: `/use-case-implement` runs the Skill column bottom-up, `/use-case-test` runs the Test skill
 column from the integration layer up, and `/use-case-coverage` searches for the markers in the last table.
 
-**Last updated:** 2026-11-06
+**Last updated:** 2026-11-07
 
 ## Layers
 
@@ -13,7 +13,7 @@ column from the integration layer up, and `/use-case-coverage` searches for the 
 |-------------|--------------------------------------------------------|-------|------------|-------------------------------------------------------------------|
 | Migration   | Flyway SQL scripts on SQLite (C-002, C-003)            | –     | –          | `src/main/resources/db/migration`                                 |
 | Persistence | Hibernate ORM with Panache, active-record entities     | –     | –          | entity class in each feature package of `tools.cevi`              |
-| Client      | –                                                      | –     | –          | –                                                                 |
+| Client      | Quarkus Mailer (`quarkus-mailer`, SMTP), no own adapter | –     | –          | `Mailer` injected into the resource that sends (`tools.cevi.contact`) |
 | Service     | –                                                      | –     | –          | –                                                                 |
 | API         | –                                                      | –     | –          | –                                                                 |
 | UI          | Quarkus REST + Qute server-side templates (C-001, C-013) | –   | –          | `*Resource` in each feature package; `src/main/resources/templates`, `META-INF/resources` |
@@ -24,7 +24,6 @@ column from the integration layer up, and `/use-case-coverage` searches for the 
 | Use case offered through | Tested in   | Test skill |
 |--------------------------|-------------|------------|
 | UI                       | UI          | –          |
-| Service                  | Persistence | –          |
 
 A layer the project does not have is marked `–` in every column (a UI layer in a REST service). The Integration
 layer table keeps only the rows of the entry layers the project has — a REST service drops the UI row — and its
@@ -46,6 +45,21 @@ which makes the UI the integration layer.
 `Use cases and test cases`: `/use-case-test` adds a browser test to every use case offered through the UI, and
 `/test-case-implement` automates the TC-* journeys. `Test cases only`: browser tests are written for the journeys
 alone, and a use case is tested in its integration layer. A project without an E2E layer drops the line.
+
+## External systems
+
+| System       | Contract | Location             |
+|--------------|----------|----------------------|
+| Mail Service | –        | `tools.cevi.contact` |
+
+The systems our system calls, by the name the use cases write on their `**Secondary Actors:**` line: the Client
+layer builds an adapter for each one from its contract (OpenAPI or AsyncAPI; `–` while there is none). A secondary
+actor without a row is a person or a role.
+
+The Mail Service is the SMTP server configured through `quarkus.mailer.*` (deployment secrets, see
+`docs/deployment.md`). There is no provider contract and no port of our own: the resource calls the Quarkus `Mailer`
+directly, which is mocked in dev and test (`quarkus.mailer.mock=true`) and real only in the `prod` profile. Tests
+read the mock mailbox; a test that needs a failing delivery points the real mailer at an unreachable port.
 
 ## Module layout
 
