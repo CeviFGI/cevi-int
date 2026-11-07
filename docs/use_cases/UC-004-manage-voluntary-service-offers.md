@@ -6,10 +6,10 @@
 **Use Case Name:** Manage Voluntary Service Offers
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published voluntary service offers accurate by adding new offers, correcting existing ones and removing offers that are no longer available.
-**Status:** Draft
+**Status:** Approved
 **Revised:** 2026-11-07 for requirements revision 8 (FR-043, FR-044): every offer carries a Short Name that forms the Public Address of its Offer Page; the administrator may supply it, otherwise the system derives it from the Organisation and the location, as it does for an event from its title (UC-002 BR-005).
 
-**Requirements:** [FR-008, FR-011, FR-012, FR-013, FR-033, FR-044](../requirements.md)
+**Requirements:** [FR-008, FR-011, FR-012, FR-013, FR-033, FR-044, NFR-006, NFR-011, NFR-021](../requirements.md)
 
 ## Preconditions
 
@@ -69,7 +69,7 @@
 
 ### A5: Offer no longer exists
 
-**Trigger:** The administrator opens the edit or delete page of an offer that has meanwhile been removed (step 1)
+**Trigger:** The administrator opens the edit or delete page of an offer, or submits a change or removal of an offer, that has meanwhile been removed (step 1)
 **Flow:**
 
 1. The system informs the administrator that the requested offer does not exist.
@@ -91,6 +91,15 @@
 
 1. The system refuses the change without inspecting the submitted values.
 2. Use case ends.
+
+### A8: Offer cannot be removed
+
+**Trigger:** The removal the administrator confirmed in A3 cannot be completed (step 1)
+**Flow:**
+
+1. The system discards the incomplete removal so that the offer is preserved.
+2. The system presents the Confirmation Page again and informs the administrator that the offer could not be removed.
+3. Use case ends.
 
 ## Postconditions
 
