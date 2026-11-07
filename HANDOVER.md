@@ -1,17 +1,16 @@
-# Handover — Stand 2026-11-07 (nach der 7. Session)
+# Handover — Stand 2026-11-07 (nach der 8. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Revision-8-Specs freigeben (Abschnitt 1), beginnend mit `/spec-review UC-004`
-(dort wird der Kurzname definiert, auf dem die übrigen aufbauen), danach
-die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klären.
+**Nächster Schritt:** Die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner
+klären, danach Revision 8 implementieren (Abschnitt 3), beginnend mit UC-004 (Kurzname).
 
 ## Stand
 
 | Use Case | Status |
 |---|---|
 | UC-001, UC-002, UC-005, UC-006, UC-007, UC-009 | `Tested` (Coverage-Audits ohne Lücke, FR-Status nachgeführt) |
-| UC-003, UC-004, UC-008, UC-010, UC-011 | `Draft` (Revision 8, noch nicht implementiert) |
+| UC-003, UC-004, UC-008, UC-010, UC-011 | `Approved` (Revision 8, via `/spec-review` freigegeben, noch nicht implementiert) |
 
 - `tooling/docker.sh verify` grün (321 Unit-, 96 e2e-Tests, Coverage-Gate erfüllt). Alles committet.
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
@@ -20,6 +19,8 @@ die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klär
 - Requirements Revision 8: Jedes Volontariat bekommt eine eigene Detailseite mit Kurzname
   (FR-043, FR-044) und Teilen (FR-045). Spezifiziert in UC-003, UC-004, UC-010, UC-011,
   Entitätsmodell (`VOLUNTARY_SERVICE.slug`) und Glossar.
+- NFR-006, NFR-011, NFR-021 stehen auf `In Progress`, weil UC-004 sie jetzt (wie UC-002) verlinkt;
+  sie werden wieder `Verified`, sobald UC-004 `Tested` ist.
 - Offene Fragen OQ-005 … OQ-015 in `docs/open_questions.md` (alle nicht blockierend). FR-029 und
   FR-030 sind `Deferred`, bis OQ-005 / OQ-006 beantwortet sind.
 - `docs/architecture/stack.md`: Mail Service ist das einzige externe System (Client-Layer = Quarkus
@@ -49,19 +50,15 @@ die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klär
   `SearchResourceTest` enthalten nur anonym erreichbare Seiten – eine Seite hinter `@RolesAllowed`
   misst dort ohne Sitzung nur die Login-Seite (deshalb ist `/version` nicht mehr drin).
 
-## 1. Freigabe der Revision-8-Specs (Product Owner)
+## 1. Revision-8-Specs — freigegeben
 
-**UC-003, UC-004, UC-008, UC-010, UC-011** stehen auf `Draft`.
-Vorgehen: `/spec-review UC-XXX` → Status auf Approved setzen → implementieren.
-
-Vom Product Owner am 2026-11-07 bestätigt (noch nicht via `/spec-review` freigegeben):
-- Kurzname bleibt beim Bearbeiten erhalten, auch wenn Organisation/Ort ändern (UC-004 BR-008);
-  ein beim Bearbeiten geleerter Kurzname wird neu abgeleitet.
-- Ein eingegebener Kurzname wird unverändert gespeichert (nur Eindeutigkeit und Länge geprüft),
-  wie bei Anlässen (UC-004 BR-009, Entitätsmodell).
-- Volontariat darf denselben Kurznamen wie ein Anlass haben (UC-004 BR-006).
-- Adresse der Volontariatsseite: `/volontariat/detail?slug=<Kurzname>` (UC-011 BR-003).
-- Startseite: Einträge im Auszug führen auf die Detailseite (UC-008 BR-004).
+Alle fünf am 2026-11-07 via `/spec-review` freigegeben. Bei der Umsetzung beachten:
+- UC-004: neue A8 (Entfernen schlägt fehl), A5 deckt auch das Absenden für ein gelöschtes Volontariat ab.
+- UC-003: neue A6 (Bearbeitungslinks auf der Volontariatsseite), A3 gilt nur noch für die Liste.
+- UC-008: Auslöser statt Vorbedingung; A3 nennt direkt geöffnete Anlass-/Volontariatsseiten.
+- Liegen gelassene Infos (nicht blockierend): Ableitungsform des Kurznamens (UC-004 BR-007),
+  Kurzname nur aus Leerzeichen (UC-004 BR-009), Reihenfolge der Volontariatsliste (UC-003 Schritt 2),
+  Umfang des Auszugs auf der Startseite (UC-008 BR-002).
 
 ## 2. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
