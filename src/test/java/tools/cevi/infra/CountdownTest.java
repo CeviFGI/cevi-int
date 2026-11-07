@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * UC-001 BR-005: how much time an event has left, derived from its display date.
+ */
 class CountdownTest {
 
     private static final LocalDate TODAY = LocalDate.of(2026, 8, 25);

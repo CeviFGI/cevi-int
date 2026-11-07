@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * UC-001 BR-004 and A3 (UC-003 BR-004 uses the same helper): the excerpt a list shows instead of
+ * the whole description.
+ */
 class ExcerptTest {
 
     @Test
@@ -14,6 +18,7 @@ class ExcerptTest {
         assertEquals("", Excerpt.from("   "));
     }
 
+    /** UC-001 A3: a description shorter than the excerpt is kept whole, without an ellipsis. */
     @Test
     void plain_text_shorter_than_the_limit_is_returned_unchanged() {
         assertEquals("Zwei Wochen in Prag.", Excerpt.from("Zwei Wochen in Prag."));
@@ -60,6 +65,7 @@ class ExcerptTest {
         assertEquals("Eins Zwei", Excerpt.from("Eins   \n\t Zwei"));
     }
 
+    /** UC-001 BR-004: the cut falls between two words, never inside one. */
     @Test
     void a_long_text_is_cut_on_a_word_boundary() {
         String text = "Zwei Wochen mit rund vierhundert jungen Menschen aus ganz Europa, mit "
@@ -73,6 +79,8 @@ class ExcerptTest {
         assertTrue(text.startsWith(excerpt.substring(0, excerpt.length() - 1)),
                 "the excerpt should be a prefix of the text");
         assertTrue(excerpt.charAt(excerpt.length() - 2) != ' ', "no space before the ellipsis");
+        // The 60th character falls inside "Europa"; the excerpt stops after the word before it.
+        assertEquals("Zwei Wochen mit rund vierhundert jungen Menschen aus ganz…", excerpt);
     }
 
     @Test

@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor finds out which international Cevi events are still ahead and reads the details of the ones that interest them.
 **Status:** Approved
-**Revised:** 2026-08-25 for requirements revision 5 (FR-035, FR-036, FR-038). The list now presents a shortened excerpt and how much time is left, so that several events can be compared on a phone screen; the full description moved to the event's own page. What is stored and what is published is unchanged.
+**Revised:** 2026-08-25 for requirements revision 5 (FR-035, FR-036, FR-038). The list now presents a shortened excerpt and how much time is left, so that several events can be compared on a phone screen; the full description moved to the event's own page. What is stored and what is published is unchanged. 2026-11-07: the event page offers the way to the working group for questions about the event (step 5, BR-007), as decided by the product owner.
 
 **Requirements:** [FR-001, FR-002, FR-003, FR-022, FR-027, FR-035, FR-036, FR-038](../requirements.md)
 
@@ -22,7 +22,7 @@
 2. The system determines all events whose display date has not yet passed.
 3. The system presents the events ordered by display date, each with its title, date text, location, a shortened excerpt of its description and how much time is left before it leaves the list.
 4. The visitor compares the presented events and selects the one that interests them.
-5. The system presents the selected event on its own page with the complete description as the administrator formatted it.
+5. The system presents the selected event on its own page with the complete description as the administrator formatted it, followed by the offer to ask the working group about it (BR-007).
 6. The visitor has the information needed to decide whether to attend, and can pass the address of the event on to others.
 
 ## Alternative Flows
@@ -95,3 +95,7 @@ Each event in the list states how long it will remain announced, derived from th
 ### BR-006: Maintenance controls never outrank the visitor's control
 
 Where maintenance controls are shown to a signed-in administrator, they are presented as a separate, visually quieter group. The control meant for the visitor stays the most prominent one on the page, because the public pages are read overwhelmingly by visitors.
+
+### BR-007: The event page leads to the working group
+
+After the description, the event's own page offers the visitor the way to the Contact Form to ask the working group about the event. A visitor who still has a question after reading finds whom to ask on the same page.

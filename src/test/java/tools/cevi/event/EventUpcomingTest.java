@@ -232,7 +232,8 @@ public class EventUpcomingTest {
             given().when().get(eventEndpoint).then()
                     .statusCode(HttpStatus.SC_OK)
                     .body(containsString("Gerade ist nichts ausgeschrieben"))
-                    .body(containsString("href=\"/kontakt\""))
+                    // not the navigation's "Kontakt" link, which every page has
+                    .body(containsString("href=\"/kontakt\">Schreib uns</a>"))
                     .body(not(containsString("class=\"card\"")));
         } finally {
             restoreDisplayDates(hidden);

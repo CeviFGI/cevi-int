@@ -30,6 +30,7 @@ public class Event extends PanacheEntityBase {
     @Size(max= 255)
     public String title;
     // UC-002 BR-004: no two events share a short name
+    // UC-001 BR-003: the short name identifies the event uniquely, so its public address is stable
     @NotBlank
     @Column(unique = true)
     @Size(max= 255)
@@ -62,6 +63,7 @@ public class Event extends PanacheEntityBase {
                 .page(0, limit).list();
     }
 
+    // UC-001 BR-003: an event is reached under its short name
     public static Event findBySlug(String slug) {
         return (Event) find("slug = :slug", Parameters.with("slug", slug)).stream().findFirst().orElse(null);
     }

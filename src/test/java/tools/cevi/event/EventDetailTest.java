@@ -120,4 +120,25 @@ public class EventDetailTest {
                 .body(org.hamcrest.Matchers.not(containsString("/anlaesse/delete?id=")))
                 .body(org.hamcrest.Matchers.not(containsString("Noch 5 Tage")));
     }
+
+    /** BR-007: after the description the page offers the way to the working group. */
+    @Test
+    public void detail_leads_to_the_working_group_after_the_description() {
+        long id = EventFixture.createEvent("CLEANUP detail_leads_to_working_group");
+        String slug = ((Event) Event.findById(id)).slug;
+
+        String page = given()
+                .queryParam("slug", slug)
+                .when()
+                .get(detailEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract().asString();
+
+        int description = page.indexOf("some description");
+        // the header and the footer link the contact page on every page; this is the offer itself
+        int contact = page.indexOf("href=\"/kontakt\">Schreib uns</a>", description);
+        org.hamcrest.MatcherAssert.assertThat(description, org.hamcrest.Matchers.greaterThan(-1));
+        org.hamcrest.MatcherAssert.assertThat(contact, org.hamcrest.Matchers.greaterThan(description));
+    }
 }
