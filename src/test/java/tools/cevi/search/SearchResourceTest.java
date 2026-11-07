@@ -453,7 +453,8 @@ class SearchResourceTest {
         given().when().get(href).then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
                 .body(containsString("Diese Seite gibt es nicht"))
-                .body(containsString("href=\"/anlaesse\""));
+                // the error page's own way back, not the navigation link every page has
+                .body(containsString("href=\"/anlaesse\">Zu den Anl\u00e4ssen</a>"));
     }
 
     // --- Business rules ----------------------------------------------------------------------

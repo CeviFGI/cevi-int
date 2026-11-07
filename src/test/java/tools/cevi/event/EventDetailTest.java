@@ -14,7 +14,7 @@ import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * UC-001 Browse Upcoming Events: the event's own page (main success scenario steps 5-6, A2,
- * BR-003, BR-004).
+ * BR-003, BR-004, BR-007).
  */
 @QuarkusTest
 public class EventDetailTest {
@@ -72,7 +72,8 @@ public class EventDetailTest {
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND)
                 .body(containsString("Diese Seite gibt es nicht"))
-                .body(containsString("href=\"/anlaesse\""));
+                // the error page's own way back, not the navigation link every page has
+                .body(containsString("href=\"/anlaesse\">Zu den Anl\u00e4ssen</a>"));
     }
 
     /**

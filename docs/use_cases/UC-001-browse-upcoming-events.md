@@ -6,7 +6,7 @@
 **Use Case Name:** Browse Upcoming Events
 **Primary Actor:** Besucher
 **Goal:** A visitor finds out which international Cevi events are still ahead and reads the details of the ones that interest them.
-**Status:** Approved
+**Status:** Tested
 **Revised:** 2026-08-25 for requirements revision 5 (FR-035, FR-036, FR-038). The list now presents a shortened excerpt and how much time is left, so that several events can be compared on a phone screen; the full description moved to the event's own page. What is stored and what is published is unchanged. 2026-11-07: the event page offers the way to the working group for questions about the event (step 5, BR-007), as decided by the product owner.
 
 **Requirements:** [FR-001, FR-002, FR-003, FR-022, FR-027, FR-035, FR-036, FR-038](../requirements.md)

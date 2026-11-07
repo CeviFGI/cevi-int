@@ -1,9 +1,10 @@
-# Handover — Stand 2026-11-07 (Ende 3. Session)
+# Handover — Stand 2026-11-07 (Ende 4. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Abschnitt 3 (Testlücken UC-001, UC-005, UC-007) mit `/use-case-test UC-XXX`,
-danach jeweils `/use-case-coverage UC-XXX`.
+**Nächster Schritt:** Abschnitt 3 (Testlücken UC-005, dann UC-007) mit `/use-case-test UC-XXX`,
+danach jeweils `/use-case-coverage UC-XXX`, Drift mit dem Product Owner klären, bei grünem Audit
+Status auf `Tested` und FR-Status nachführen (Spec-Lint `REQ_STATUS_DRIFT` zeigt die Zielwerte).
 
 ## Stand
 
@@ -13,8 +14,16 @@ danach jeweils `/use-case-coverage UC-XXX`.
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS: Audit ohne Lücke, verify grün). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
-- `tooling/docker.sh verify` ist grün (Stand Commit `490c34e`: 287 Unit-, 95 e2e-Tests,
+- `tooling/docker.sh verify` ist grün (Stand Ende 4. Session: 297 Unit-, 96 e2e-Tests,
   Coverage-Gate erfüllt). Alles committet.
+- **UC-001 ist `Tested`** (4. Session; drittes Coverage-Audit ohne Drift, letzte Lücke A2
+  geschlossen). FR-001/002/003/036 `Verified`; FR-022/027/035/038 `In Progress`, weil UC-003 noch
+  `Draft` ist. Product-Owner-Entscheide 2026-11-07 umgesetzt: Anlassseite ohne Admin-Links und ohne
+  Countdown, Karten ohne „sichtbar bis“; der Teaser „Fragen dazu? / Schreib uns“ ist neu UC-001
+  BR-007 (Schritt 5).
+- **Falle bei Navigationslinks in Tests:** Header und Footer verlinken `/anlaesse` und `/kontakt` auf jeder
+  Seite. Ein Assert auf `href="/kontakt"` beweist darum nichts – immer auf den Link der Seite selbst
+  ankern (z. B. `href="/kontakt">Schreib uns</a>`).
 - **UC-002 und UC-006 sind `Tested`** (Commit `490c34e`; Coverage-Audits 34/34 bzw. 27/27,
   FR-Status nachgeführt).
   Spec-Änderungen nach PO-Entscheid: UC-002 A8 (Entfernen schlägt fehl), A5 auch beim Absenden,
@@ -53,20 +62,20 @@ statt `QuarkusTransaction.rollback()` in allen Resources verwenden.
 
 ## 3. Testlücken (`/use-case-test UC-XXX`)
 
-- **UC-001:** A1 (leere Liste), Datumstext/Ort in der Liste, Link Liste → Detailseite, E2E läuft
-  den Hauptablauf nicht durch, BR-006, „keine Daten geändert“.
 - **UC-005:** A2, A3 (Mailfehler), BR-007 (Nachricht nicht im Log), leere Spam-Antwort,
   Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
 - **UC-007:** A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite,
   Inhalt Datenschutzseite, „keine Daten geändert“.
-- UC-002/UC-006 erledigt (inkl. Code-Marker und Test-Javadoc).
+- UC-001/UC-002/UC-006 erledigt (inkl. Code-Marker und Test-Javadoc).
 - Übrige: Code-Marker `// UC-XXX BR-YYY:` fehlen weitgehend (Format in `docs/architecture/stack.md`);
   UC-ID im Test-Javadoc fehlt noch.
 
 ## 4. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
-- **UC-001:** Countdown auch auf der Anlassseite; Teaser „Fragen dazu? / Schreib uns“; Admin-Links
-  auf der Anlassseite (A4 nennt nur die Liste).
+- **UC-001 (für `/spec-review UC-001`, Hinweise aus dem Audit):** BR-003 („Link bleibt gültig“)
+  widerspricht UC-002, wo der Kurzname beim Bearbeiten geändert werden kann – der alte Link gibt
+  dann 404. BR-004 sagt nicht, was ohne brauchbare Wortgrenze passiert (sehr langes Wort/URL: der
+  Code schneidet hart, `ExcerptTest` dokumentiert das).
 - **UC-002 (für `/spec-review UC-002`):** Schritt 9 sagt, der neue Anlass sei in der Liste
   sichtbar – mit vergangenem Anzeigedatum erscheint er dort aber nicht (UC-001 BR-001).
 - **`docs/architecture/stack.md`:** Integration-Tabelle hat eine Zeile `Service → Persistence`,
