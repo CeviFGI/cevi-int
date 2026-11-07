@@ -6,7 +6,8 @@
 **Use Case Name:** Enter the Platform
 **Primary Actor:** Besucher
 **Goal:** A visitor who arrives on the platform, usually by following a link shared in a chat, understands within one screen what the site offers and reaches the part of it that concerns them.
-**Status:** Draft
+**Trigger:** The visitor opens the start page, usually by following a link shared in a chat.
+**Status:** Approved
 **Introduced:** 2026-08-25 with requirements revision 5 (FR-034, FR-023). Until then the start page forwarded to the event list and had no content of its own, so a visitor arriving from a shared link was given a bare list and never learned what the site was.
 **Revised:** 2026-11-07 for requirements revision 8 (FR-043): every entry of an extract leads to the entry's own page — an event to its Event Page, an offer to its Offer Page — as it does in the complete list (BR-004).
 
@@ -14,7 +15,7 @@
 
 ## Preconditions
 
-- The visitor has opened the start page of the public website.
+- The public website is available.
 
 ## Main Success Scenario
 
@@ -45,7 +46,7 @@
 
 ### A3: The visitor arrived at a section directly
 
-**Trigger:** The visitor opened the Event List, the Offer List or an information page instead of the start page (step 1)
+**Trigger:** The visitor opened the Event List, the Offer List, an Event Page, an Offer Page or an information page instead of the start page (step 1)
 **Flow:**
 
 1. The system presents that page directly, unchanged and under its own address.
