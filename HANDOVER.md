@@ -1,10 +1,9 @@
-# Handover — Stand 2026-11-07 (Ende 2. Session)
+# Handover — Stand 2026-11-07 (Ende 3. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** `/use-case-coverage UC-002` und `/use-case-coverage UC-006` (Bugs behoben,
-Testlücken geschlossen) → Status nach Ergebnis auf Implemented setzen. Danach Abschnitt 3
-(Testlücken UC-001, UC-005, UC-007).
+**Nächster Schritt:** Abschnitt 3 (Testlücken UC-001, UC-005, UC-007) mit `/use-case-test UC-XXX`,
+danach jeweils `/use-case-coverage UC-XXX`.
 
 ## Stand
 
@@ -14,13 +13,21 @@ Testlücken geschlossen) → Status nach Ergebnis auf Implemented setzen. Danach
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS: Audit ohne Lücke, verify grün). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
-- `tooling/docker.sh verify` ist grün (Stand Commit `ccfdd92`: 277 Unit-, 95 e2e-Tests,
+- `tooling/docker.sh verify` ist grün (Stand Commit `490c34e`: 287 Unit-, 95 e2e-Tests,
   Coverage-Gate erfüllt). Alles committet.
+- **UC-002 und UC-006 sind `Tested`** (Commit `490c34e`; Coverage-Audits 34/34 bzw. 27/27,
+  FR-Status nachgeführt).
+  Spec-Änderungen nach PO-Entscheid: UC-002 A8 (Entfernen schlägt fehl), A5 auch beim Absenden,
+  NFR-006/011/021 verlinkt; UC-006 BR-009 (Abmelden nur per Formular) und BR-010 (zwei allgemeine
+  Admin-Einstiege `/auth`, `/admin`). Neu: `CurrentUser.isSignOutAvailable()` – Fehlerseiten ohne
+  CSRF-Token (404/405 für angemeldete Admins) lieferten vorher 500.
+- Marker `// UC-002 BR-004:` fehlt bewusst an `V1.0.4__Slug.sql` (angewendete Migration nicht
+  ändern, sonst Flyway-Prüfsummenfehler).
 - Die „Open Points for Confirmation“ aus `requirements.md` sind jetzt OQ-005 … OQ-015 in
   `docs/open_questions.md` (alle nicht blockierend, offen). FR-029 und FR-030 sind `Deferred`, bis
   OQ-005 / OQ-006 beantwortet sind.
-- Nach den Coverage-Audits vom 2026-11-07 wurden UC-002 und UC-006 von Implemented auf Approved
-  zurückgesetzt; die FR-Status folgen jetzt den Use Cases (daher viele FRs auf `Open`).
+- Die FR-Status folgen den Use Cases (`/requirements` bzw. Spec-Lint `REQ_STATUS_DRIFT`); FRs von
+  Use Cases, die noch nicht `Tested` sind, stehen auf `Open` bzw. `In Progress`.
 - Product-Owner-Entscheide 2026-11-07 (in der Spec nachgeführt): UC-007 BR-004 Quellengruppen
   „offen beim Aufruf, einklappbar“; CSRF-Token an „diesen Browser“ gebunden (UC-002, UC-004);
   NFR-031 erlaubt die Client-IP im Protokoll der Anmeldeversuche.
@@ -52,17 +59,18 @@ statt `QuarkusTransaction.rollback()` in allen Resources verwenden.
   Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
 - **UC-007:** A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite,
   Inhalt Datenschutzseite, „keine Daten geändert“.
-- UC-002/UC-006 erledigt (Commits `b10d9e2`, `ccfdd92`).
-- Alle: Code-Marker `// UC-XXX BR-YYY:` fehlen weitgehend (Format in `docs/architecture/stack.md`);
-  UC-ID im Test-Javadoc ist für UC-002/UC-006 nachgetragen, für die übrigen noch nicht.
+- UC-002/UC-006 erledigt (inkl. Code-Marker und Test-Javadoc).
+- Übrige: Code-Marker `// UC-XXX BR-YYY:` fehlen weitgehend (Format in `docs/architecture/stack.md`);
+  UC-ID im Test-Javadoc fehlt noch.
 
 ## 4. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
 - **UC-001:** Countdown auch auf der Anlassseite; Teaser „Fragen dazu? / Schreib uns“; Admin-Links
   auf der Anlassseite (A4 nennt nur die Liste).
-- **UC-002:** Fehlgeschlagenes Löschen hat keinen Flow. UC-004/UC-006-Code zitiert UC-002 BR-009/BR-010 → eigene Regeln oder als Requirement.
-- **UC-006:** Zusätzliche Einstiege `GET /auth` und `GET /admin`. `LoginE2ETest` Javadoc zum
-  Logout zitiert noch UC-002 BR-009 (gehört zu UC-006 A3).
+- **UC-002 (für `/spec-review UC-002`):** Schritt 9 sagt, der neue Anlass sei in der Liste
+  sichtbar – mit vergangenem Anzeigedatum erscheint er dort aber nicht (UC-001 BR-001).
+- **`docs/architecture/stack.md`:** Integration-Tabelle hat eine Zeile `Service → Persistence`,
+  obwohl Service `–` ist → `/stack` erneut laufen lassen.
 - **UC-007:** `/version` wird in `PublicPages.java`, `NoThirdPartyAssetsTest`, `EditorAssetsTest`
   als öffentliche Seite geführt (misst anonym nur die Login-Seite). Veralteter Marker
   `IndexResourceTest.java:49` (BR-001 → BR-004).
