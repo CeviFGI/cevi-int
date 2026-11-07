@@ -747,7 +747,7 @@ class SearchResourceTest {
     void every_public_page_offers_the_search_field() {
         Event event = event("CLEANUP Zqueberall Anlass", "Text");
         List<String> pages = List.of("/", "/anlaesse", "/volontariat", "/fgi", "/kontakt",
-                "/datenschutzinformation", "/auth/login", "/version", "/suche?q=zq",
+                "/datenschutzinformation", "/auth/login", "/suche?q=zq",
                 "/anlaesse/detail?slug=" + event.slug);
         for (String path : pages) {
             String body = given().redirects().follow(true).when().get(path).then()

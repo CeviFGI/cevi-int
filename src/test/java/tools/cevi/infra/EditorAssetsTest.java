@@ -29,7 +29,7 @@ class EditorAssetsTest {
     private static final String EDITOR_INIT = "/js/editor-init.js";
 
     private static final String[] PUBLIC_PAGES = { "/", "/anlaesse", "/volontariat", "/fgi",
-            "/kontakt", "/datenschutzinformation", "/auth/login", "/version" };
+            "/kontakt", "/datenschutzinformation", "/auth/login" };
 
     /** A script element, with its {@code src} when it has one. */
     private static final Pattern SCRIPT_TAG = Pattern.compile("(?i)<script\\b(?:[^>]*\\ssrc=\"([^\"]*)\")?[^>]*>");

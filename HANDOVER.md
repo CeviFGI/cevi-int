@@ -2,18 +2,17 @@
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** UC-007: `/use-case-coverage UC-007` (Tests geschrieben, siehe Abschnitt 2), Drift mit dem Product Owner klären, bei grünem Audit Status auf
-`Tested` und FR-Status nachführen (`/requirements`; Spec-Lint `REQ_STATUS_DRIFT` zeigt die Zielwerte).
+**Nächster Schritt:** Revision-8-Specs freigeben (Abschnitt 1: `/spec-review UC-XXX`), danach
+die offenen Code-↔-Spec-Entscheide aus Abschnitt 2 mit dem Product Owner klären.
 
 ## Stand
 
 | Use Case | Status |
 |---|---|
-| UC-001, UC-002, UC-005, UC-006, UC-009 | `Tested` (Coverage-Audits ohne Lücke, FR-Status nachgeführt) |
-| UC-007 | `Approved`, implementiert, Tests geschrieben, Coverage-Audit offen |
+| UC-001, UC-002, UC-005, UC-006, UC-007, UC-009 | `Tested` (Coverage-Audits ohne Lücke, FR-Status nachgeführt) |
 | UC-003, UC-004, UC-008, UC-010, UC-011 | `Draft` (Revision 8, noch nicht implementiert) |
 
-- `tooling/docker.sh verify` grün (322 Unit-, 99 e2e-Tests, Coverage-Gate erfüllt). Alles committet.
+- `tooling/docker.sh verify` grün (321 Unit-, 96 e2e-Tests, Coverage-Gate erfüllt). Alles committet.
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
@@ -58,17 +57,8 @@ Vom Product Owner am 2026-11-07 bestätigt (noch nicht via `/spec-review` freige
 - Adresse der Volontariatsseite: `/volontariat/detail?slug=<Kurzname>` (UC-011 BR-003).
 - Startseite: Einträge im Auszug führen auf die Detailseite (UC-008 BR-004).
 
-## 2. Tests UC-007 (erledigt, Audit offen)
+## 2. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
-`SiteInformationTest` (alle Flows, BR-001 … BR-005, „keine Daten geändert“) und
-`SiteInformationE2ETest`. A3 läuft über `FailingPageResource` (nur unter `src/test`, Pfad
-`/test-only/failing-page`). Die UC-007-Tests aus `IndexResourceTest` und `NotFoundExceptionMapperTest`
-sind dorthin umgezogen; Code-Marker in `IndexResource`, `base.qute.html`, `fgi.html` ergänzt.
-
-## 3. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
-
-- **UC-007:** `/version` wird in `PublicPages.java`, `NoThirdPartyAssetsTest`, `EditorAssetsTest`
-  als öffentliche Seite geführt (misst anonym nur die Login-Seite).
 - **UC-001 (für `/spec-review UC-001`):** BR-003 („Link bleibt gültig“) widerspricht UC-002, wo der
   Kurzname beim Bearbeiten geändert werden kann – der alte Link gibt dann 404. BR-004 sagt nicht,
   was ohne brauchbare Wortgrenze passiert (der Code schneidet hart, `ExcerptTest` dokumentiert das).
@@ -79,7 +69,7 @@ sind dorthin umgezogen; Code-Marker in `IndexResource`, `base.qute.html`, `fgi.h
   `ShareEventE2ETest.java:91` nennt NFR-042, das UC-009 nicht verlinkt. Notiz zu NFR-041 in
   `requirements.md` („tests still state the narrower revision-6 rule“) ist teilweise veraltet.
 
-## 4. Danach
+## 3. Danach
 
 1. Revision 8 implementieren: UC-004 (Kurzname, Flyway-Migration inkl. Kurznamen für bestehende
    Volontariate), UC-003 (Volontariatsseite), UC-011 (`share.js` wiederverwenden), UC-010
