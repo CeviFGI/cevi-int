@@ -32,6 +32,7 @@ public final class Countdown {
      * @return German wording for the remaining time, or an empty string when the date has passed —
      *         such an event is not listed, so there is nothing to say about it
      */
+    // UC-001 BR-005: the time left is derived from the display date that decides the listing
     public static String text(LocalDate displayDate, LocalDate today) {
         if (displayDate == null) {
             return "";

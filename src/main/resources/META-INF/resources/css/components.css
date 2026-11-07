@@ -403,21 +403,6 @@ dl.panel dd:last-child { margin-bottom: 0; }
 .disclosure > summary:hover { text-decoration: underline; }
 .disclosure .prose { margin-top: var(--space-3); font-size: var(--step--1); }
 
-/*
- * Uppercase and letter-spaced rather than smaller and paler: at 0.72rem it fell under the 14px
- * floor of NFR-013, and #9A968D on the sunken strip measured 2.70:1 against the 4.5:1 of NFR-014.
- * The case and the tracking carry the "this is an aside" reading on their own.
- */
-.card__admin-note {
-    margin-left: auto;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--step--1);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-}
-
 /* --- Confirmation pages -------------------------------------------------------------------- */
 
 /* A preview of the record about to be removed: recognisable, not inviting to click away */
@@ -428,8 +413,6 @@ dl.panel dd:last-child { margin-bottom: 0; }
     max-width: var(--measure);
     margin-bottom: var(--space-4);
 }
-
-.admin-bar--detached { margin-top: var(--space-6); }
 
 /* --- Help grid ----------------------------------------------------------------------------- */
 

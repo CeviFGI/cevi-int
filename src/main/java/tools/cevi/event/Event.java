@@ -47,6 +47,8 @@ public class Event extends PanacheEntityBase {
     @Size(max= 65535)
     public String description;
 
+    // UC-001 BR-001: listed only while the display date is today or later
+    // UC-001 BR-002: closest display date first
     public static List<Event> upcomingEvents() {
         return list("displayDate >= :today", Sort.by("displayDate"), Parameters.with("today", LocalDate.now()));
     }

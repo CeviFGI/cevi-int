@@ -96,4 +96,28 @@ public class EventDetailTest {
                 .body(containsString("Lissabon"))
                 .body(containsString("/anlaesse/detail?slug=" + slug + "\""));
     }
+
+    /**
+     * Main success scenario step 5, A4: the maintenance controls belong to the list only; the
+     * event's own page shows a signed-in administrator none, and states no remaining time
+     * (BR-005 names the list).
+     */
+    @Test
+    @io.quarkus.test.security.TestSecurity(user = "admin", roles = {"admin"})
+    public void detail_offers_no_maintenance_controls_and_no_countdown() {
+        String title = "CLEANUP detail_without_admin_links";
+        long id = EventFixture.createEvent(title, java.time.LocalDate.now().plusDays(5));
+        String slug = ((Event) Event.findById(id)).slug;
+
+        given()
+                .queryParam("slug", slug)
+                .when()
+                .get(detailEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(title))
+                .body(org.hamcrest.Matchers.not(containsString("/anlaesse/edit?id=")))
+                .body(org.hamcrest.Matchers.not(containsString("/anlaesse/delete?id=")))
+                .body(org.hamcrest.Matchers.not(containsString("Noch 5 Tage")));
+    }
 }

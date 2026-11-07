@@ -263,6 +263,8 @@ public class EventUpcomingTest {
         assertThat(edit, greaterThan(group));
         assertThat(delete, greaterThan(group));
         assertThat(page.substring(group, delete), not(containsString("btn--primary")));
+        // A4 offers controls only; the display date is not repeated as a note for administrators
+        assertThat(page, not(containsString("sichtbar bis")));
     }
 
     /** UC-001 postcondition: browsing the list and an event page changes no data. */

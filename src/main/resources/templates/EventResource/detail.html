@@ -10,11 +10,6 @@
 <h1>{event.title}</h1>
 <div class="detail-head">
     <p class="meta meta--place">{event.location}</p>
-    {#let remaining=event.displayDate.countdown}
-    {#if remaining}
-    <span class="chip {#if !event.displayDate.countdownUrgent}chip--quiet{/if}">{remaining}</span>
-    {/if}
-    {/let}
 </div>
 
 {!UC-009: the share control. Without script (A4) the visitor sees the Public Address as selectable
@@ -42,16 +37,6 @@ UC-009 BR-005: the only script on a public page; nothing else on this page depen
 {!The one place administrator-authored HTML is rendered unescaped. It was reduced to the
 allow-list when it was stored (NFR-010); prose.css styles everything that list permits.!}
 <div class="prose">{event.description.withScrollableTables.raw}</div>
-
-{! UC-006 BR-003: maintenance links only for a signed-in administrator !}
-
-{#if inject:currentUser.admin}
-<div class="admin-bar admin-bar--detached">
-    <span class="admin-bar__who">Angemeldet als Administrator</span>
-    <a class="btn btn--ghost" href="/anlaesse/edit?id={event.id}">Bearbeiten</a>
-    <a class="btn btn--ghost" href="/anlaesse/delete?id={event.id}">Löschen</a>
-</div>
-{/if}
 
 <div class="teaser">
     <div>

@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.is;
 @QuarkusTest
 public class EventUpcomingE2ETest extends PlaywrightTestBase {
 
+    /** Main success scenario step 1: the list opens in the browser without a script error. */
     @Test
     public void upcoming_events_page_renders_without_console_errors() {
         List<String> consoleErrors = new ArrayList<>();

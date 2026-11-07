@@ -39,6 +39,7 @@ public final class Excerpt {
      * @return plain text of at most {@code maxLength} characters plus an ellipsis, cut on a word
      *         boundary; an empty string when there is nothing to show
      */
+    // UC-001 BR-004: a short plain-text excerpt, cut on a word boundary
     public static String from(String html, int maxLength) {
         if (html == null || html.isBlank()) {
             return "";
