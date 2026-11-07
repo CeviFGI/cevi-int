@@ -1,4 +1,4 @@
-# Handover — Stand 2026-11-07
+# Handover — Stand 2026-11-07 (nachgeführt)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
@@ -22,7 +22,7 @@
 Status `Draft`, warten auf Review/Genehmigung: **UC-003, UC-004, UC-008, UC-010, UC-011**.
 Vorgehen: `/spec-review UC-XXX` → Status auf Approved setzen → implementieren.
 
-Ohne Rückfrage getroffene Annahmen, bitte bestätigen:
+Annahmen am 2026-11-07 vom Product Owner bestätigt (noch nicht via `/spec-review` freigegeben):
 - Kurzname bleibt beim Bearbeiten erhalten, auch wenn Organisation/Ort ändern (UC-004 BR-008);
   ein beim Bearbeiten geleerter Kurzname wird neu abgeleitet.
 - Ein eingegebener Kurzname wird unverändert gespeichert (nur Eindeutigkeit und Länge geprüft),
@@ -31,19 +31,16 @@ Ohne Rückfrage getroffene Annahmen, bitte bestätigen:
 - Adresse der Volontariatsseite: `/volontariat/detail?slug=<Kurzname>` (UC-011 BR-003).
 - Startseite: Einträge im Auszug führen auf die Detailseite (UC-008 BR-004).
 
-## 2. Bugs aus den Coverage-Audits (zuerst angehen)
+## 2. Bugs aus den Coverage-Audits — behoben am 2026-11-07
 
-| Prio | UC | Problem | Ort |
-|---|---|---|---|
-| hoch | UC-002 BR-005 | `generateUniqueSlug` erhöht `counter` nie → dritter Anlass mit gleichem Titel (ohne Kurzname) hängt in Endlosschleife | `EventResource.java:184-192` |
-| hoch | UC-002 BR-006 | Zähler-Pfad kürzt nicht auf 252 Zeichen → kann 255 überschreiten | `EventResource.java:189` |
-| mittel | UC-006 A4 | Logout entscheidet nach Cookie-Präsenz statt `identity.isAnonymous()` → abgelaufene Session bekommt „Abgemeldet“ | `AuthResource.java:60-65` |
-| mittel | UC-006 BR-007 | Secure-Flag des Session-Cookies nicht explizit gesetzt / nicht belegt | `application-prod.properties` |
-| mittel | UC-005 A2 | Wirft `commit()`, wirft danach vermutlich auch `rollback()` → keine Mail, Fehlerseite | `ContactResource.java:79-86` |
-| niedrig | UC-001 BR-006 | „Neuen Anlass eintragen“ ist `btn--primary` (soll ruhiger sein, wie `btn--ghost` auf Start-/Detailseite) | `EventResource/list.html:12` |
-| niedrig | UC-007 BR-004 | Gruppen der Quellen sollen auf dem Handy eingeklappt sein, sind aber immer `open` (oder Spec auf „einklappbar“ ändern, FR-039 sagt nur das) | `IndexResource/fgi.html` |
+Behoben mit Tests: UC-002 BR-005/BR-006 (Kurzname-Zähler, Länge), UC-006 A4 (Logout nach
+`identity.isAnonymous()`), UC-006 BR-007 (Secure-Flag kommt aus `X-Forwarded-Proto` + Proxy-
+Forwarding, belegt durch `SessionCookieAttributesTest`), UC-005 A2 / UC-002 A6 (`Transactions.
+rollbackIfActive()` in allen Resources), UC-001 BR-006 (Wartungsknopf `btn--ghost`, auch auf der
+Volontariatsliste). UC-007 BR-004: Spec auf „einklappbar, offen beim Aufruf“ gelockert.
 
-Nach dem Fix jeweils `/use-case-implement UC-XXX`, Test dazu, dann Status wieder auf Implemented.
+Offen: Status von UC-002/UC-006 erst nach erneutem Coverage-Audit wieder auf Implemented setzen
+(Testlücken in Abschnitt 3 zuerst schliessen).
 
 ## 3. Testlücken (`/use-case-test UC-XXX`)
 
@@ -65,11 +62,11 @@ Nach dem Fix jeweils `/use-case-implement UC-XXX`, Test dazu, dann Status wieder
 
 - **UC-001:** Countdown auch auf der Anlassseite; Teaser „Fragen dazu? / Schreib uns“; Admin-Links
   auf der Anlassseite (A4 nennt nur die Liste).
-- **UC-002:** CSRF-Token ist nicht an die angemeldete Session gebunden (Spec sagt „own session“) →
-  Spec auf „dieser Browser“ lockern oder Token binden. Fehlgeschlagenes Löschen hat keinen Flow.
+- **UC-002:** Fehlgeschlagenes Löschen hat keinen Flow. (CSRF: entschieden, Spec von UC-002/UC-004
+  auf „dieser Browser“ gelockert.)
   UC-004/UC-006-Code zitiert UC-002 BR-009/BR-010 → eigene Regeln oder als Requirement.
-- **UC-006:** Zusätzliche Einstiege `GET /auth` und `GET /admin`; Client-IP im INFO/WARN-Log
-  widerspricht NFR-031 (IPs nur DEBUG).
+- **UC-006:** Zusätzliche Einstiege `GET /auth` und `GET /admin`. (Client-IP: entschieden, NFR-031
+  erlaubt die IP im Protokoll der Anmeldeversuche.)
 - **UC-007:** `/version` wird in `PublicPages.java`, `NoThirdPartyAssetsTest`, `EditorAssetsTest`
   als öffentliche Seite geführt (misst anonym nur die Login-Seite). Veralteter Marker
   `IndexResourceTest.java:49` (BR-001 → BR-004).

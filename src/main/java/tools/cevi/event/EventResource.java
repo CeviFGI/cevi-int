@@ -1,5 +1,6 @@
 package tools.cevi.event;
 
+import tools.cevi.infra.Transactions;
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.qute.CheckedTemplate;
@@ -27,6 +28,9 @@ import tools.cevi.infra.ValidationMessages;
 
 @Path("anlaesse")
 public class EventResource {
+    private static final int MAX_SLUG_LENGTH = 255;
+    private static final int MAX_DERIVED_SLUG_LENGTH = 252;
+
     @Inject
     Validator validator;
 
@@ -174,21 +178,30 @@ public class EventResource {
                 return Response.seeOther(URI.create("/anlaesse")).build();
             } catch (Exception e) {
                 Log.error("Unable to save [" + event  + "] to database.", e);
-                QuarkusTransaction.rollback();
+                Transactions.rollbackIfActive();
             }
         }
         Log.info("Violations encountered while adding: " + violations);
         return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(0, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
     }
 
-    private String generateUniqueSlug(long id, String title) {
-        String slug = Slug.of(title).toString();
-        slug = slug.substring(0, Math.min(slug.length(), 252));
+    // UC-002 BR-005: a short name derived from the title gets a counter until it is free
+    // UC-002 BR-006: the derived name is cut to 252 characters, so name and counter stay within 255
+    static String generateUniqueSlug(long id, String title) {
+        String base = Slug.of(title).toString();
+        base = base.substring(0, Math.min(base.length(), MAX_DERIVED_SLUG_LENGTH));
+        String slug = base;
         int counter = 0;
-        while (!Event.isSlugUnique(slug) && Event.findBySlug(slug).id != id) {
-            slug = Slug.of(title + counter).toString();
+        while (isTakenByAnother(slug, id)) {
+            String suffix = Integer.toString(counter++);
+            slug = base.substring(0, Math.min(base.length(), MAX_SLUG_LENGTH - suffix.length())) + suffix;
         }
         return slug;
+    }
+
+    private static boolean isTakenByAnother(String slug, long id) {
+        Event owner = Event.findBySlug(slug);
+        return owner != null && owner.id != id;
     }
 
     private boolean tryParseDate(String date) {
@@ -233,11 +246,11 @@ public class EventResource {
                 Log.info("Updated: " + event);
                 return Response.seeOther(URI.create("/anlaesse")).build();
             } else {
-                QuarkusTransaction.rollback();
+                Transactions.rollbackIfActive();
             }
         } catch (Exception e) {
             Log.error("Unable to save event [" + event  + "] to database.", e);
-            QuarkusTransaction.rollback();
+            Transactions.rollbackIfActive();
         }
         Log.info("Violations encountered while updating: " + violations);
         return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
@@ -254,7 +267,7 @@ public class EventResource {
             return Response.seeOther(URI.create("/anlaesse")).build();
         } catch (Exception e) {
             Log.error("Unable to delete event [" + id  + "] from database.", e);
-            QuarkusTransaction.rollback();
+            Transactions.rollbackIfActive();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Templates.delete(event)).build();
         }
     }

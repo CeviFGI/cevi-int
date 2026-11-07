@@ -6,13 +6,11 @@ import io.quarkus.security.identity.SecurityIdentity;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
@@ -57,8 +55,10 @@ public class AuthResource {
     @POST
     @Path("logout")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response logout(@CookieParam("quarkus-credential") Cookie cookie) {
-        if (cookie != null) {
+    public Response logout() {
+        // UC-006 A4: whether a session exists is decided by the established identity, not by the
+        // presence of a cookie, which an expired session leaves behind and any visitor can set
+        if (!identity.isAnonymous()) {
             return Response.seeOther(URI.create("/auth/loggedOut"))
                     .header("Set-Cookie", "quarkus-credential=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT").build();
         }

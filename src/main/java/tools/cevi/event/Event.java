@@ -57,10 +57,6 @@ public class Event extends PanacheEntityBase {
                 .page(0, limit).list();
     }
 
-    public static boolean isSlugUnique(String slug) {
-        return find("slug = :slug", Parameters.with("slug", slug)).count() == 0;
-    }
-
     public static Event findBySlug(String slug) {
         return (Event) find("slug = :slug", Parameters.with("slug", slug)).stream().findFirst().orElse(null);
     }

@@ -89,6 +89,22 @@ public class EventUpcomingTest {
                 .body(containsString("Bearbeiten"));
     }
 
+    /**
+     * UC-001 BR-006: the maintenance control is the quieter ghost button, so the list itself stays
+     * what a visitor's eye goes to.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void maintenance_control_is_visually_quieter() {
+        given()
+                .when()
+                .get(eventEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("<a class=\"btn btn--ghost\" href=\"/anlaesse/add\">"))
+                .body(not(containsString("<a class=\"btn btn--primary\" href=\"/anlaesse/add\">")));
+    }
+
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
     public void order_upcoming_by_displayDate() {

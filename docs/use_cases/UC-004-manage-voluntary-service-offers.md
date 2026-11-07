@@ -22,7 +22,7 @@
 2. The system presents an empty offer form.
 3. The administrator enters the Organisation, the Organisation Link, the location and a formatted Description, and optionally a Short Name for the offer's Public Address.
 4. The administrator submits the form.
-5. The system confirms that the submission comes from a form it handed out to this administrator's own session.
+5. The system confirms that the submission comes from a form it handed out to the browser the administrator works in.
 6. The system derives a Short Name from the Organisation and the location if none was entered.
 7. The system checks that all mandatory information is present, that no value exceeds its permitted length, that the Organisation Link is a web address and that the Short Name is not already used by another offer; a Short Name the administrator entered is taken as entered (BR-009).
 8. The system reduces the formatted Description to the formatting it permits, discarding anything else.
@@ -55,7 +55,7 @@
 
 1. The system presents the offer and asks the administrator to confirm the removal on a Confirmation Page.
 2. The administrator confirms by submitting that form.
-3. The system confirms that the confirmation comes from a form it handed out to this administrator's own session.
+3. The system confirms that the confirmation comes from a form it handed out to the browser the administrator works in.
 4. The system removes the offer and presents the updated Offer List.
 5. Use case ends.
 
@@ -86,7 +86,7 @@
 
 ### A7: Submission does not come from the system's own form
 
-**Trigger:** A change arrives that the system cannot trace back to a form it handed out to this session (step 5)
+**Trigger:** A change arrives that the system cannot trace back to a form it handed out to this browser (step 5)
 **Flow:**
 
 1. The system refuses the change without inspecting the submitted values.

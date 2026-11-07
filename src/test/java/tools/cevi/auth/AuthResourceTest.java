@@ -110,6 +110,23 @@ public class AuthResourceTest {
                 .header("location", is("http://localhost:8081/"));
     }
 
+    /**
+     * UC-006 A4: a session that has ended leaves its cookie behind; signing out with it is a sign-out
+     * without an active session and leads to the start page, not to the confirmation.
+     */
+    @Test
+    public void logout_with_stale_session_cookie() {
+        Csrf.given()
+                .cookie("quarkus-credential", "expired-or-forged")
+                .redirects()
+                .follow(false)
+                .when()
+                .post(logoutEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_SEE_OTHER)
+                .header("location", is("http://localhost:8081/"));
+    }
+
     @Test
     public void logged_out() {
         given().when().get(loggedOutEndpoint).then().statusCode(HttpStatus.SC_OK).body(containsString("Abgemeldet"));

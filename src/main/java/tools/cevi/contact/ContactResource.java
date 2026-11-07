@@ -1,5 +1,6 @@
 package tools.cevi.contact;
 
+import tools.cevi.infra.Transactions;
 import java.util.List;
 
 import io.quarkus.logging.Log;
@@ -82,7 +83,7 @@ public class ContactResource {
             Log.info("Contact form entry persisted, id=" + entry.getId());
         } catch (Exception e) {
             Log.error("Unable to save a contact form entry to database. Trying to send the mail anyway", e);
-            QuarkusTransaction.rollback();
+            Transactions.rollbackIfActive();
         }
 
         try {

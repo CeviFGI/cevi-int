@@ -21,7 +21,7 @@
 2. The system presents an empty event form with today's date pre-filled as the display date.
 3. The administrator enters the title, the date text as visitors read it, the location, the display date and a formatted description, and optionally a short name for the event address.
 4. The administrator submits the form.
-5. The system confirms that the submission comes from a form it handed out to this administrator's own session.
+5. The system confirms that the submission comes from a form it handed out to the browser the administrator works in.
 6. The system derives a short name from the title if none was entered.
 7. The system checks that all mandatory information is present and that the short name is not already used by another event.
 8. The system reduces the formatted description to the formatting it permits, discarding anything else.
@@ -54,7 +54,7 @@
 
 1. The system presents the event and asks the administrator to confirm the removal on a confirmation form.
 2. The administrator confirms by submitting that form.
-3. The system confirms that the confirmation comes from a form it handed out to this administrator's own session.
+3. The system confirms that the confirmation comes from a form it handed out to the browser the administrator works in.
 4. The system removes the event and returns to the event list.
 5. Use case ends.
 
@@ -85,7 +85,7 @@
 
 ### A7: Submission does not come from the system's own form
 
-**Trigger:** A change arrives that the system cannot trace back to a form it handed out to this session (step 5)
+**Trigger:** A change arrives that the system cannot trace back to a form it handed out to this browser (step 5)
 **Flow:**
 
 1. The system refuses the change without inspecting the submitted values.
@@ -137,7 +137,7 @@ If the supplied display date cannot be read as a date, the previously stored dis
 
 ### BR-009: Changes are accepted only from the system's own forms
 
-Every addition, change and removal must be traceable to a form the system handed out to the same signed-in session, and must be submitted as a form rather than by following a link. A request that merely carries a valid session, without that origin, is refused. This prevents a foreign website from performing changes in the name of an administrator who happens to be signed in.
+Every addition, change and removal must be traceable to a form the system handed out to the same browser, and must be submitted as a form rather than by following a link. A request that merely carries a valid session, without that origin, is refused. This prevents a foreign website from performing changes in the name of an administrator who happens to be signed in.
 
 ### BR-010: Descriptions keep only permitted formatting
 

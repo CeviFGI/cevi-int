@@ -1,5 +1,6 @@
 package tools.cevi.voluntary;
 
+import tools.cevi.infra.Transactions;
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.qute.CheckedTemplate;
@@ -128,7 +129,7 @@ public class VoluntaryResource {
                 return Templates.list(VoluntaryService.listAll(), 0);
             } catch (Exception e) {
                 Log.error("Unable to save [" + voluntaryService  + "] to database.", e);
-                QuarkusTransaction.rollback();
+                Transactions.rollbackIfActive();
             }
         }
         return Templates.form(0, organization, organizationLink, location, description,
@@ -154,11 +155,11 @@ public class VoluntaryResource {
                 Log.info("Updated: " + voluntaryService);
                 return Templates.list(VoluntaryService.listAll(), 0);
             } else {
-                QuarkusTransaction.rollback();
+                Transactions.rollbackIfActive();
             }
         } catch (Exception e) {
             Log.error("Unable to save [" + voluntaryService  + "] to database.", e);
-            QuarkusTransaction.rollback();
+            Transactions.rollbackIfActive();
         }
         return Templates.form(id, organization, organizationLink, location, description,
                 ValidationMessages.of(violations.stream().map(ValidationMessage::of).toList()));
@@ -172,7 +173,7 @@ public class VoluntaryResource {
             QuarkusTransaction.commit();
         } catch (Exception e) {
             Log.error("Unable to delete VoluntaryService [" + id  + "] from database.", e);
-            QuarkusTransaction.rollback();
+            Transactions.rollbackIfActive();
         }
         return Templates.list(VoluntaryService.listAll(), 0);
     }

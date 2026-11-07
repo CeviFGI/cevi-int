@@ -83,7 +83,7 @@ The version page states both the version of the application and the version of t
 
 ### BR-004: Collected sources are grouped by channel
 
-The external sources on the presentation of the working group are grouped by the kind of channel they are — blogs, social networks, websites, newsletters, picture collections. The collection is long enough that an ungrouped list forces a visitor to read all of it to find one entry, and on a phone the groups are presented collapsed so that the page stays navigable.
+The external sources on the presentation of the working group are grouped by the kind of channel they are — blogs, social networks, websites, newsletters, picture collections. The collection is long enough that an ungrouped list forces a visitor to read all of it to find one entry. The groups are open on arrival and the visitor can collapse each of them, so that on a phone the page stays navigable without depending on scripts.
 
 ### BR-005: Version information is not public
 

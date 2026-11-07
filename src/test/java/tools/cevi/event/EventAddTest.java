@@ -160,4 +160,43 @@ public class EventAddTest {
         assertThat(firstEvent.slug, equalTo("cleanup-add-twice-with-same-title")); // if no slug is defined one will be generated
         assertThat(secondEvent.slug, equalTo("cleanup-add-twice-with-same-title0")); // same title adds a counter
     }
+
+    /**
+     * UC-002 BR-005: the counter keeps counting until the derived short name is free, so a third
+     * event with the same title gets its own short name too.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_three_times_with_same_title() {
+        String title = "CLEANUP add_three_times_with_same_title";
+
+        EventFixture.createEventWithRest(eventEndpoint, title, "");
+        EventFixture.createEventWithRest(eventEndpoint, title, "");
+        EventFixture.createEventWithRest(eventEndpoint, title, "");
+
+        List<Event> events = Event.listAll();
+        List<String> slugs = events.subList(events.size() - 3, events.size()).stream().map(e -> e.slug).toList();
+        assertThat(slugs, equalTo(List.of(
+                "cleanup-add-three-times-with-same-title",
+                "cleanup-add-three-times-with-same-title0",
+                "cleanup-add-three-times-with-same-title1")));
+    }
+
+    /**
+     * UC-002 BR-006: a short name derived from a title of the maximum length is cut to 252
+     * characters, and the counter appended to it keeps it within the 255 characters of BR-003.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_twice_with_longest_title() {
+        String title = "CLEANUP " + "a".repeat(247);
+        String derived = ("cleanup-" + "a".repeat(247)).substring(0, 252);
+
+        EventFixture.createEventWithRest(eventEndpoint, title, "");
+        EventFixture.createEventWithRest(eventEndpoint, title, "");
+
+        List<Event> events = Event.listAll();
+        assertThat(events.get(events.size() - 2).slug, equalTo(derived));
+        assertThat(events.get(events.size() - 1).slug, equalTo(derived + "0"));
+    }
 }
