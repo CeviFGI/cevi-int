@@ -1,6 +1,10 @@
-# Handover — Stand 2026-11-07 (nachgeführt)
+# Handover — Stand 2026-11-07 (Ende 2. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
+
+**Nächster Schritt:** `/use-case-coverage UC-002` und `/use-case-coverage UC-006` (Bugs behoben,
+Testlücken geschlossen) → Status nach Ergebnis auf Implemented setzen. Danach Abschnitt 3
+(Testlücken UC-001, UC-005, UC-007).
 
 ## Stand
 
@@ -10,12 +14,16 @@
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS: Audit ohne Lücke, verify grün). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
-- `tooling/docker.sh verify` war am 2026-11-07 grün (94 e2e-Tests, Coverage-Gate erfüllt).
+- `tooling/docker.sh verify` ist grün (Stand Commit `ccfdd92`: 277 Unit-, 95 e2e-Tests,
+  Coverage-Gate erfüllt). Alles committet.
 - Die „Open Points for Confirmation“ aus `requirements.md` sind jetzt OQ-005 … OQ-015 in
   `docs/open_questions.md` (alle nicht blockierend, offen). FR-029 und FR-030 sind `Deferred`, bis
   OQ-005 / OQ-006 beantwortet sind.
 - Nach den Coverage-Audits vom 2026-11-07 wurden UC-002 und UC-006 von Implemented auf Approved
   zurückgesetzt; die FR-Status folgen jetzt den Use Cases (daher viele FRs auf `Open`).
+- Product-Owner-Entscheide 2026-11-07 (in der Spec nachgeführt): UC-007 BR-004 Quellengruppen
+  „offen beim Aufruf, einklappbar“; CSRF-Token an „diesen Browser“ gebunden (UC-002, UC-004);
+  NFR-031 erlaubt die Client-IP im Protokoll der Anmeldeversuche.
 
 ## 1. Freigabe der überarbeiteten Specs (Product Owner)
 
@@ -31,39 +39,30 @@ Annahmen am 2026-11-07 vom Product Owner bestätigt (noch nicht via `/spec-revie
 - Adresse der Volontariatsseite: `/volontariat/detail?slug=<Kurzname>` (UC-011 BR-003).
 - Startseite: Einträge im Auszug führen auf die Detailseite (UC-008 BR-004).
 
-## 2. Bugs aus den Coverage-Audits — behoben am 2026-11-07
+## 2. Bugs aus den Coverage-Audits — erledigt
 
-Behoben mit Tests: UC-002 BR-005/BR-006 (Kurzname-Zähler, Länge), UC-006 A4 (Logout nach
-`identity.isAnonymous()`), UC-006 BR-007 (Secure-Flag kommt aus `X-Forwarded-Proto` + Proxy-
-Forwarding, belegt durch `SessionCookieAttributesTest`), UC-005 A2 / UC-002 A6 (`Transactions.
-rollbackIfActive()` in allen Resources), UC-001 BR-006 (Wartungsknopf `btn--ghost`, auch auf der
-Volontariatsliste). UC-007 BR-004: Spec auf „einklappbar, offen beim Aufruf“ gelockert.
-
-Offen: Status von UC-002/UC-006 nach erneutem Coverage-Audit (`/use-case-coverage`) nachführen;
-die Testlücken beider Use Cases sind geschlossen.
+Alle behoben und getestet (Commit `fcf4810`). Neu: `tools.cevi.infra.Transactions.rollbackIfActive()`
+statt `QuarkusTransaction.rollback()` in allen Resources verwenden.
 
 ## 3. Testlücken (`/use-case-test UC-XXX`)
 
 - **UC-001:** A1 (leere Liste), Datumstext/Ort in der Liste, Link Liste → Detailseite, E2E läuft
   den Hauptablauf nicht durch, BR-006, „keine Daten geändert“.
-- **UC-002:** erledigt 2026-11-07 (`EventFormRulesTest`, `EventFormE2ETest`, A4/A5-Tests, Javadoc-Marker).
 - **UC-005:** A2, A3 (Mailfehler), BR-007 (Nachricht nicht im Log), leere Spam-Antwort,
   Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
-- **UC-006:** erledigt 2026-11-07 (`SignInRulesTest`, `SessionIdleTimeoutTest`, `LoginE2ETest` erweitert).
 - **UC-007:** A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite,
   Inhalt Datenschutzseite, „keine Daten geändert“.
-- Alle: Marker `// UC-XXX BR-YYY:` im Code und UC-ID im Test-Javadoc fehlen weitgehend
-  (Format in `docs/architecture/stack.md`).
+- UC-002/UC-006 erledigt (Commits `b10d9e2`, `ccfdd92`).
+- Alle: Code-Marker `// UC-XXX BR-YYY:` fehlen weitgehend (Format in `docs/architecture/stack.md`);
+  UC-ID im Test-Javadoc ist für UC-002/UC-006 nachgetragen, für die übrigen noch nicht.
 
 ## 4. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
 
 - **UC-001:** Countdown auch auf der Anlassseite; Teaser „Fragen dazu? / Schreib uns“; Admin-Links
   auf der Anlassseite (A4 nennt nur die Liste).
-- **UC-002:** Fehlgeschlagenes Löschen hat keinen Flow. (CSRF: entschieden, Spec von UC-002/UC-004
-  auf „dieser Browser“ gelockert.)
-  UC-004/UC-006-Code zitiert UC-002 BR-009/BR-010 → eigene Regeln oder als Requirement.
-- **UC-006:** Zusätzliche Einstiege `GET /auth` und `GET /admin`. (Client-IP: entschieden, NFR-031
-  erlaubt die IP im Protokoll der Anmeldeversuche.)
+- **UC-002:** Fehlgeschlagenes Löschen hat keinen Flow. UC-004/UC-006-Code zitiert UC-002 BR-009/BR-010 → eigene Regeln oder als Requirement.
+- **UC-006:** Zusätzliche Einstiege `GET /auth` und `GET /admin`. `LoginE2ETest` Javadoc zum
+  Logout zitiert noch UC-002 BR-009 (gehört zu UC-006 A3).
 - **UC-007:** `/version` wird in `PublicPages.java`, `NoThirdPartyAssetsTest`, `EditorAssetsTest`
   als öffentliche Seite geführt (misst anonym nur die Login-Seite). Veralteter Marker
   `IndexResourceTest.java:49` (BR-001 → BR-004).
