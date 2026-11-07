@@ -17,6 +17,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 /**
+ * UC-002 Manage Events, BR-010.
+ * <p>
  * Event descriptions are rendered unescaped, which is what makes the formatting work — and what
  * would turn a submitted script into stored script running for every visitor. The reduction happens
  * before storing, so these tests check the stored value and the rendered page.

@@ -18,6 +18,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-002 Manage Events, A1: changing an existing event, keeping or deriving its short name
+ * (BR-004, BR-005), and BR-001 for a visitor who is not signed in.
+ */
 @QuarkusTest
 public class EventEditTest {
     @TestHTTPEndpoint(EventResource.class)
@@ -70,6 +74,19 @@ public class EventEditTest {
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlass bearbeiten"));
+    }
+
+    /** A5: the edit page of an event that no longer exists says so. */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_form_non_existing() {
+        given()
+                .queryParam("id", 10000000)
+                .when()
+                .get(editEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_NOT_FOUND)
+                .body(containsString("Diese Seite gibt es nicht"));
     }
 
     @Test

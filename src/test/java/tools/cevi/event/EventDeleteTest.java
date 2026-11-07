@@ -16,6 +16,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-002 Manage Events, A3 to A5: removing an event after confirmation (BR-007), only from the
+ * system's own form (A7, BR-009), and a removed event that is opened again (A5).
+ */
 @QuarkusTest
 public class EventDeleteTest{
     @TestHTTPEndpoint(EventResource.class)
@@ -49,6 +53,18 @@ public class EventDeleteTest{
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .body(containsString("Anlass löschen"));
+    }
+
+    /** A4, BR-007: opening the confirmation page and leaving it without confirming removes nothing. */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void delete_form_left_without_confirming_keeps_the_event() {
+        long id = EventFixture.createEvent("CLEANUP delete_form_left_without_confirming");
+
+        given().queryParam("id", id).when().get(deleteEndpoint).then().statusCode(HttpStatus.SC_OK);
+        given().when().get("/anlaesse").then().statusCode(HttpStatus.SC_OK);
+
+        assertThat(Event.findById((int) id) != null, equalTo(true));
     }
 
     @Test

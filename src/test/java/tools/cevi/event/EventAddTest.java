@@ -18,6 +18,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 
+/**
+ * UC-002 Manage Events, main success scenario: adding an event, with the short name the
+ * administrator supplies or the one derived from the title (BR-004, BR-005, BR-006), and BR-001 for
+ * a visitor who is not signed in.
+ */
 @QuarkusTest
 public class EventAddTest {
     @TestHTTPEndpoint(EventResource.class)

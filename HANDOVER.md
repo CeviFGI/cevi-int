@@ -46,8 +46,7 @@ Offen: Status von UC-002/UC-006 erst nach erneutem Coverage-Audit wieder auf Imp
 
 - **UC-001:** A1 (leere Liste), Datumstext/Ort in der Liste, Link Liste → Detailseite, E2E läuft
   den Hauptablauf nicht durch, BR-006, „keine Daten geändert“.
-- **UC-002:** A6 (Speicherfehler), BR-006, BR-008 (ungültiges Anzeigedatum), Pflichtfelder/A2,
-  Längenlimits ausser Titel, Add/Edit ohne CSRF-Token, kein E2E-Test für das Anlass-Formular.
+- **UC-002:** erledigt 2026-11-07 (`EventFormRulesTest`, `EventFormE2ETest`, A4/A5-Tests, Javadoc-Marker).
 - **UC-005:** A2, A3 (Mailfehler), BR-007 (Nachricht nicht im Log), leere Spam-Antwort,
   Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
 - **UC-006:** Log der Anmeldeversuche (BR-005), Idle-Timeout (BR-006), bcrypt (BR-002),
