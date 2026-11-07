@@ -263,7 +263,7 @@ checked by a real browser on every public route, and each found something (`docs
 | **NFR-038** | `TapTargetE2ETest` at 360 px, signed in and signed out | — |
 | **NFR-039** | `FocusVisibleE2ETest`, 40 tab stops per route | The 3 : 1 ratio of the ring itself, which is a single token (`--cevi-blue` on `--surface`, 10.3 : 1) rather than a per-element measurement. |
 | **NFR-040** | `ReducedMotionE2ETest`, with the counter-check that the same pages do animate by default | — |
-| **NFR-041** | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (no script on any other public page), `EventShareTest` (the event page loads only the share script, from its own origin, at most 2 KB) | The 150 KB first view as a whole, which no test currently sums. Since revision 7 the tests still state the narrower revision-6 rule; they are to be restated as an 8 KB script total per public page when FR-042 is implemented. |
+| **NFR-041** | `CssBudgetTest` (stylesheet bytes, gzipped), `StaticAssetTest` (font bytes), `EditorAssetsTest` (every public page carries only self-hosted, non-inline script, at most 8 KB in total), `EventShareTest` (the same ceiling for the event page with the share script) | The 150 KB first view as a whole, which no test currently sums. |
 
 A "Verified" here therefore means *the stated numbers are enforced by the build*, not that the
 interface is beyond criticism. The review with the product owner on a real phone remains part of

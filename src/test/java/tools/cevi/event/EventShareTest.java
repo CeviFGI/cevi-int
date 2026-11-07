@@ -123,17 +123,17 @@ class EventShareTest {
     }
 
     /**
-     * NFR-041: the share script stays within 2 KB uncompressed. BR-004: it addresses no other
-     * host and sends nothing anywhere — no fetch, no beacon, no request object.
+     * BR-004: the share script addresses no other host and sends nothing anywhere — no fetch, no
+     * beacon, no request object. Its size counts towards the 8 KB script total of the event page,
+     * which {@link #the_event_page_loads_the_share_script_from_its_own_origin()} checks.
      */
     @Test
-    void the_share_script_is_small_and_talks_to_no_host() {
+    void the_share_script_talks_to_no_host() {
         byte[] script = given().when().get(SHARE_SCRIPT).then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract().body().asByteArray();
         String source = new String(script, StandardCharsets.UTF_8);
 
-        assertThat(script.length, lessThanOrEqualTo(2048));
         assertThat(source, not(containsString("http")));
         assertThat(source, not(containsString("fetch")));
         assertThat(source, not(containsString("sendBeacon")));

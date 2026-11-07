@@ -90,11 +90,22 @@ class ExcerptTest {
         assertEquals(text, Excerpt.from(text, 40));
     }
 
-    /** A single word longer than the limit has no boundary to cut on, so it is cut hard. */
+    /** UC-001 BR-004: without a word boundary to cut on, the excerpt is cut at the limit and still ends with an ellipsis. */
     @Test
     void a_word_longer_than_the_limit_is_cut_anyway() {
         String excerpt = Excerpt.from("a".repeat(100), 20);
 
         assertEquals("a".repeat(20) + "…", excerpt);
+    }
+
+    /**
+     * UC-001 BR-004: a word boundary only in the first half of the excerpt length is not usable —
+     * cutting there would leave too little text — so the excerpt is cut at the limit.
+     */
+    @Test
+    void a_boundary_only_in_the_first_half_is_not_used() {
+        String excerpt = Excerpt.from("Link https://example.org/" + "a".repeat(100), 40);
+
+        assertEquals(("Link https://example.org/" + "a".repeat(100)).substring(0, 40) + "…", excerpt);
     }
 }

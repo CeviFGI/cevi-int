@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor finds out which international Cevi events are still ahead and reads the details of the ones that interest them.
 **Status:** Tested
-**Revised:** 2026-08-25 for requirements revision 5 (FR-035, FR-036, FR-038). The list now presents a shortened excerpt and how much time is left, so that several events can be compared on a phone screen; the full description moved to the event's own page. What is stored and what is published is unchanged. 2026-11-07: the event page offers the way to the working group for questions about the event (step 5, BR-007), as decided by the product owner.
+**Revised:** 2026-08-25 for requirements revision 5 (FR-035, FR-036, FR-038). The list now presents a shortened excerpt and how much time is left, so that several events can be compared on a phone screen; the full description moved to the event's own page. What is stored and what is published is unchanged. 2026-11-07: the event page offers the way to the working group for questions about the event (step 5, BR-007), as decided by the product owner. 2026-11-07: BR-003 states that an event's Public Address lasts until an administrator changes its Short Name (UC-002 BR-011), and BR-004 states how an excerpt ends when no word boundary is near the length limit, both as decided by the product owner; the behaviour is unchanged.
 
 **Requirements:** [FR-001, FR-002, FR-003, FR-022, FR-027, FR-035, FR-036, FR-038](../requirements.md)
 
@@ -82,11 +82,11 @@ The event list is sorted by display date, closest event first.
 
 ### BR-003: Every event has a stable public address
 
-Each event is reachable under a short, readable name that identifies it uniquely, so a link to an event stays valid.
+Each event is reachable under its Short Name, a short, readable name that identifies it uniquely. A link to an event stays valid as long as no administrator changes that Short Name (UC-002 BR-011); after a change, the previous address no longer leads to the event.
 
 ### BR-004: The list shows an excerpt, the event page the whole text
 
-In a list, an event's description is shortened to a short plain-text excerpt that breaks on a word boundary. The complete formatted description is presented only on the event's own page. A list answers which event is worth opening; presenting every description in full makes that comparison impossible on a phone.
+In a list, an event's description is shortened to a short plain-text excerpt that breaks on a word boundary and ends with an ellipsis. If no word boundary lies in the latter half of the excerpt length — a long web address or a long word without spaces — the excerpt is cut at the length limit instead and ends with an ellipsis as well. The complete formatted description is presented only on the event's own page. A list answers which event is worth opening; presenting every description in full makes that comparison impossible on a phone.
 
 ### BR-005: Every listed event states how much time is left
 

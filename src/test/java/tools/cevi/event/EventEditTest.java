@@ -21,7 +21,7 @@ import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * UC-002 Manage Events, A1: changing an existing event, keeping or deriving its short name
- * (BR-004, BR-005), A5 for an event that no longer exists, and BR-001 for a visitor who is not
+ * (BR-004, BR-005, BR-011), A5 for an event that no longer exists, and BR-001 for a visitor who is not
  * signed in.
  */
 @QuarkusTest
@@ -33,6 +33,10 @@ public class EventEditTest {
     @TestHTTPEndpoint(EventResource.class)
     @TestHTTPResource("edit")
     URL editEndpoint;
+
+    @TestHTTPEndpoint(EventResource.class)
+    @TestHTTPResource("detail")
+    URL detailEndpoint;
 
     /**
      * BR-001, Pre-1: a visitor who is not signed in is sent to the sign-in page instead of the edit
@@ -99,7 +103,7 @@ public class EventEditTest {
     }
 
     /**
-     * A1, BR-005: a short name emptied while changing is derived anew from the changed title.
+     * A1, BR-005, BR-011: a short name emptied while changing is derived anew from the changed title.
      */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
@@ -162,7 +166,7 @@ public class EventEditTest {
     }
 
     /**
-     * A1: changing the title keeps the short name the event already has.
+     * A1, BR-011: changing the title keeps the short name the event already has.
      */
     @Test
     @TestSecurity(user = "admin", roles = { "admin"})
@@ -189,6 +193,39 @@ public class EventEditTest {
 
         var event = (Event) Event.findById(id);
         assertThat(event.slug, equalTo(slug)); // keep the slug from insertion
+    }
+
+    /**
+     * A1, BR-011: an administrator who changes the short name changes the Public Address; the
+     * previous address no longer leads to the event.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void edit_changed_slug_retires_the_previous_address() {
+        String title = "CLEANUP UC-002 edit_changed_slug";
+        long id = EventFixture.createEvent(title);
+        String oldSlug = ((Event) Event.findById(id)).slug;
+        String newSlug = "cleanup-uc-002-edit-changed-slug-new";
+
+        Csrf.given()
+                .formParam("id", id)
+                .formParam("title", title)
+                .formParam("slug", newSlug)
+                .formParam("date", "some date")
+                .formParam("location", "Bern")
+                .formParam("description", "desc")
+                .when()
+                .post(eventEndpoint)
+                .then()
+                .statusCode(HttpStatus.SC_OK);
+
+        // Checked through the Public Address: the entity loaded above is cached in this test's
+        // session and would still show the old short name.
+        given().queryParam("slug", oldSlug).when().get(detailEndpoint).then()
+                .statusCode(HttpStatus.SC_NOT_FOUND);
+        given().queryParam("slug", newSlug).when().get(detailEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(title));
     }
 
     /**

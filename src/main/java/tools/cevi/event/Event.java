@@ -30,7 +30,8 @@ public class Event extends PanacheEntityBase {
     @Size(max= 255)
     public String title;
     // UC-002 BR-004: no two events share a short name
-    // UC-001 BR-003: the short name identifies the event uniquely, so its public address is stable
+    // UC-001 BR-003: the short name identifies the event uniquely; its public address lasts until an
+    // administrator changes the short name (UC-002 BR-011)
     @NotBlank
     @Column(unique = true)
     @Size(max= 255)

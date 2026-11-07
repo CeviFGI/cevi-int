@@ -1,4 +1,4 @@
-// UC-009 share control; see EventResource/detail.html. At most 2 KB (NFR-041).
+// UC-009 share control; see EventResource/detail.html. Counts towards the 8 KB script total of a public page (NFR-041).
 (function () {
     var box = document.querySelector('[data-share]');
     if (!box) return;

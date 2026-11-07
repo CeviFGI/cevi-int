@@ -231,6 +231,8 @@ public class EventResource {
     }
 
     private Response handleEdit(long id, String title, String slug, String date, String displayDate, String location, String description) {
+        // UC-002 BR-011: the submitted short name is kept even when the title changed; only an
+        // emptied one is derived anew, which retires the previous Public Address.
         if (slug == null || slug.isBlank()) {
             slug = generateUniqueSlug(id, title);
             Log.info("Generated slug: " + slug);

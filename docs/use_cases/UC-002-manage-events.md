@@ -7,6 +7,7 @@
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
 **Status:** Tested
+**Revised:** 2026-11-07, as decided by the product owner: step 9 no longer promises that the new event is visible in the list, because an event whose display date has passed is stored but not listed publicly (A9, UC-001 BR-001); BR-011 states that a Short Name stays until the administrator changes it. The behaviour is unchanged.
 
 **Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, NFR-006, NFR-011, NFR-021](../requirements.md)
 
@@ -25,7 +26,7 @@
 6. The system derives a short name from the title if none was entered.
 7. The system checks that all mandatory information is present and that the short name is not already used by another event.
 8. The system reduces the formatted description to the formatting it permits, discarding anything else.
-9. The system records the event and returns the administrator to the event list, where the new event is visible.
+9. The system records the event and returns the administrator to the event list.
 
 ## Alternative Flows
 
@@ -100,11 +101,19 @@
 2. The system presents the confirmation page again and informs the administrator that the event could not be removed.
 3. Use case ends.
 
+### A9: Display date has passed
+
+**Trigger:** The display date of the recorded event lies before today (step 9)
+**Flow:**
+
+1. The system records the event as in step 9, but the event does not appear in the public event list (UC-001 BR-001); it stays reachable under its Public Address.
+2. Use case ends.
+
 ## Postconditions
 
 ### Success Postconditions
 
-- The event is added, changed or removed, and the public event list reflects the change immediately.
+- The event is added, changed or removed, and the public event list reflects the change immediately; an event whose display date has passed is stored but not listed (UC-001 BR-001).
 
 ### Failure Postconditions
 
@@ -151,3 +160,7 @@ Every addition, change and removal must be traceable to a form the system handed
 ### BR-010: Descriptions keep only permitted formatting
 
 Before a description is stored, it is reduced to the formatting the platform permits — text emphasis, headings, lists, tables, links, images and colours. Everything else, in particular anything that could run as a program in a visitor's browser, is discarded. The reduction happens when the system receives the description; what the editor in the browser allows is a convenience for the administrator, not the boundary that is relied upon.
+
+### BR-011: A Short Name stays until the administrator changes it
+
+Changing the title of an existing event does not change its Short Name, so a link to the event that visitors have already passed on keeps working. Only an administrator who edits the Short Name itself changes the Public Address — the previous address then no longer leads to the event. An administrator who empties the Short Name while editing changes it, too: the system derives a new one from the title as in BR-005, and the previous address no longer leads to the event.

@@ -16,12 +16,13 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * UC-002 Manage Events, main success scenario: adding an event, with the short name the
- * administrator supplies or the one derived from the title (BR-004, BR-005, BR-006), and BR-001 for
- * a visitor who is not signed in.
+ * administrator supplies or the one derived from the title (BR-004, BR-005, BR-006), A9 for an event
+ * whose display date has passed, and BR-001 for a visitor who is not signed in.
  */
 @QuarkusTest
 public class EventAddTest {
@@ -32,6 +33,33 @@ public class EventAddTest {
     @TestHTTPEndpoint(EventResource.class)
     @TestHTTPResource("add")
     URL addEndpoint;
+
+    @TestHTTPEndpoint(EventResource.class)
+    @TestHTTPResource("detail")
+    URL detailEndpoint;
+
+    /**
+     * A9: an event whose display date has passed is recorded, but the public event list does not
+     * show it; it stays reachable under its Public Address.
+     */
+    @Test
+    @TestSecurity(user = "admin", roles = { "admin"})
+    public void add_with_past_display_date_is_stored_but_not_listed() {
+        String title = "CLEANUP UC-002 add_with_past_display_date";
+        long eventCount = Event.count();
+
+        // The fixture submits the display date 2023-01-01.
+        long id = EventFixture.createEventWithRest(eventEndpoint, title, "");
+
+        assertThat(Event.count(), equalTo(eventCount + 1));
+        given().when().get(eventEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(not(containsString(title)));
+        given().queryParam("slug", ((Event) Event.findById(id)).slug)
+                .when().get(detailEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString(title));
+    }
 
     /**
      * BR-001, Pre-1: a visitor who is not signed in is sent to the sign-in page instead of the form,

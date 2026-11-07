@@ -1,16 +1,16 @@
-# Handover — Stand 2026-11-07 (nach der 8. Session)
+# Handover — Stand 2026-11-07 (nach der 9. Session)
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Die Code-↔-Spec-Entscheide aus Abschnitt 1 mit dem Product Owner klären,
-danach Revision 8 implementieren (Abschnitt 2), beginnend mit UC-004.
+**Nächster Schritt:** Revision 8 implementieren (Abschnitt „Danach“), beginnend mit UC-004.
 
 ## Stand
 
 - UC-001, 002, 005, 006, 007, 009 `Tested`; UC-003, 004, 008, 010, 011 `Approved` (Revision 8:
   eigene Volontariatsseite mit Kurzname und Teilen), noch nicht implementiert.
 - `tooling/docker.sh verify` grün, alles committet.
-- Spec-Lint grün mit `--strict` (1 Befund in `docs/.spec-lint-baseline.json` akzeptiert):
+- Spec-Lint grün mit `--strict` (3 Befunde in `docs/.spec-lint-baseline.json` akzeptiert: UC-001,
+  UC-002 und UC-009 nach Spec-Änderungen, die ein Delta-Audit bestätigt hat):
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
 - NFR-006, NFR-011, NFR-021 stehen auf `In Progress`, weil UC-004 sie verlinkt; wieder `Verified`,
   sobald UC-004 `Tested` ist.
@@ -39,20 +39,16 @@ danach Revision 8 implementieren (Abschnitt 2), beginnend mit UC-004.
   `SearchResourceTest` enthalten nur anonym erreichbare Seiten – eine Seite hinter `@RolesAllowed`
   misst dort ohne Sitzung nur die Login-Seite.
 
-## 1. Abweichungen Code ↔ Spec — Entscheid nötig (welche Seite stimmt?)
+## Entschieden in der 9. Session (Product Owner)
 
-- **UC-001 (`/spec-review UC-001`):** BR-003 („Link bleibt gültig“) widerspricht UC-002, wo der
-  Kurzname beim Bearbeiten geändert werden kann – der alte Link gibt dann 404. Glossar und UC-004
-  BR-008 sagen bereits „solange der Kurzname nicht geändert wird“. BR-004 sagt nicht, was ohne
-  brauchbare Wortgrenze passiert (der Code schneidet hart, `ExcerptTest` dokumentiert das).
-- **UC-002 (`/spec-review UC-002`):** Schritt 9 sagt, der neue Anlass sei in der Liste sichtbar –
-  mit vergangenem Anzeigedatum erscheint er dort aber nicht (UC-001 BR-001).
-- **UC-009:** Marker in `EventResource/detail.html:25` zitiert die alte BR-005; `share.js:1` und
-  `EventShareTest.java:126/136` behaupten 2 KB (NFR-041) – seit Revision 7 gilt nur 8 KB total;
-  `ShareEventE2ETest.java:91` nennt NFR-042, das UC-009 nicht verlinkt. Notiz zu NFR-041 in
-  `requirements.md` („tests still state the narrower revision-6 rule“) ist teilweise veraltet.
+- UC-001 BR-003: Der Link bleibt gültig, bis ein Admin den Kurznamen ändert (neu UC-002 BR-011).
+- UC-001 BR-004: Ohne Wortgrenze in der zweiten Hälfte der Auszugslänge wird hart geschnitten, mit „…“.
+- UC-002 Schritt 9 verspricht keine Sichtbarkeit mehr; neu A9 (vergangenes Anzeigedatum: gespeichert,
+  aber nicht gelistet).
+- UC-009: Code-Marker, `share.js`, Tests und die NFR-041-Notiz auf Revision 7 nachgeführt (8 KB total,
+  keine 2-KB-Regel mehr, kein NFR-042).
 
-## 2. Danach
+## Danach
 
 1. Revision 8 implementieren: UC-004 (Kurzname, Flyway-Migration inkl. Kurznamen für bestehende
    Volontariate), UC-003 (Volontariatsseite), UC-011 (`share.js` wiederverwenden), UC-010

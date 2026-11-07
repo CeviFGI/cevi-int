@@ -2,6 +2,20 @@
   "version": 1,
   "findings": [
     {
+      "fingerprint": "b8a29e2243788f00dc9b11229aa592f29b9104d9",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-001-browse-upcoming-events.md",
+      "element": "UC-001",
+      "message": "UC-001 is Tested, but the specification changed after that status was set in 62a77c4; run the coverage audit again (state 3b8d9a50)"
+    },
+    {
+      "fingerprint": "18b0cba215f7904dc1631cb06beab62425875932",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-002-manage-events.md",
+      "element": "UC-002",
+      "message": "UC-002 is Tested, but the specification changed after that status was set in 490c34e; run the coverage audit again (state a20773d3)"
+    },
+    {
       "fingerprint": "c76618225dd81bad0f31b6685536365b5ee89bb1",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-009-share-an-event.md",

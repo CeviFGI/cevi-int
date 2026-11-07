@@ -88,7 +88,7 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
         return (String) page.evaluate("() => navigator.clipboard.readText()");
     }
 
-    /** Collects every request that leaves the application's own host (BR-004, NFR-042). */
+    /** Collects every request that leaves the application's own host (BR-004). */
     private List<String> foreignRequests() {
         List<String> foreign = new ArrayList<>();
         String ownHost = URI.create(url("/")).getHost();
