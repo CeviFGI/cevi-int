@@ -70,7 +70,8 @@ class VoluntaryManageTest {
 
     /**
      * Main success scenario steps 6 and 9, BR-007: without a Short Name the system derives one from
-     * the Organisation followed by the location, in the readable form of an event's.
+     * the Organisation followed by the location, in the readable form of an event's. Success
+     * postcondition: the new offer is at once in the Offer List and on its Offer Page.
      */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
@@ -82,7 +83,13 @@ class VoluntaryManageTest {
                 .statusCode(HttpStatus.SC_SEE_OTHER)
                 .header("location", containsString("/volontariat"));
 
-        assertThat(stored("cleanup-uc-004-jugendhaus-zurich-bogota-kolumbien"), notNullValue());
+        String slug = "cleanup-uc-004-jugendhaus-zurich-bogota-kolumbien";
+        assertThat(stored(slug), notNullValue());
+        offerList().then().statusCode(HttpStatus.SC_OK)
+                .body(containsString(">CLEANUP UC-004 Jugendhaus Zürich</a>"));
+        offerPage(slug).then().statusCode(HttpStatus.SC_OK)
+                .body(containsString("<h1>CLEANUP UC-004 Jugendhaus Zürich</h1>"))
+                .body(containsString("Bogotá, Kolumbien"));
     }
 
     /** BR-007: a derived Short Name another offer already carries gets a counter until it is free. */

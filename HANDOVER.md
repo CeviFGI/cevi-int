@@ -1,32 +1,33 @@
-# Handover — Stand 2026-11-07 (nach der 11. Session)
+# Handover — Stand 2026-11-07 (nach der 12. Session)
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** `/use-case-coverage UC-003` erneut laufen lassen (Gap 1 und beide Drifts der
-11. Session sind behoben), dann UC-003 und UC-004 auf `Tested`; danach der Rest von Revision 8
-(Abschnitt „Danach“, Punkt 1).
+**Nächster Schritt:** Rest von Revision 8 (Abschnitt „Danach“, Punkt 1): UC-011 (Teilen auf der
+Volontariatsseite).
 
 ## Stand
 
-- UC-001, 002, 005, 006, 007, 009 `Tested`.
-- UC-003 implementiert und getestet (11. Session), Status noch `Approved`. Der erste Audit fand
-  einen Fehler (Kurzname im Kartenlink nicht URL-kodiert – jetzt `{it.slug.queryValue}`, auch in
-  der Anlass-Karte) und zwei Drifts (Hilfetext Organisations-Link; Reihenfolge der Liste, jetzt in
-  UC-003 Schritt 2 festgehalten, vom Benutzer bestätigt). Alles behoben, Audit noch nicht wiederholt.
-  Für die Ergänzung von Schritt 2 ist `/spec-review UC-003` noch nicht gelaufen (optional).
-- UC-004 implementiert und getestet; die BR-008-Tests rufen jetzt alte/neue Adresse der
-  Volontariatsseite ab. `/use-case-coverage UC-004`, dann `Tested`.
-- UC-010: Treffer führen bereits auf die Volontariatsseite (`Search.offerPage`), Tests angepasst;
-  Audit fehlt. UC-008: der Auszug nutzt dieselbe Karte und führt damit schon zur Seite, aber kein
-  Test der Startseite prüft das. UC-011 (Teilen) noch offen.
+- UC-001, 002, 003, 004, 005, 006, 007, 009 `Tested`.
+- 12. Session: Coverage-Audits für UC-003 und UC-004 wiederholt, die gefundenen Testlücken
+  geschlossen (UC-003: Reihenfolge innerhalb einer Organisation, Auszug der Startseite → Volontariatsseite,
+  Felder nach dem Besuch unverändert; UC-004: Bereinigung der Beschreibung über den Endpunkt, Liste
+  und Volontariatsseite nach Hinzufügen/Ändern/Löschen, UC-004-Marker im `VoluntaryFormE2ETest`).
+  Zweiter Audit: UC-003 20/20, UC-004 bis auf Post-S-1 „Volontariatsseite eines neuen Angebots“,
+  danach ergänzt. Beide auf `Tested`; FR-008 … FR-013, FR-022, FR-027, FR-033, FR-035, FR-038,
+  FR-044 und NFR-006, NFR-011, NFR-021 auf `Verified`; FR-043 `In Progress` (UC-008 fehlt noch).
+- UC-008: der Test, dass der Auszug der Startseite zur Volontariatsseite führt, existiert jetzt
+  (`VoluntaryBrowseTest.the_entry_on_the_start_page_leads_to_the_offer_page`, unter UC-003 A4).
+  Audit für UC-008 fehlt. UC-010: Treffer führen auf die Volontariatsseite, Audit fehlt. UC-011
+  (Teilen) noch offen.
+- Audit-Hinweis ohne Handlungsbedarf: `VoluntaryResourceTest` und `VoluntaryManageTest` überlappen
+  in drei Testpaaren (Hinzufügen, Bearbeitungsformular, Löschen) – Zusammenlegen optional.
 - `tooling/docker.sh verify` grün, alles committet.
 - Spec-Lint grün mit `--strict` (3 Befunde `SPEC_CHANGED_AFTER_STATUS` in
   `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Für UC-001/002 wurden in der
   9. Session nur die geänderten Elemente geprüft (Delta-Audit), kein voller `/use-case-coverage`.
   Nach einer Spec-Änderung an einem `Tested`-Use-Case: Audit, dann `--update-baseline`.
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
-- NFR-006, NFR-011, NFR-021 stehen auf `In Progress`, weil UC-004 sie verlinkt; wieder `Verified`,
-  sobald UC-004 `Tested` ist.
+- Optional: `/spec-review UC-003` für die Ergänzung von Schritt 2 (Reihenfolge der Liste).
 
 ## Was die 11. Session an UC-003 gemacht hat
 
@@ -97,8 +98,7 @@ Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 1. Revision 8 implementieren:
    - **UC-011** Teilen auf der Volontariatsseite (`share.js` wiederverwenden, Muster
      `EventResource/detail.html` und `EventResource.publicAddress`; Dialog mit Organisation und Ort).
-   - **UC-008** Test, dass der Auszug der Startseite zur Volontariatsseite führt.
    - Sonar-Check für neuen Code.
-2. Coverage-Audits und Status / FR- und NFR-Status nachführen (UC-003, 004, 008, 010, 011; optional
+2. Coverage-Audits und Status / FR- und NFR-Status nachführen (UC-008, 010, 011; optional
    auch ein voller Audit für UC-001 und UC-002, siehe „Stand“).
 3. Offene Fragen OQ-005 … OQ-015 mit dem Product Owner klären (`/open-questions`).

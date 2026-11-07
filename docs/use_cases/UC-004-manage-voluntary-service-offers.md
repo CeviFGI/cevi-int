@@ -6,7 +6,7 @@
 **Use Case Name:** Manage Voluntary Service Offers
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published voluntary service offers accurate by adding new offers, correcting existing ones and removing offers that are no longer available.
-**Status:** Approved
+**Status:** Tested
 **Revised:** 2026-11-07 for requirements revision 8 (FR-043, FR-044): every offer carries a Short Name that forms the Public Address of its Offer Page; the administrator may supply it, otherwise the system derives it from the Organisation and the location, as it does for an event from its title (UC-002 BR-005).
 
 **Requirements:** [FR-008, FR-011, FR-012, FR-013, FR-033, FR-044, NFR-006, NFR-011, NFR-021](../requirements.md)

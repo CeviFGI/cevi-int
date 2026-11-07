@@ -6,7 +6,7 @@
 **Use Case Name:** Browse Voluntary Service Offers
 **Primary Actor:** Besucher
 **Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, reads the complete offer that interests them, and learns which Organisation to approach.
-**Status:** Approved
+**Status:** Tested
 **Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041). Revised again on 2026-11-07 for requirements revision 8 (FR-010, FR-043): every offer has an Offer Page of its own, the whole entry in the Offer List leads to it, and the link to the Organisation moved from the list entry to that page. Unfolding the complete Description in place in the list is replaced by the Offer Page. 2026-11-07: step 2 states the order of the Offer List — by Organisation, as the search orders equally ranked offers (UC-010 BR-004) — as decided by the product owner.
 
 **Requirements:** [FR-009, FR-010, FR-022, FR-027, FR-035, FR-038, FR-043](../requirements.md)
