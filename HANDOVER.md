@@ -1,10 +1,11 @@
-# Handover — Stand 2026-11-07 (Ende 4. Session)
+# Handover — Stand 2026-11-07 (5. Session)
 
 Übergabe für die nächste Session. Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Abschnitt 3 (Testlücken UC-005, dann UC-007) mit `/use-case-test UC-XXX`,
-danach jeweils `/use-case-coverage UC-XXX`, Drift mit dem Product Owner klären, bei grünem Audit
-Status auf `Tested` und FR-Status nachführen (Spec-Lint `REQ_STATUS_DRIFT` zeigt die Zielwerte).
+**Nächster Schritt:** `/use-case-coverage UC-005` (Tests sind geschrieben, siehe Abschnitt 3),
+Drift mit dem Product Owner klären, bei grünem Audit Status auf `Tested` und FR-Status nachführen
+(Spec-Lint `REQ_STATUS_DRIFT` zeigt die Zielwerte). Danach UC-007: `/use-case-test UC-007`,
+dann `/use-case-coverage UC-007`.
 
 ## Stand
 
@@ -14,8 +15,15 @@ Status auf `Tested` und FR-Status nachführen (Spec-Lint `REQ_STATUS_DRIFT` zeig
 - Spec-Lint: `0 errors, 0 warnings` mit `--strict`; 1 Befund in `docs/.spec-lint-baseline.json`
   akzeptiert (UC-009 SPEC_CHANGED_AFTER_STATUS: Audit ohne Lücke, verify grün). Prüfen mit
   `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`.
-- `tooling/docker.sh verify` ist grün (Stand Ende 4. Session: 297 Unit-, 96 e2e-Tests,
+- `tooling/docker.sh verify` ist grün (Stand 5. Session: 313 Unit-, 96 e2e-Tests,
   Coverage-Gate erfüllt). Alles committet.
+- **UC-005: Testlücken geschlossen (5. Session), Audit steht noch aus.** `ContactResourceTest`
+  deckt Hauptszenario, A1, A2, A4, A5, BR-001 … BR-008 ab; A3 liegt in
+  `ContactNotificationFailureTest` (Testprofil: echter Mailer gegen 127.0.0.1:1, Quarkus startet
+  dafür einmal neu). A2 per SQLite-Trigger `uc005_a2_insert`. Kein Produktionscode geändert.
+- **Falle bei Log-Tests (BR-007):** Der Mock-Mailer (dev/test) loggt jede Mail inkl. Text unter dem
+  Logger `quarkus-mailer`. Prod ist nicht betroffen (`application-prod.properties`:
+  `quarkus.mailer.mock=false`); der Test nimmt nur diese Zeile aus.
 - **UC-001 ist `Tested`** (4. Session; drittes Coverage-Audit ohne Drift, letzte Lücke A2
   geschlossen). FR-001/002/003/036 `Verified`; FR-022/027/035/038 `In Progress`, weil UC-003 noch
   `Draft` ist. Product-Owner-Entscheide 2026-11-07 umgesetzt: Anlassseite ohne Admin-Links und ohne
@@ -62,11 +70,10 @@ statt `QuarkusTransaction.rollback()` in allen Resources verwenden.
 
 ## 3. Testlücken (`/use-case-test UC-XXX`)
 
-- **UC-005:** A2, A3 (Mailfehler), BR-007 (Nachricht nicht im Log), leere Spam-Antwort,
-  Feldfehler bei A4, Fehlen von Absenderfeldern (BR-004), Hilfetexte (BR-008).
 - **UC-007:** A3 (500-Seite), kein E2E-Test, Versionswerte, Rückweg auf 404-Seite,
   Inhalt Datenschutzseite, „keine Daten geändert“.
-- UC-001/UC-002/UC-006 erledigt (inkl. Code-Marker und Test-Javadoc).
+- UC-001/UC-002/UC-006 erledigt (inkl. Code-Marker und Test-Javadoc); UC-005 Tests und
+  Test-Javadoc erledigt (Code-Marker `// UC-005 BR-YYY:` vom Audit prüfen lassen).
 - Übrige: Code-Marker `// UC-XXX BR-YYY:` fehlen weitgehend (Format in `docs/architecture/stack.md`);
   UC-ID im Test-Javadoc fehlt noch.
 
