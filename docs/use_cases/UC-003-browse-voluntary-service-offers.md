@@ -6,7 +6,7 @@
 **Use Case Name:** Browse Voluntary Service Offers
 **Primary Actor:** Besucher
 **Goal:** A visitor gets an overview of the voluntary service opportunities the working group recommends, reads the complete offer that interests them, and learns which Organisation to approach.
-**Status:** Draft
+**Status:** Approved
 **Revised:** 2026-08-25 for requirements revision 5 (FR-010, FR-035, FR-038). The link to the offering organisation, previously described in this specification but presented on no page, becomes the offer's own control; descriptions are shortened the same way as in the event list. Revised again on 2026-11-06 for requirements revision 7 (FR-041). Revised again on 2026-11-07 for requirements revision 8 (FR-010, FR-043): every offer has an Offer Page of its own, the whole entry in the Offer List leads to it, and the link to the Organisation moved from the list entry to that page. Unfolding the complete Description in place in the list is replaced by the Offer Page.
 
 **Requirements:** [FR-009, FR-010, FR-022, FR-027, FR-035, FR-038, FR-043](../requirements.md)
@@ -45,15 +45,15 @@
 
 ### A3: The visitor is a signed-in administrator
 
-**Trigger:** An Administrator Session exists when the Offer List or an Offer Page is presented (step 2)
+**Trigger:** An Administrator Session exists when the Offer List is presented (step 2)
 **Flow:**
 
-1. The system additionally offers the Maintenance Links for each offer, in the Offer List and on its Offer Page, presented as a separate and quieter group than the action meant for visitors.
+1. The system additionally offers the Maintenance Links for each offer in the Offer List, presented as a separate and quieter group than the action meant for visitors.
 2. Use case continues at step 3.
 
 ### A4: The visitor opens an Offer Page directly
 
-**Trigger:** The visitor follows a shared or bookmarked Public Address of an Offer Page, or picks an offer among the search results (UC-010 step 5), instead of opening the Offer List (step 1)
+**Trigger:** The visitor follows a shared or bookmarked Public Address of an Offer Page, or picks an offer among the search results (UC-010 step 5) or in the extract on the start page (UC-008 step 4), instead of opening the Offer List (step 1)
 **Flow:**
 
 1. The system presents the offer on its Offer Page as in step 4, with the way to the complete Offer List.
@@ -66,6 +66,14 @@
 
 1. The system informs the visitor that the requested page does not exist and offers the way to the Offer List.
 2. Use case ends.
+
+### A6: The visitor on an Offer Page is a signed-in administrator
+
+**Trigger:** An Administrator Session exists when an Offer Page is presented (step 4)
+**Flow:**
+
+1. The system additionally offers the Maintenance Links for that offer on its Offer Page, presented as a separate and quieter group than the control leading to the Organisation.
+2. Use case continues at step 5.
 
 ## Postconditions
 
