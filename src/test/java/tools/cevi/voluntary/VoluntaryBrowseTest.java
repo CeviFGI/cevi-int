@@ -107,6 +107,19 @@ class VoluntaryBrowseTest {
         assertThat(offerPage(offer.slug), containsString(tail));
     }
 
+    /**
+     * BR-004, FR-035: the excerpt is at most 160 characters of the Description's visible text, cut
+     * on a word boundary — 60 × "Wort " (300 characters) gives exactly 32 words and the ellipsis.
+     */
+    @Test
+    void the_list_excerpt_is_at_most_160_characters() {
+        String organization = "CLEANUP UC-003 excerpt160";
+        VoluntaryFixture.createVoluntaryService(organization, "<p>" + "Wort ".repeat(60) + "</p>", "https://example.org/x");
+        String expected = "Wort ".repeat(32).strip() + "…";
+
+        assertThat(card(list(), organization), containsString("<p class=\"card__excerpt\">" + expected + "</p>"));
+    }
+
     /** A2: a Description shorter than the Excerpt stands in full, without a sign of a cut. */
     @Test
     void a_short_description_is_presented_in_full_without_an_ellipsis() {

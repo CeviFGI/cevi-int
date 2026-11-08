@@ -75,6 +75,23 @@ public class EventUpcomingTest {
                 .body(containsString(tail));
     }
 
+    /**
+     * UC-001 BR-004, FR-035: the excerpt is at most 160 characters of the description's visible
+     * text, cut on a word boundary. 60 × "Wort " is 300 characters; the 160th is a space, so the
+     * excerpt is exactly 32 words (159 characters) and the ellipsis — a longer or shorter limit
+     * gives a different number of words.
+     */
+    @Test
+    public void list_excerpt_is_at_most_160_characters() {
+        String title = "CLEANUP list_excerpt_160";
+        EventFixture.createEvent(title, LocalDate.now().plusDays(10), "<p>" + "Wort ".repeat(60) + "</p>");
+        String expected = "Wort ".repeat(32).strip() + "…";
+
+        given().when().get(eventEndpoint).then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("<p class=\"card__excerpt\">" + expected + "</p>"));
+    }
+
     /** UC-001 BR-005: how long an event stays announced is derived from the display date it already has. */
     @Test
     public void list_states_how_much_time_an_event_has_left() {

@@ -2,18 +2,18 @@
   "version": 1,
   "findings": [
     {
-      "fingerprint": "fdab575c4c76e9efc0f1d4ad65e5b06640cacb75",
+      "fingerprint": "c90f9d44cdd5513b063f4bb37ba3c27de1c6033e",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-001-browse-upcoming-events.md",
       "element": "UC-001",
-      "message": "UC-001 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 97d7e0cf)"
+      "message": "UC-001 is Done, but the specification, FR-035 changed after that status was set in 6c7e35c; run the coverage audit again (state 4b491d70)"
     },
     {
-      "fingerprint": "2d09a20f8d5d9143ce8af5eea16f29c3bb6717bf",
+      "fingerprint": "228c172eaee090b55ea9b74fa9c9f0782d938039",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-003-browse-voluntary-service-offers.md",
       "element": "UC-003",
-      "message": "UC-003 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 99f2409b)"
+      "message": "UC-003 is Done, but the specification, FR-035 changed after that status was set in 6c7e35c; run the coverage audit again (state 8479f2d0)"
     },
     {
       "fingerprint": "7e63b6723572dab40cfeaa527bfa26bb631106f5",
@@ -44,25 +44,39 @@
       "message": "UC-008 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 8e2855ff)"
     },
     {
-      "fingerprint": "093771da87d45d1e5ac5a867cf7b9ceda00eb64a",
+      "fingerprint": "75de2e0e8ce6a25806e90a769ca2da6f25d87d5d",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-009-share-an-event.md",
       "element": "UC-009",
-      "message": "UC-009 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 0d06ff35)"
+      "message": "UC-009 is Done, but the specification, C-021 changed after that status was set in 6c7e35c; run the coverage audit again (state d5cd3630)"
     },
     {
-      "fingerprint": "98dcd05497cae8a8fe7273f90779a071558ca46b",
+      "fingerprint": "c809d783f8e9a1b79c2e62e0dda46782728f9df3",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-010-search-events-and-offers.md",
       "element": "UC-010",
-      "message": "UC-010 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 43982bdd)"
+      "message": "UC-010 is Done, but the specification, C-021 changed after that status was set in 6c7e35c; run the coverage audit again (state cba0f0a8)"
     },
     {
-      "fingerprint": "500face07ae3951d96346d7ff5eea375238b8b01",
+      "fingerprint": "0cc0623a6d5a78faf26fd340eece863aa6d84eb8",
       "code": "SPEC_CHANGED_AFTER_STATUS",
       "path": "use_cases/UC-011-share-a-voluntary-service-offer.md",
       "element": "UC-011",
-      "message": "UC-011 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state c69da132)"
+      "message": "UC-011 is Done, but the specification, C-021 changed after that status was set in 6c7e35c; run the coverage audit again (state d82842ae)"
+    },
+    {
+      "fingerprint": "d4c13e4505e2e250624ad989e3bcfcb2b1d90f6b",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-012-add-an-event-to-the-calendar.md",
+      "element": "UC-012",
+      "message": "UC-012 is Tested, but C-021 changed after that status was set in 3ed6b75; run the coverage audit again (state 74d819b5)"
+    },
+    {
+      "fingerprint": "0ac74b8fda47c2744022a48ba203ca6ea9d3fe99",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-013-subscribe-to-the-news-feed.md",
+      "element": "UC-013",
+      "message": "UC-013 is Tested, but C-021 changed after that status was set in 7a6ab6e; run the coverage audit again (state efdfed94)"
     }
   ]
 }
