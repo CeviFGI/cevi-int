@@ -1,8 +1,9 @@
 # ADR-002: Public pages use script only as self-hosted progressive enhancement
 
-**Status:** Accepted
+**Status:** Superseded
 **Date:** 2026-11-08
 **Requirements:** C-021, NFR-041, NFR-024, NFR-042, C-017, C-020, NFR-035, FR-040, FR-042
+**Superseded by:** ADR-009
 
 ## Context
 

@@ -1,8 +1,9 @@
 # ADR-004: Self-host the brand web fonts as files in the repository
 
-**Status:** Accepted
+**Status:** Superseded
 **Date:** 2026-11-08
 **Requirements:** NFR-044, NFR-042, NFR-030, NFR-035, C-018, NFR-041
+**Superseded by:** ADR-010
 
 ## Context
 

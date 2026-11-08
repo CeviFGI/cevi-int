@@ -1,8 +1,9 @@
 # ADR-001: Build the interface on an own token-based design system, without a CSS framework
 
-**Status:** Accepted
+**Status:** Superseded
 **Date:** 2026-11-08
 **Requirements:** C-019, C-020, NFR-037, NFR-041, NFR-044, NFR-045
+**Superseded by:** ADR-008
 
 ## Context
 
