@@ -348,6 +348,9 @@ dl.panel dd:last-child { margin-bottom: 0; }
     margin-bottom: var(--space-5);
 }
 
+/* Link to the Calendar Entry of an event (UC-012); an outline icon, unlike the filled share icon. */
+.calendar-entry svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
 /* Share control of the event and offer pages (UC-009, UC-011). Without script only the address field shows. */
 .share {
     display: flex;

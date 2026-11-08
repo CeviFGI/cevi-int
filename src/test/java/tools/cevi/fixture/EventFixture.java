@@ -49,6 +49,17 @@ public class EventFixture implements QuarkusTestAfterEachCallback {
         return event.id;
     }
 
+    /** For tests of the Calendar Entry (UC-012): an event with a First Day and a Last Day. */
+    public static long createEventWithPeriod(String title, String description, LocalDate firstDay, LocalDate lastDay) {
+        long id = createEvent(title, LocalDate.now(), "some date", "some location", description);
+        QuarkusTransaction.requiringNew().run(() -> {
+            Event event = Event.findById((int) id);
+            event.firstDay = firstDay;
+            event.lastDay = lastDay;
+        });
+        return id;
+    }
+
     public static long createEventWithRest(URL eventEndpoint, String title, String slug) {
         Csrf.given()
                 .formParam("title", title)

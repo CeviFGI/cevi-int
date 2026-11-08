@@ -44,10 +44,20 @@ public class Event extends PanacheEntityBase {
     public String location;
     @NotNull
     public LocalDate displayDate;
+    // UC-002 BR-012: First Day and Last Day are optional, but only together, the Last Day not before
+    // the First Day; checked by EventPeriod when the form is submitted
+    public LocalDate firstDay;
+    public LocalDate lastDay;
     @NotBlank
     @Column(columnDefinition = "TEXT")
     @Size(max= 65535)
     public String description;
+
+    /** Whether the event has a period, and with it a Calendar Entry. */
+    // UC-012 BR-001: the Calendar Entry is offered only while both days are recorded
+    public boolean hasPeriod() {
+        return firstDay != null && lastDay != null;
+    }
 
     // UC-001 BR-001: listed only while the display date is today or later
     // UC-001 BR-002: closest display date first
@@ -83,6 +93,8 @@ public class Event extends PanacheEntityBase {
                 ", date='" + date + '\'' +
                 ", location='" + location + '\'' +
                 ", displayDate=" + displayDate +
+                ", firstDay=" + firstDay +
+                ", lastDay=" + lastDay +
                 ", description='" + description + '\'' +
                 '}';
     }

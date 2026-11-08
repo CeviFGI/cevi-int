@@ -7,6 +7,7 @@ import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 
 import java.net.URI;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +30,11 @@ import tools.cevi.infra.ValidationMessages;
 
 @Path("anlaesse")
 public class EventResource {
+    private static final URI EVENT_LIST = URI.create("/anlaesse");
+    private static final String DETAIL_PATH = "/anlaesse/detail";
+    private static final String CALENDAR_PATH = "/anlaesse/kalender.ics";
+    private static final String SLUG_TAKEN = "Es existiert bereits ein anderer Eintrag mit demselben Slug";
+
     @Inject
     Validator validator;
 
@@ -38,9 +44,9 @@ public class EventResource {
         }
 
         public static native TemplateInstance list(List<Event> events);
-        public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
+        public static native TemplateInstance form(EventForm form, ValidationMessages validationMessages);
         public static native TemplateInstance delete(Event event, boolean removalFailed);
-        public static native TemplateInstance detail(Event event, PublicAddress share);
+        public static native TemplateInstance detail(Event event, PublicAddress share, String calendarEntry);
     }
 
     @GET
@@ -56,7 +62,7 @@ public class EventResource {
     @RolesAllowed("admin")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance add() {
-        return Templates.form(0, "", "", "", LocalDate.now().toString(), "", "", ValidationMessages.none());
+        return Templates.form(EventForm.empty(), ValidationMessages.none());
     }
 
     // UC-002 BR-001: only an administrator may add, change or remove events
@@ -70,7 +76,7 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with id " + id + " not found");
         }
-        return Templates.form(id, event.title, event.slug, event.date, event.displayDate.toString(), event.location, event.description, ValidationMessages.none());
+        return Templates.form(EventForm.of(event), ValidationMessages.none());
     }
 
     @GET
@@ -82,7 +88,34 @@ public class EventResource {
             throw new NotFoundException("Event with slug " + slug + " not found");
         }
         // UC-009 BR-003: the Public Address the share control passes on
-        return Templates.detail(event, PublicAddress.of(uriInfo, "/anlaesse/detail", event.slug));
+        PublicAddress share = PublicAddress.of(uriInfo, DETAIL_PATH, event.slug);
+        // UC-012 BR-001, A1: the offer of the Calendar Entry only while the event has a period
+        String calendarEntry = event.hasPeriod() ? PublicAddress.of(uriInfo, CALENDAR_PATH, event.slug).path() : null;
+        return Templates.detail(event, share, calendarEntry);
+    }
+
+    /**
+     * The Calendar Entry of an event (UC-012). A plain {@code GET} that changes nothing and records
+     * nothing beyond the request log every page view gets (UC-012 BR-006).
+     */
+    // UC-012 BR-006: no record of its own, no counter; NFR-031 logging as for any page view
+    @GET
+    @Path("kalender.ics")
+    @Produces(CalendarEntry.MEDIA_TYPE)
+    public Response calendarEntry(@QueryParam("slug") String slug, @Context UriInfo uriInfo) {
+        Event event = Event.findBySlug(slug);
+        // UC-012 A2: removed, renamed, or without its period — the Not-Found Page, no entry
+        if (event == null || !event.hasPeriod()) {
+            throw new NotFoundException("No calendar entry for event with slug " + slug);
+        }
+        // UC-012 BR-003: the Public Address as for sharing without script
+        String address = PublicAddress.of(uriInfo, DETAIL_PATH, event.slug).address();
+        // UC-012 BR-005: a copy of the event as it is now
+        String file = CalendarEntry.of(event, address, Instant.now());
+        // NFR-048: text/calendar, a file name ending in .ics; UC-012 A3: the device may keep it as a file
+        return Response.ok(file, CalendarEntry.MEDIA_TYPE)
+                .header("Content-Disposition", "attachment; filename=\"" + CalendarEntry.fileName(event) + "\"")
+                .build();
     }
 
     /**
@@ -130,60 +163,77 @@ public class EventResource {
     @RolesAllowed("admin")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response submit(@FormParam("id") long id, @FormParam("title") String title,
-                                   @FormParam("slug") String slug, @FormParam("date") String date,
-                                   @FormParam("displayDate") String displayDate,
-                                   @FormParam("location") String location, @FormParam("description") String description) {
-
+    public Response submit(@BeanParam EventForm form) {
         // UC-002 BR-010: reduced here rather than in the templates: the description is rendered
         // unescaped, so what is stored has to be safe regardless of how it got in
-        String safeDescription = HtmlSanitizer.sanitize(description);
+        form.description = HtmlSanitizer.sanitize(form.description);
 
-        if (id == 0) {
-            return handleAdd(title, slug, date, displayDate, location, safeDescription);
+        if (form.id == 0) {
+            return handleAdd(form);
         } else {
-            return handleEdit(id, title, slug, date, displayDate, location, safeDescription);
+            return handleEdit(form);
         }
     }
 
-    private Response handleAdd(String title, String slug, String date, String displayDate, String location, String description) {
-        if (slug == null || slug.isBlank()) {
-            slug = generateUniqueSlug(0, title);
+    private Response handleAdd(EventForm form) {
+        if (form.slug == null || form.slug.isBlank()) {
+            form.slug = generateUniqueSlug(0, form.title);
         }
 
         Event event = new Event();
-        event.title = title;
-        event.slug = slug;
-        event.date = date;
-        if (tryParseDate(displayDate)) {
-            event.displayDate = LocalDate.parse(displayDate);
-        }
-        event.location = location;
-        event.description = description;
-
         Set<ValidationMessage> violations = new LinkedHashSet<>();
+        apply(form, event, violations);
 
         // UC-002 BR-004: no two events share a short name
-        var eventBySlug = Event.findBySlug(slug);
+        var eventBySlug = Event.findBySlug(form.slug);
         if (eventBySlug != null) {
-            violations.add(ValidationMessage.of("slug", "Es existiert bereits ein anderer Eintrag mit demselben Slug"));
+            violations.add(ValidationMessage.of("slug", SLUG_TAKEN));
         }
 
-        violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toCollection(LinkedHashSet::new)));
+        violations.addAll(validate(event));
         if (violations.isEmpty()) {
             try {
                 QuarkusTransaction.begin();
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Created: " + event);
-                return Response.seeOther(URI.create("/anlaesse")).build();
+                return Response.seeOther(EVENT_LIST).build();
             } catch (Exception e) {
                 Log.error("Unable to save [" + event  + "] to database.", e);
                 Transactions.rollbackIfActive();
             }
         }
         Log.info("Violations encountered while adding: " + violations);
-        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(0, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
+        return rejected(form, violations);
+    }
+
+    /**
+     * Takes the submitted values over into the event. The display date is only taken when it can be
+     * read (BR-008); the period only when it is valid as a whole (BR-012) — otherwise its faults go
+     * into {@code violations} and the entry is rejected.
+     */
+    private static void apply(EventForm form, Event event, Set<ValidationMessage> violations) {
+        event.title = form.title;
+        event.slug = form.slug;
+        event.date = form.date;
+        if (tryParseDate(form.displayDate)) {
+            event.displayDate = LocalDate.parse(form.displayDate);
+        }
+        // UC-002 BR-012: both or neither, readable, the Last Day not before the First Day
+        EventPeriod period = EventPeriod.read(form.firstDay, form.lastDay);
+        violations.addAll(period.violations());
+        event.firstDay = period.firstDay();
+        event.lastDay = period.lastDay();
+        event.location = form.location;
+        event.description = form.description;
+    }
+
+    private Set<ValidationMessage> validate(Event event) {
+        return validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private static Response rejected(EventForm form, Set<ValidationMessage> violations) {
+        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(form, ValidationMessages.of(violations)).render()).build();
     }
 
     // UC-002 BR-005: a short name derived from the title gets a counter until it is free
@@ -198,7 +248,7 @@ public class EventResource {
     }
 
     // UC-002 BR-008: a display date that cannot be read is ignored rather than stored
-    private boolean tryParseDate(String date) {
+    private static boolean tryParseDate(String date) {
         try {
             LocalDate.parse(date);
         } catch (Exception e) {
@@ -207,12 +257,13 @@ public class EventResource {
         return true;
     }
 
-    private Response handleEdit(long id, String title, String slug, String date, String displayDate, String location, String description) {
+    private Response handleEdit(EventForm form) {
+        long id = form.id;
         // UC-002 BR-011: the submitted short name is kept even when the title changed; only an
         // emptied one is derived anew, which retires the previous Public Address.
-        if (slug == null || slug.isBlank()) {
-            slug = generateUniqueSlug(id, title);
-            Log.info("Generated slug: " + slug);
+        if (form.slug == null || form.slug.isBlank()) {
+            form.slug = generateUniqueSlug(id, form.title);
+            Log.info("Generated slug: " + form.slug);
         }
 
         Event event = null;
@@ -221,9 +272,9 @@ public class EventResource {
             QuarkusTransaction.begin();
 
             // UC-002 BR-004: no two events share a short name
-            var eventBySlug = Event.findBySlug(slug);
+            var eventBySlug = Event.findBySlug(form.slug);
             if (eventBySlug != null && eventBySlug.id != id) {
-                violations.add(ValidationMessage.of("slug", "Es existiert bereits ein anderer Eintrag mit demselben Slug"));
+                violations.add(ValidationMessage.of("slug", SLUG_TAKEN));
             }
 
             event = Event.findById(id);
@@ -232,21 +283,14 @@ public class EventResource {
                 Transactions.rollbackIfActive();
                 throw new NotFoundException("Event with id " + id + " not found");
             }
-            event.title = title;
-            event.slug = slug;
-            event.date = date;
-            if (tryParseDate(displayDate)) {
-                event.displayDate = LocalDate.parse(displayDate);
-            }
-            event.location = location;
-            event.description = description;
+            apply(form, event, violations);
 
-            violations.addAll(validator.validate(event).stream().map(ValidationMessage::of).collect(Collectors.toCollection(LinkedHashSet::new)));
+            violations.addAll(validate(event));
             if (violations.isEmpty()) {
                 event.persist();
                 QuarkusTransaction.commit();
                 Log.info("Updated: " + event);
-                return Response.seeOther(URI.create("/anlaesse")).build();
+                return Response.seeOther(EVENT_LIST).build();
             } else {
                 Transactions.rollbackIfActive();
             }
@@ -257,7 +301,7 @@ public class EventResource {
             Transactions.rollbackIfActive();
         }
         Log.info("Violations encountered while updating: " + violations);
-        return Response.status(Response.Status.BAD_REQUEST).entity(Templates.form(id, title, slug, date, displayDate, location, description, ValidationMessages.of(violations)).render()).build();
+        return rejected(form, violations);
     }
 
     /**
@@ -269,7 +313,7 @@ public class EventResource {
             QuarkusTransaction.begin();
             Event.deleteById(event.id);
             QuarkusTransaction.commit();
-            return Response.seeOther(URI.create("/anlaesse")).build();
+            return Response.seeOther(EVENT_LIST).build();
         } catch (Exception e) {
             Log.error("Unable to delete event [" + event.id + "] from database.", e);
             Transactions.rollbackIfActive();

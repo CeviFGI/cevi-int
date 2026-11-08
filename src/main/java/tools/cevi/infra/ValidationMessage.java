@@ -26,6 +26,8 @@ public record ValidationMessage(String fieldName, String message) {
             Map.entry("slug", "Slug"),
             Map.entry("date", "Datum"),
             Map.entry("displayDate", "Anzeigedatum"),
+            Map.entry("firstDay", "Erster Tag"),
+            Map.entry("lastDay", "Letzter Tag"),
             Map.entry("location", "Ort"),
             Map.entry("description", "Beschreibung"),
             Map.entry("organization", "Organisation"),

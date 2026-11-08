@@ -24,6 +24,22 @@
     margin-top: var(--space-2);
 }
 
+/* A group of fields that belong together, e.g. First Day and Last Day of an event (UC-002 BR-012). */
+.field-group {
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+.field-group > legend {
+    padding: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    margin-bottom: var(--space-3);
+}
+.field-group > .field { margin-bottom: var(--space-3); }
+
 .field input[type="text"],
 .field input[type="url"],
 .field input[type="date"],

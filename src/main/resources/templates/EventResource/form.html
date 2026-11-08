@@ -8,7 +8,7 @@
 
 <a class="backlink" href="/anlaesse"><span aria-hidden="true">←</span> Alle Anlässe</a>
 
-{#if id }
+{#if form.id }
 <h1>Anlass bearbeiten</h1>
 {#else}
 <h1>Neuen Anlass anlegen</h1>
@@ -17,7 +17,7 @@
 <form class="panel form-card form-card--wide" action="/anlaesse" method="post">
     {! UC-002 BR-009: changes come only from this form, with a CSRF token bound to this browser !}
     <input type="hidden" name="{inject:csrf.parameterName}" value="{inject:csrf.token}"/>
-    <input type="hidden" name="id" value="{id}" />
+    <input type="hidden" name="id" value="{form.id}" />
 
     {#errorSummary validationMessages title="Der Anlass wurde nicht gespeichert." /}
 
@@ -26,7 +26,7 @@
             {#let error=validationMessages.messageFor('title')}
             <div class="field {#if error}is-error{/if}">
                 <label for="title">Titel <span class="field__required">*</span></label>
-                <input type="text" id="title" name="title" maxlength="255" value="{title}" required
+                <input type="text" id="title" name="title" maxlength="255" value="{form.title}" required
                        {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
             </div>
@@ -35,7 +35,7 @@
             {#let error=validationMessages.messageFor('slug')}
             <div class="field {#if error}is-error{/if}">
                 <label for="slug">Slug</label>
-                <input type="text" id="slug" name="slug" maxlength="255" value="{slug}"
+                <input type="text" id="slug" name="slug" maxlength="255" value="{form.slug}"
                        aria-describedby="slug-help" {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
                 {!Permanent text, not a title tooltip: a tooltip is invisible on a touch device,
@@ -48,7 +48,7 @@
             {#let error=validationMessages.messageFor('date')}
             <div class="field {#if error}is-error{/if}">
                 <label for="date">Datum <span class="field__required">*</span></label>
-                <input type="text" id="date" name="date" maxlength="255" value="{date}" required
+                <input type="text" id="date" name="date" maxlength="255" value="{form.date}" required
                        aria-describedby="date-help" {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
                 <span class="field__help" id="date-help">Frei formulierbar, genau so wie es auf der
@@ -59,7 +59,7 @@
             {#let error=validationMessages.messageFor('displayDate')}
             <div class="field {#if error}is-error{/if}">
                 <label for="displayDate">Anzeigedatum <span class="field__required">*</span></label>
-                <input type="date" id="displayDate" name="displayDate" value="{displayDate}" required
+                <input type="date" id="displayDate" name="displayDate" value="{form.displayDate}" required
                        aria-describedby="displayDate-help" {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
                 <span class="field__help" id="displayDate-help">Bis und mit diesem Tag steht der
@@ -68,10 +68,35 @@
             </div>
             {/let}
 
+            {! UC-002 BR-012: optional, but only together; the period of the Calendar Entry (UC-012) !}
+            <fieldset class="field-group" aria-describedby="period-help">
+                <legend>Kalendereintrag</legend>
+                {#let error=validationMessages.messageFor('firstDay')}
+                <div class="field {#if error}is-error{/if}">
+                    <label for="firstDay">Erster Tag</label>
+                    <input type="date" id="firstDay" name="firstDay" value="{form.firstDay}"
+                           {#if error}aria-invalid="true"{/if}>
+                    {#if error}<p class="field__error">{error}</p>{/if}
+                </div>
+                {/let}
+
+                {#let error=validationMessages.messageFor('lastDay')}
+                <div class="field {#if error}is-error{/if}">
+                    <label for="lastDay">Letzter Tag</label>
+                    <input type="date" id="lastDay" name="lastDay" value="{form.lastDay}"
+                           {#if error}aria-invalid="true"{/if}>
+                    {#if error}<p class="field__error">{error}</p>{/if}
+                </div>
+                {/let}
+                <span class="field__help" id="period-help">Beide Tage angeben, damit Besucher den
+                      Anlass in ihren Kalender übernehmen können; bei einem eintägigen Anlass zweimal
+                      dasselbe Datum. Leer lassen, dann gibt es keinen Kalendereintrag.</span>
+            </fieldset>
+
             {#let error=validationMessages.messageFor('location')}
             <div class="field {#if error}is-error{/if}">
                 <label for="location">Ort <span class="field__required">*</span></label>
-                <input type="text" id="location" name="location" maxlength="255" value="{location}"
+                <input type="text" id="location" name="location" maxlength="255" value="{form.location}"
                        required {#if error}aria-invalid="true"{/if}>
                 {#if error}<p class="field__error">{error}</p>{/if}
             </div>
@@ -83,7 +108,7 @@
             <div class="field {#if error}is-error{/if}">
                 <label for="description">Beschreibung <span class="field__required">*</span></label>
                 <textarea id="description" name="description" maxlength="65535" required
-                          {#if error}aria-invalid="true"{/if}>{description}</textarea>
+                          {#if error}aria-invalid="true"{/if}>{form.description}</textarea>
                 {#if error}<p class="field__error">{error}</p>{/if}
                 <span class="field__help">Formatierung wird beim Speichern auf das zugelassene
                       Markup reduziert; was hier steht, erscheint auf der Detailseite. Die ersten

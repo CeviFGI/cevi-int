@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.is;
 
 /**
  * UC-002 Manage Events: the rules the event form enforces on what it accepts — BR-001, BR-002,
- * BR-003, BR-008, A2, A6 and A7 for adding (main success scenario) and changing (A1) an event.
+ * BR-003, BR-008, BR-012, A2, A6 and A7 for adding (main success scenario) and changing (A1) an event.
  */
 @QuarkusTest
 class EventFormRulesTest {
@@ -166,6 +166,120 @@ class EventFormRulesTest {
         assertThat(changed.displayDate, equalTo(stored));
     }
 
+    /** BR-012: First Day and Last Day are stored as given; an event of a single day has the same date in both. */
+    @ParameterizedTest
+    @CsvSource({"2099-07-01, 2099-07-05", "2099-07-01, 2099-07-01", "2001-01-01, 2001-01-02"})
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void a_valid_period_is_stored(String firstDay, String lastDay) {
+        Map<String, String> entry = validEntry("CLEANUP BR-012 valid " + firstDay + " " + lastDay);
+        entry.put("firstDay", firstDay);
+        entry.put("lastDay", lastDay);
+
+        submit(Csrf.given(), entry).then().statusCode(HttpStatus.SC_SEE_OTHER);
+
+        Event stored = Event.find("title", entry.get("title")).firstResult();
+        EventFixture.trackForCleanup(stored.id);
+        assertThat(stored.firstDay, equalTo(LocalDate.parse(firstDay)));
+        assertThat(stored.lastDay, equalTo(LocalDate.parse(lastDay)));
+    }
+
+    /** BR-012: the period is optional; an event without it is stored as before. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void an_event_without_period_is_stored() {
+        Map<String, String> entry = validEntry("CLEANUP BR-012 no period");
+
+        submit(Csrf.given(), entry).then().statusCode(HttpStatus.SC_SEE_OTHER);
+
+        Event stored = Event.find("title", entry.get("title")).firstResult();
+        EventFixture.trackForCleanup(stored.id);
+        assertThat(stored.firstDay, is((LocalDate) null));
+        assertThat(stored.lastDay, is((LocalDate) null));
+    }
+
+    /**
+     * BR-012, A2: only one of the two days, a value that cannot be read, or a Last Day before the
+     * First Day rejects the entry, keeps what was typed and marks the field to correct. Unlike the
+     * display date (BR-008) an unreadable day is not ignored.
+     */
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2099-07-01, '',         lastDay",
+            "'',         2099-07-05, firstDay",
+            "1.7.2099,   2099-07-05, firstDay",
+            "2099-07-01, Juli,       lastDay",
+            "2099-07-05, 2099-07-04, lastDay",
+    })
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void a_faulty_period_is_rejected(String firstDay, String lastDay, String field) {
+        long eventCount = Event.count();
+        Map<String, String> entry = validEntry("CLEANUP BR-012 faulty " + field);
+        entry.put("firstDay", firstDay);
+        entry.put("lastDay", lastDay);
+
+        String html = submit(Csrf.given(), entry).then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().asString();
+
+        assertFieldMarked(html, field);
+        assertValuesKept(html, entry, null);
+        assertThat(html, containsString("name=\"firstDay\" value=\"" + firstDay + "\""));
+        assertThat(html, containsString("name=\"lastDay\" value=\"" + lastDay + "\""));
+        assertThat(Event.count(), equalTo(eventCount));
+    }
+
+    /** BR-012, A1: the edit form shows the stored period, so that saving unchanged keeps it. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void edit_form_shows_the_stored_period() {
+        long id = EventFixture.createEventWithPeriod("CLEANUP BR-012 edit form", "desc",
+                LocalDate.of(2099, 7, 1), LocalDate.of(2099, 7, 5));
+
+        given().queryParam("id", id).when().get(eventEndpoint + "/edit").then()
+                .statusCode(HttpStatus.SC_OK)
+                .body(containsString("name=\"firstDay\" value=\"2099-07-01\""))
+                .body(containsString("name=\"lastDay\" value=\"2099-07-05\""));
+    }
+
+    /** BR-012, A1: emptying both days while editing removes the period. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void emptying_both_days_removes_the_period() {
+        long id = EventFixture.createEventWithPeriod("CLEANUP BR-012 remove period", "desc",
+                LocalDate.of(2099, 7, 1), LocalDate.of(2099, 7, 5));
+        Map<String, String> entry = validEntry("CLEANUP BR-012 remove period");
+        entry.put("id", Long.toString(id));
+
+        submit(Csrf.given(), entry).then().statusCode(HttpStatus.SC_SEE_OTHER);
+
+        Event changed = Event.findById((int) id);
+        assertThat(changed.firstDay, is((LocalDate) null));
+        assertThat(changed.lastDay, is((LocalDate) null));
+    }
+
+    /** BR-012, A1, A2: a faulty period on a change is rejected and the stored period stays. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void a_faulty_period_on_a_change_keeps_the_stored_one() {
+        long id = EventFixture.createEventWithPeriod("CLEANUP BR-012 change faulty", "desc",
+                LocalDate.of(2099, 7, 1), LocalDate.of(2099, 7, 5));
+        Map<String, String> entry = validEntry("CLEANUP BR-012 change faulty changed");
+        entry.put("id", Long.toString(id));
+        entry.put("firstDay", "2099-07-10");
+        entry.put("lastDay", "2099-07-09");
+
+        String html = submit(Csrf.given(), entry).then()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract().asString();
+
+        assertThat(html, containsString("Anlass bearbeiten"));
+        assertFieldMarked(html, "lastDay");
+        Event unchanged = Event.findById((int) id);
+        assertThat(unchanged.title, equalTo("CLEANUP BR-012 change faulty"));
+        assertThat(unchanged.firstDay, equalTo(LocalDate.of(2099, 7, 1)));
+        assertThat(unchanged.lastDay, equalTo(LocalDate.of(2099, 7, 5)));
+    }
+
     /** A7, BR-009: an addition without the token of the system's own form is refused, nothing is stored. */
     @Test
     @TestSecurity(user = "admin", roles = {"admin"})
@@ -271,6 +385,8 @@ class EventFormRulesTest {
         entry.put("slug", "");
         entry.put("date", "Sommer 2099");
         entry.put("displayDate", "2099-07-01");
+        entry.put("firstDay", "");
+        entry.put("lastDay", "");
         entry.put("location", "Genf");
         entry.put("description", "Beschreibung");
         return entry;

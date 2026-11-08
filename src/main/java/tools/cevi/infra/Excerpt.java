@@ -62,17 +62,8 @@ public final class Excerpt {
         return cut.stripTrailing() + "…";
     }
 
-    /**
-     * The handful of references the sanitiser's output actually contains. {@code &amp;} is decoded
-     * last, so that a stored "&amp;lt;" turns into the text "&lt;" rather than into a tag.
-     */
+    /** In one pass, so that a stored "&amp;lt;" turns into the text "&lt;" rather than into a tag. */
     private static String decodeEntities(String text) {
-        return text.replace("&nbsp;", " ")
-                .replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&quot;", "\"")
-                .replace("&#39;", "'")
-                .replace("&#x27;", "'")
-                .replace("&amp;", "&");
+        return PlainText.decode(text);
     }
 }
