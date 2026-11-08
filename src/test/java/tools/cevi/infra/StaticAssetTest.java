@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Every asset a stylesheet or a page names has to exist. A missing font degrades silently to a
@@ -22,15 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @QuarkusTest
 class StaticAssetTest {
-
-    /** The two faces a German page always needs — the budget in NFR-041 is stated against these. */
-    private static final List<String> BASELINE_FONTS =
-            List.of("/fonts/montserrat-latin.woff2", "/fonts/lora-latin.woff2");
-
-    private static final int BASELINE_FONT_BUDGET_BYTES = 90 * 1024;
-
-    /** Comfortably above the 5.8 KB the current asset costs, well below a full-size original. */
-    private static final int LOGO_BUDGET_BYTES = 12 * 1024;
 
     private static final Pattern CSS_URL = Pattern.compile("url\\((/[^)\"']+)\\)");
     private static final Pattern IMPORT = Pattern.compile("@import\\s+\"([^\"]+)\"");
@@ -63,32 +53,8 @@ class StaticAssetTest {
                 .statusCode(200)
                 .extract().body().asByteArray();
 
-        assertTrue(logo.length <= LOGO_BUDGET_BYTES,
-                () -> "the logo is " + logo.length + " bytes, over the " + LOGO_BUDGET_BYTES
-                        + " byte budget — it is drawn at most 40 CSS px tall (NFR-041)");
         assertEquals(674, pngWidth(logo),
                 "a logo wider than twice its rendered width is bytes the visitor cannot see");
-    }
-
-    /**
-     * The extended and italic faces are declared but fetched only when rendered text needs them,
-     * so the figure that has to stay inside the budget is the baseline pair, not the whole
-     * directory (NFR-041).
-     */
-    @Test
-    void the_fonts_a_german_page_always_loads_stay_within_the_budget() {
-        int total = 0;
-        for (String font : BASELINE_FONTS) {
-            byte[] body = given().when().get(font).then()
-                    .statusCode(200)
-                    .extract().body().asByteArray();
-            total += body.length;
-        }
-
-        final int measured = total;
-        assertTrue(measured <= BASELINE_FONT_BUDGET_BYTES,
-                () -> "montserrat-latin plus lora-latin come to " + measured
-                        + " bytes, over the " + BASELINE_FONT_BUDGET_BYTES + " byte budget (NFR-041)");
     }
 
     /**

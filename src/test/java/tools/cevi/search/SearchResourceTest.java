@@ -37,8 +37,7 @@ import static org.hamcrest.Matchers.startsWith;
 /**
  * UC-010 Search Events and Offers — the Search Results Page, the Live Results fragment and the
  * Event Page or Offer Page a search leads to, over HTTP against the real database. The behaviour in the
- * browser (typing, keyboard, scrolling) is covered by {@code SearchE2ETest}; the response time of
- * NFR-046 by {@code SearchResponseTimeTest}.
+ * browser (typing, keyboard, scrolling) is covered by {@code SearchE2ETest}.
  *
  * <p>Every entry created here carries an invented word beginning with {@code zq}, so the demo data
  * of the test database can never be what a test finds.

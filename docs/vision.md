@@ -76,13 +76,10 @@ international work, which shapes every goal below.
 - **Sender data on the contact form.** No name, no e-mail field. A visitor who wants a reply
   writes their contact details into the message text (UC-005 BR-004) — deliberate data minimisation.
 - **Content in languages other than German.** The audience is German-speaking Swiss Cevi members.
-
-### Undecided
-
-- **Exchange offers.** The database holds an `EXCHANGE` table and the user interface holds a
-  display fragment for it, but no code reads or writes it and no use case describes it. Either the
-  feature is completed or the table is dropped — this is a product decision, recorded as a
-  requirement flagged for review rather than silently resolved.
+- **Exchange offers.** The unused `EXCHANGE` table and its display fragment are removed (FR-029
+  rejected, OQ-005).
+- **Account management in the application.** Accounts stay a deployment matter of the operator
+  (FR-030 rejected, OQ-006).
 
 ## 6. Quality Goals
 
@@ -114,10 +111,7 @@ international work, which shapes every goal below.
 
 ## 9. Open Questions
 
-1. Should exchange offers be built out, or should the `EXCHANGE` table be dropped? (see §5)
-2. What availability and backup expectations apply — the platform currently has no monitoring and
-   no documented backup of the SQLite file.
-3. Should administrators be able to manage accounts (create users, change passwords) themselves,
-   or does the operator keep doing that at deployment level?
-4. Which browsers and which accessibility level are binding? Both are assumed in
-   `docs/requirements.md` and marked for confirmation.
+None. The questions this section once held are decided and recorded in `docs/open_questions.md`:
+exchange offers are dropped (OQ-005), accounts stay with the operator (OQ-006), a daily backup is
+the only operational expectation (OQ-008), and current evergreen browsers are supported (OQ-010);
+the accessibility level is WCAG 2.1 AA (NFR-014).

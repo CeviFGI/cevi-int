@@ -17,8 +17,8 @@ import tools.cevi.voluntary.VoluntaryService;
  * Matches a Search Term against the entries the public lists show (UC-010). The entries are
  * read by the caller; this class only decides what matches, how it ranks and what is shown of it.
  *
- * <p>The term never reaches the database: the lists are small enough (NFR-046 sizes them at 500
- * events and 200 offers) to match in memory, which is also the only way to compare the text a
+ * <p>The term never reaches the database: the lists are small enough (a few hundred entries at
+ * most) to match in memory, which is also the only way to compare the text a
  * visitor reads rather than the stored markup (BR-002).
  */
 public final class Search {

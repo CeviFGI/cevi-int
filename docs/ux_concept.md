@@ -122,9 +122,8 @@ This is the reason the palette assigns **blue as the reading colour and red as t
 blue clears AAA everywhere and can carry text; red clears AA only on white and is therefore
 reserved for buttons, the active navigation marker, badges and rules.
 
-**Dark mode** is specified as an optional, low-priority addition (§9). The token layer is built so
-that it costs one `@media (prefers-color-scheme: dark)` block redefining ~12 variables, and nothing
-else. It is not required for the redesign to be complete.
+**Dark mode** is not offered: the product owner decided against it on 2026-11-08 (NFR-045
+Rejected, OQ-014).
 
 ### 3.2 Typography
 
@@ -612,22 +611,20 @@ clickable — this is the classic failure mode of the pattern and is called out 
 
 ---
 
-## 7. Performance budget
+## 7. Page weight
 
-The current public page ships one 245-line stylesheet and a 29 KB logo, and — since the Jodit fix —
-no editor assets (NFR-036). The redesign must not undo that.
+The byte budgets this section once set for stylesheets, web fonts, script and the whole page were
+dropped on 2026-11-08 (NFR-041 Rejected, OQ-015): with few visitors and little data, page weight is
+not a target. What stays is not a budget but a rule:
 
-| Asset | Budget | Note |
+| Asset | Rule | Note |
 |---|---|---|
-| CSS (all files, gzipped) | ≤ 24 KB | **16.5 KB measured** after phase 4 — hand-written tokens + components, comments included. Before the redesign: ≈ 1.5 KB raw, which is why it looked unstyled. |
-| Web fonts | ≤ 90 KB | **69.9 KB measured** for a German page (Montserrat + Lora, Latin). Extended and italic faces load only when used. |
-| JavaScript on public pages | **0 bytes** | Unchanged. Navigation, disclosure and layout are CSS-only. |
-| Logo | ≤ 12 KB | Replace the 1500 × 178 PNG with an SVG, or a 2× raster at the size actually used. |
-| Total public page weight | ≤ 150 KB | Well inside NFR-001's 1000 ms budget on mobile data. |
-| Editor assets on public pages | 0 bytes | NFR-036 — must not regress; `EditorAssetsTest` already guards it. |
+| Every asset | served from the application's own origin | NFR-042 — no CDN, no font service. |
+| Editor assets on public pages | 0 bytes | NFR-036 — `EditorAssetsTest` guards it. |
+| JavaScript on public pages | only as progressive enhancement | C-021, ADR-009 — self-hosted third-party libraries are allowed. |
+| Logo | a 2× raster at the size actually drawn | `StaticAssetTest` checks the width. |
 
-Fonts are the only new cost. They are worth it: typography is what separates this from the
-"unstyled document" impression, and 70 KB cached for a year is a one-time cost per visitor.
+The extended and italic font faces still load only when rendered text uses them (ADR-010).
 
 ---
 
@@ -644,9 +641,8 @@ Recording this matters as much as the design itself — a redesign is where scop
 - **No change to the security invariants.** CSRF on every state change, sanitisation before
   storage, `script-src 'self'` with no inline `<script>`, editor assets on the two form pages only.
   Every one of these has a test; none of them may be weakened to make a layout easier.
-- **No change to `EXCHANGE`.** The open question in `docs/vision.md` §9 stays open; the redesign
-  neither builds nor removes the feature. `templates/tags/exchange.html` is restyled along with its
-  siblings so it does not rot, and nothing more.
+- **No exchange offers.** FR-029 was rejected (OQ-005); the `EXCHANGE` table and its display
+  fragment are removed.
 
 ---
 
@@ -654,8 +650,6 @@ Recording this matters as much as the design itself — a redesign is where scop
 
 | Idea | Why it is deferred |
 |---|---|
-| Dark mode | Costs ~12 token redefinitions once the token layer exists. Worth doing, but it doubles the visual review effort. Low priority. |
-| Per-event share button (Web Share API) | Needs JavaScript on a public page; violates the 0-byte budget for a small gain. Reconsider only if link sharing is measured. |
 | Filtering the event list (by region, by month) | Real value, but it is a new use case with new requirements — not a redesign. |
 | Photographs per event | Needs a schema change, an upload path, storage on a read-only container filesystem (C-014) and a licence process. A separate project. |
 | Open Graph preview images | Would meaningfully improve links shared in chat groups — which is *the* distribution channel (vision §3). Cheap for a static image, expensive per-event. Worth a follow-up decision. |
@@ -664,11 +658,5 @@ Recording this matters as much as the design itself — a redesign is where scop
 
 ## 10. Open points for confirmation
 
-| Ref | Question |
-|---|---|
-| §3.2 | Is Lora as body face accepted, given the "old school" feedback — or should body copy use the CD's third face (Helvetica Neue / system sans)? The font files are already in the repository, so switching costs one token, not a new download. |
-| §4.3 | Is truncating the description to a 160-character excerpt in the list acceptable to the administrators who write those descriptions? |
-| §4.6 | Is the hero wording ("Raus aus der Schweiz. Rein in die Welt.") on-brand, or should the working group supply the copy? |
-| §4.6 | Does `/` becoming a real page instead of a redirect need coordination with anyone linking to the site today? |
-| §7 | Is a replacement logo asset (SVG or correctly-sized raster) available from the working group, or should the existing PNG be down-scaled? |
-| §9 | Dark mode in this delivery or a later one? |
+All points were decided: Lora stays the body face (OQ-013), the 160-character excerpt is confirmed
+(OQ-012), the hero wording stays as proposed (OQ-011), and dark mode is not offered (OQ-014).

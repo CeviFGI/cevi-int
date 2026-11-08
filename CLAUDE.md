@@ -132,10 +132,11 @@ hub; the files behind it are layered tokens → base → layout → components �
   adds a token there first — never a literal hex value or a `px` font size in a component file.
   The three brand colours are fixed by the Cevi Schweiz Corporate Design Manual (NFR-044) and are
   not open to adjustment.
-- **The whole bundle has a byte ceiling** of 24 KB gzipped, enforced by `CssBudgetTest` (NFR-041).
-  That is what makes a CSS framework impossible rather than merely discouraged.
+- **No byte budgets.** Stylesheets, fonts and scripts have no size ceiling (NFR-041 rejected,
+  ADR-008 … ADR-010). C-020 alone keeps a CSS framework out; every asset is still served from the
+  application's own origin (NFR-042), and a third-party script library is allowed only self-hosted.
 - **The quality thresholds are tested, not reviewed.** Seven browser tests under
-  `src/test/java/tools/cevi/e2e/` hold the interface to NFR-013, NFR-014 and NFR-038 … NFR-041:
+  `src/test/java/tools/cevi/e2e/` hold the interface to NFR-013, NFR-014 and NFR-038 … NFR-040:
   no page scrolls sideways at any of six widths, no text renders below 14 px, every control is
   44 × 44 on a phone, every focusable element shows a ring, every piece of text reaches its
   contrast threshold, and nothing animates under `prefers-reduced-motion`. Each failure message

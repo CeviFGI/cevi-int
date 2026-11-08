@@ -34,9 +34,6 @@ class EditorAssetsTest {
     /** A script element, with its {@code src} when it has one. */
     private static final Pattern SCRIPT_TAG = Pattern.compile("(?i)<script\\b(?:[^>]*\\ssrc=\"([^\"]*)\")?[^>]*>");
 
-    /** NFR-041: at most 8 KB of self-hosted script per public page, uncompressed. */
-    private static final int SCRIPT_BUDGET = 8 * 1024;
-
     @Test
     void public_pages_do_not_reference_the_editor() {
         for (String path : PUBLIC_PAGES) {
@@ -48,15 +45,15 @@ class EditorAssetsTest {
     }
 
     /**
-     * The rule C-021 and NFR-041 state since 2026-11-06: script may enhance a public page, never
-     * carry it — so a public page carries no inline script (it would need an exception in
-     * {@code script-src 'self'}, NFR-024), only files from its own {@code /js/} folder, never a
-     * library from a WebJar, and at most 8 KB of them in total. The event page, which also loads
-     * the share script, is held to the same ceiling by {@code EventShareTest}; that every page
-     * works without any of it is what the server-rendered tests of each use case show.
+     * The rule of C-021 (ADR-009): script may enhance a public page, never carry it — so a public
+     * page carries no inline script (it would need an exception in {@code script-src 'self'},
+     * NFR-024) and only files served from its own origin (NFR-042); a third-party library is
+     * allowed when it is self-hosted. The event and offer pages, which also load the share script,
+     * are held to the same rule by {@code EventShareTest} and {@code VoluntaryShareTest}; that every
+     * page works without any of it is what the server-rendered tests of each use case show.
      */
     @Test
-    void a_public_page_carries_only_small_self_hosted_scripts() {
+    void a_public_page_carries_only_self_hosted_scripts() {
         List<String> pages = new ArrayList<>(List.of(PUBLIC_PAGES));
         pages.add("/suche?q=anlass");
         for (String path : pages) {
@@ -64,17 +61,13 @@ class EditorAssetsTest {
                     .statusCode(HttpStatus.SC_OK)
                     .extract().body().asString();
 
-            int total = 0;
             Matcher script = SCRIPT_TAG.matcher(body);
             while (script.find()) {
                 String src = script.group(1);
-                assertTrue(src != null && src.startsWith("/js/"),
+                assertTrue(src != null && src.startsWith("/") && !src.startsWith("//"),
                         path + " delivers a script that is inline or not self-hosted (C-021): " + script.group());
-                total += given().when().get(src).then().statusCode(HttpStatus.SC_OK)
-                        .extract().body().asByteArray().length;
+                given().when().get(src).then().statusCode(HttpStatus.SC_OK);
             }
-            assertTrue(total <= SCRIPT_BUDGET,
-                    path + " executes " + total + " bytes of script, more than NFR-041 allows (" + SCRIPT_BUDGET + ")");
         }
     }
 

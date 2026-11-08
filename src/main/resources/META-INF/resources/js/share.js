@@ -1,5 +1,4 @@
 // UC-009 and UC-011 share control; see EventResource/detail.html and VoluntaryResource/detail.html.
-// Counts towards the 8 KB script total of a public page (NFR-041).
 (function () {
     var box = document.querySelector('[data-share]');
     if (!box) return;

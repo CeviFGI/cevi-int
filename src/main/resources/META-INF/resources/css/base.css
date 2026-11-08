@@ -8,7 +8,7 @@
  *
  * Each family is split by unicode-range the way Google Fonts does it, so a browser fetches a file
  * only when rendered text actually needs it. A German page loads montserrat-latin and lora-latin
- * and nothing else — 69.9 KB, inside the NFR-041 budget. The extended faces exist so that a place
+ * and nothing else (ADR-010). The extended faces exist so that a place
  * name like Poděbrady renders correctly without charging every visitor for it; the italic faces
  * are fetched only where a description actually contains emphasis.
  */

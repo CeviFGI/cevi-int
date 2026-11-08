@@ -16,7 +16,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 
@@ -129,9 +128,8 @@ class VoluntaryShareTest {
     }
 
     /**
-     * BR-005, NFR-041 and C-021: the Offer Page loads the same share script as the Event Page from
-     * its own origin; every script it carries is self-hosted, none is inline, and together they
-     * stay within 8 KB.
+     * BR-005, C-021 and NFR-042: the Offer Page loads the same share script as the Event Page from
+     * its own origin; every script it carries is self-hosted and none is inline.
      */
     @Test
     void the_offer_page_loads_the_share_script_from_its_own_origin() {
@@ -141,13 +139,10 @@ class VoluntaryShareTest {
 
         assertThat(body, containsString("<script src=\"" + SHARE_SCRIPT + "\" defer></script>"));
         Matcher script = Pattern.compile("(?i)<script\\b[^>]*>").matcher(body);
-        int total = 0;
         while (script.find()) {
-            Matcher src = Pattern.compile("src=\"(/js/[^\"]+)\"").matcher(script.group());
+            Matcher src = Pattern.compile("src=\"(/[^/\"][^\"]*)\"").matcher(script.group());
             assertThat(script.group(), src.find(), is(true));
-            total += given().when().get(src.group(1)).then().statusCode(HttpStatus.SC_OK)
-                    .extract().body().asByteArray().length;
+            given().when().get(src.group(1)).then().statusCode(HttpStatus.SC_OK);
         }
-        assertThat(total, lessThanOrEqualTo(8 * 1024));
     }
 }

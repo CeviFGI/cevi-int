@@ -3,23 +3,20 @@ package tools.cevi.infra;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Keeps the redesign from turning into a page-weight regression (NFR-041).
+ * Keeps the design system single-sourced (NFR-037, ADR-008). The bundle has no byte ceiling any
+ * more since NFR-041 was rejected on 2026-11-08.
  *
- * <p>The budget is deliberately measured over what the server actually hands out, following the
+ * <p>The checks deliberately run over what the server actually hands out, following the
  * {@code @import} list of {@code site.css} rather than a hard-coded set of file names — a
  * stylesheet that is added but never imported would otherwise be invisible here, and one that is
  * imported but missing would go unnoticed until a page rendered wrong.
@@ -27,26 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @QuarkusTest
 class CssBudgetTest {
 
-    private static final int BUDGET_BYTES_GZIPPED = 24 * 1024;
     private static final Pattern IMPORT = Pattern.compile("@import\\s+\"([^\"]+)\"");
     private static final Pattern HEX_COLOUR = Pattern.compile("(#[0-9A-Fa-f]{3,8})\\b");
     private static final Pattern FUNCTIONAL_COLOUR = Pattern.compile("\\b(rgba?\\(|hsla?\\(|oklch\\()");
     private static final Pattern FONT_SIZE = Pattern.compile("font-size:\\s*([^;]+);");
-
-    @Test
-    void the_stylesheet_bundle_stays_within_its_budget() {
-        String hub = fetch("/css/site.css");
-
-        int sum = gzippedSize(hub);
-        for (String imported : importsOf(hub)) {
-            sum += gzippedSize(fetch("/css/" + imported));
-        }
-        final int total = sum;
-
-        assertTrue(total <= BUDGET_BYTES_GZIPPED,
-                () -> "all stylesheets a public page loads come to " + total
-                        + " bytes gzipped, over the " + BUDGET_BYTES_GZIPPED + " byte budget (NFR-041)");
-    }
 
     /**
      * The token file is the single source of colour and type (NFR-037). This does not prove that
@@ -129,16 +110,5 @@ class CssBudgetTest {
 
     private static String fetch(String path) {
         return given().when().get(path).then().statusCode(200).extract().body().asString();
-    }
-
-    private static int gzippedSize(String content) {
-        try (ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
-            try (GZIPOutputStream gzip = new GZIPOutputStream(sink)) {
-                gzip.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            }
-            return sink.size();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 }

@@ -15,7 +15,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 
@@ -101,8 +100,8 @@ class EventShareTest {
     }
 
     /**
-     * NFR-041 and C-021: the event page loads the share script from its own origin;
-     * every script it carries is self-hosted, none is inline, and together they stay within 8 KB.
+     * C-021 and NFR-042: the event page loads the share script from its own origin;
+     * every script it carries is self-hosted and none is inline.
      */
     @Test
     void the_event_page_loads_the_share_script_from_its_own_origin() {
@@ -112,20 +111,16 @@ class EventShareTest {
 
         assertThat(body, containsString("<script src=\"" + SHARE_SCRIPT + "\" defer></script>"));
         Matcher script = Pattern.compile("(?i)<script\\b[^>]*>").matcher(body);
-        int total = 0;
         while (script.find()) {
-            Matcher src = Pattern.compile("src=\"(/js/[^\"]+)\"").matcher(script.group());
+            Matcher src = Pattern.compile("src=\"(/[^/\"][^\"]*)\"").matcher(script.group());
             assertThat(script.group(), src.find(), is(true));
-            total += given().when().get(src.group(1)).then().statusCode(HttpStatus.SC_OK)
-                    .extract().body().asByteArray().length;
+            given().when().get(src.group(1)).then().statusCode(HttpStatus.SC_OK);
         }
-        assertThat(total, lessThanOrEqualTo(8 * 1024));
     }
 
     /**
      * BR-004: the share script addresses no other host and sends nothing anywhere — no fetch, no
-     * beacon, no request object. Its size counts towards the 8 KB script total of the event page,
-     * which {@link #the_event_page_loads_the_share_script_from_its_own_origin()} checks.
+     * beacon, no request object.
      */
     @Test
     void the_share_script_talks_to_no_host() {
