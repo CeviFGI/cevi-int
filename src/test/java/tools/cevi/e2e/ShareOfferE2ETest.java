@@ -93,14 +93,26 @@ public class ShareOfferE2ETest extends PlaywrightTestBase {
     }
 
     /**
-     * Main success scenario, BR-001, BR-002 and BR-004: a browser that offers a Share Dialog opens
-     * it, filled with the Organisation, the location and the Public Address; afterwards the visitor
-     * is on the Offer Page as before, no confirmation is shown and no other host was contacted.
+     * Collects every request the page makes from now on, to its own host included, so that a
+     * share that reports itself back to the platform shows up (BR-004).
+     */
+    private List<String> requestsFromNowOn() {
+        List<String> requests = new ArrayList<>();
+        page.onRequest(request -> requests.add(request.method() + " " + request.url()));
+        return requests;
+    }
+
+    /**
+     * Main success scenario, BR-001, BR-002, BR-004 and the success postconditions: a browser that
+     * offers a Share Dialog opens it, filled with the Organisation, the location and the Public
+     * Address; afterwards the visitor is on the Offer Page as before, no confirmation is shown, and
+     * the share issued no request at all — nothing is recorded, no other host is contacted.
      */
     @Test
     void the_share_dialog_receives_organisation_location_and_public_address() {
         List<String> foreign = foreignRequests();
         String before = openOfferPage(shareDialog(Outcome.SENT));
+        List<String> requests = requestsFromNowOn();
 
         shareButton().click();
 
@@ -113,6 +125,7 @@ public class ShareOfferE2ETest extends PlaywrightTestBase {
         assertThat(page.url(), is(before));
         assertThat(status()).isEmpty();
         assertThat(foreign, empty());
+        assertThat(requests, empty());
     }
 
     /**
@@ -134,7 +147,7 @@ public class ShareOfferE2ETest extends PlaywrightTestBase {
     /**
      * A1, BR-002, BR-004 and BR-006: without a Share Dialog the Public Address alone lands on the
      * clipboard, the copy is confirmed beside the control as a status message, and the
-     * confirmation disappears on its own.
+     * confirmation disappears on its own. Copying issues no request at all.
      */
     @Test
     void without_a_share_dialog_the_address_is_copied_and_confirmed() {
@@ -143,6 +156,7 @@ public class ShareOfferE2ETest extends PlaywrightTestBase {
         // A controlled clock, so the confirmation's lifetime passes without the test waiting it out.
         page.clock().install();
         openOfferPage(NO_SHARE_DIALOG);
+        List<String> requests = requestsFromNowOn();
 
         shareButton().click();
 
@@ -152,6 +166,7 @@ public class ShareOfferE2ETest extends PlaywrightTestBase {
         page.clock().runFor(5_000);
         assertThat(status()).isEmpty();
         assertThat(foreign, empty());
+        assertThat(requests, empty());
     }
 
     /**
