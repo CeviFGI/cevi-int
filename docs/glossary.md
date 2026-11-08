@@ -24,7 +24,6 @@ test cases.
 | Cevi                         | The Swiss YMCA/YWCA youth association (Cevi Schweiz) whose members form the audience of the platform and whose Corporate Design Manual fixes the brand colours.     |                   |
 | International Working Group  | The volunteer body of Cevi Schweiz that runs the platform, publishes its content and receives Contact Messages; short form *working group*.                         | Team, Committee   |
 | Organisation                 | An outside body that runs a voluntary service or an exchange; the Visitor applies there directly, never through the platform.                                       | Provider          |
-| Partner Organisation         | An Organisation abroad that offers an Exchange Offer together with the International Working Group.                                                                  |                   |
 
 ## Content
 
@@ -40,8 +39,7 @@ test cases.
 | Short Name              | The unique, readable identifier of an Event or a Voluntary Service Offer that forms its Public Address; derived when the Administrator supplies none — for an Event from its title (FR-007), for an offer from its Organisation and location (FR-044). Stored as the attribute `slug`. | Permalink                  |
 | Public Address          | The stable, shareable URL of a page — for an Event or a Voluntary Service Offer built from its Short Name — that still resolves months later, as long as the Administrator does not change the Short Name (UC-001 BR-003, UC-004 BR-008). | Permalink                  |
 | Voluntary Service Offer | A voluntary service opportunity abroad that an Organisation runs and the International Working Group recommends, with Organisation, Organisation Link, location and Description. Short form *offer*. | Job, Internship            |
-| Organisation Link       | The `http://` or `https://` address of the website of the Organisation behind a Voluntary Service Offer or Exchange Offer.                                                                 |                            |
-| Exchange Offer          | An exchange opportunity with a Partner Organisation. Present in the schema but used by no use case; scope undecided (FR-029).                                                               |                            |
+| Organisation Link       | The `http://` or `https://` address of the website of the Organisation behind a Voluntary Service Offer.                                                                 |                            |
 | Description             | The formatted text of an Event or offer, written in the rich-text editor and reduced to the Allow-List before it is stored.                                                                |                            |
 | Allow-List              | The documented set of HTML tags, attributes and URL schemes a Description may keep; everything else is removed on the server before storage (NFR-010).                                     | Whitelist                  |
 | Excerpt                 | At most 160 characters of a Description's visible text shown instead of the full text: in a list entry its beginning (UC-001 BR-004); on the Search Results Page the passage around the earliest occurrence of the Search Term, or the beginning when it does not occur there (UC-010 BR-008). | Teaser                     |
