@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 /**
  * UC-010 Search Events and Offers — the Search Results Page, the Live Results fragment and the
- * Offer List entry a search leads to, over HTTP against the real database. The behaviour in the
+ * Event Page or Offer Page a search leads to, over HTTP against the real database. The behaviour in the
  * browser (typing, keyboard, scrolling) is covered by {@code SearchE2ETest}; the response time of
  * NFR-046 by {@code SearchResponseTimeTest}.
  *
@@ -520,17 +520,21 @@ class SearchResourceTest {
 
     /**
      * BR-002: the Description is searched as the text a visitor reads — the visible text of a link
-     * and of a table is found, a link address and the markup itself are not.
+     * and of a table is found, a link address, the data of an inline picture and the markup itself
+     * are not.
      */
     @Test
     void the_description_is_searched_as_read_text_not_as_markup() {
         event("CLEANUP Markup Anlass", "<p>Siehe <a href=\"https://zqadresse.example.org/\">zqlinktext</a>.</p>"
-                + "<table><tr><td>zqzelle</td></tr></table><p><strong>zqfett</strong>gedruckt</p>");
+                + "<table><tr><td>zqzelle</td></tr></table><p><strong>zqfett</strong>gedruckt</p>"
+                + "<p><img src=\"data:image/png;base64,zqbilddaten\"></p>");
 
         assertThat(titles(eventGroup(search("zqlinktext"))), is(List.of("CLEANUP Markup Anlass")));
         assertThat(titles(eventGroup(search("zqzelle"))), is(List.of("CLEANUP Markup Anlass")));
         assertThat(titles(eventGroup(search("zqfettgedruckt"))), is(List.of("CLEANUP Markup Anlass")));
         assertThat(search("zqadresse"), containsString("Nichts gefunden"));
+        assertThat(search("zqbilddaten"), containsString("Nichts gefunden"));
+        assertThat(search("base64"), not(containsString("CLEANUP Markup Anlass")));
         assertThat(search("strong"), not(containsString("CLEANUP Markup Anlass")));
         assertThat(search("href"), not(containsString("CLEANUP Markup Anlass")));
     }

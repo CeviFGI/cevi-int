@@ -1,6 +1,5 @@
 /*
- * Search (UC-010): the search field in the header, its Live Results, the Search Results Page and
- * the offer a search result leads to.
+ * Search (UC-010): the search field in the header, its Live Results and the Search Results Page.
  *
  * The field sits in the header of every page (BR-007), after the navigation in the markup and on
  * screen alike, so the focus order never departs from what the visitor sees (WCAG 2.4.3): below the

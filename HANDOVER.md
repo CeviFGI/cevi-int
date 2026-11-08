@@ -2,14 +2,14 @@
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Die Lücken der Coverage-Audits von UC-008 und UC-010 schliessen (unten), dann
-beide auf `Tested` setzen.
+**Nächster Schritt:** Die Lücken des Coverage-Audits von UC-008 schliessen (unten), dann UC-008 auf
+`Tested` setzen – danach sind alle Use Cases `Tested`.
 
 ## Stand
 
-- UC-001 … 007, 009, 011 `Tested`. `tooling/docker.sh verify` grün, alles committet.
-- UC-008 und UC-010: Code vollständig (Audit 2026-11-08: Implementierung 17/17 bzw. 27/27), Tests
-  lückenhaft (siehe unten). Status beider noch `Approved`.
+- UC-001 … 007, 009, 010, 011 `Tested`. `tooling/docker.sh verify` grün, alles committet.
+- UC-008: Code vollständig (Audit 2026-11-08: Implementierung 17/17), Tests lückenhaft (6/17, siehe
+  unten). Status noch `Approved`.
 - Spec-Lint grün mit `--strict` (3 Befunde `SPEC_CHANGED_AFTER_STATUS` in
   `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Nach einer Spec-Änderung an
   einem `Tested`-Use-Case: Audit, dann `--update-baseline`.
@@ -61,24 +61,7 @@ Markern in 1.9.
 Danach Coverage-Audit wiederholen, `verify`, dann UC-008 `Tested`; FR-023, FR-034 `Verified`, FR-043
 von `In Progress` auf `Verified`.
 
-### 2. UC-010 Search Events and Offers – eine Testlücke, veraltete Kommentare
-
-Audit: Tests 26/27.
-
-1. **BR-002 Bilddaten:** in `SearchResourceTest.the_description_is_searched_as_read_text_not_as_markup`
-   eine Beschreibung mit `<img src="data:image/png;base64,…">` speichern und zeigen, dass ein Token
-   aus der data-URL nichts findet (Code entfernt den Tag bereits, `Excerpt.java:49`).
-2. **Drift – veraltete Kommentare** (Spezifikation seit FR-043: Angebotstreffer führt auf die
-   Volontariatsseite; der Code tut das schon). Empfehlung (vom User noch nicht ausdrücklich
-   bestätigt, aber durch FR-043 vorgegeben): nur die Kommentare nachführen.
-   - `templates/tags/searchHit.html:4-5` („to the offer's entry in the Offer List“)
-   - `SearchResourceTest.java:38-39` („the Offer List entry a search leads to“)
-   - `css/search.css:3` („the offer a search result leads to“)
-
-Danach `verify`, UC-010 `Tested`; FR-041, FR-042, NFR-046, NFR-047 `Verified`. Mit UC-010 werden auch
-NFR-041 und C-021 `Verified` (verlinkt von UC-009, UC-010, UC-011; die anderen beiden sind `Tested`).
-
-### 3. Kleinigkeiten
+### 2. Kleinigkeiten
 
 - `docs/requirements.md:266` (Verifikationstabelle NFR-041) nennt nur `EventShareTest` für das
   8-KB-Skriptlimit; `VoluntaryShareTest` prüft es jetzt auch für die Volontariatsseite – über
@@ -87,7 +70,7 @@ NFR-041 und C-021 `Verified` (verlinkt von UC-009, UC-010, UC-011; die anderen b
   Anfragen an fremde Hosts, nicht, dass das Teilen gar keine Anfrage auslöst. Muster:
   `ShareOfferE2ETest.requestsFromNowOn()`.
 
-### 4. Optional / später
+### 3. Optional / später
 
 - Voller Audit für UC-001 und UC-002 (in der 9. Session nur Delta-Audit); `/spec-review UC-003` für
   die Ergänzung von Schritt 2 (Reihenfolge der Liste); die drei überlappenden Testpaare in
