@@ -8,8 +8,6 @@
 **Goal:** A visitor finds the Upcoming Events and Voluntary Service Offers that mention what they are looking for — a country, a topic, an organisation — without reading through the Event List and the Offer List one entry after another.
 **Trigger:** The visitor enters a Search Term in the search field and starts the search.
 **Status:** Done
-**Introduced:** 2026-11-06 with requirements revision 7 (FR-041, FR-042). Until then a visitor could find an event or offer only by reading both lists, and the full Description of an offer only by opening each one in place.
-**Revised:** 2026-11-07 for requirements revision 8 (FR-043): every offer has an Offer Page of its own, so a match on an offer now leads to that page, as a match on an event leads to its Event Page, instead of to the offer's entry in the Offer List.
 
 **Requirements:** [FR-041, FR-042, NFR-041, NFR-046, NFR-047, C-021](../requirements.md)
 **Layers:** UI

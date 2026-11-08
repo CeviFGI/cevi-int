@@ -1,8 +1,7 @@
 # Glossary
 
-**Date:** 2026-11-06 (Search Term, Search Results Page, Live Results added; Share Dialog, Event Page added; Excerpt extended to the Search Results Page)
 **Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
-`docs/use_cases/UC-001` … `UC-010`
+`docs/use_cases/UC-001` … `UC-012`
 
 One name per domain concept. The specifications are written in English; where the German
 interface uses its own label, the definition names it so the screens can be matched to the terms.
@@ -31,10 +30,13 @@ test cases.
 
 | Term                    | Definition                                                                                                                                                                                  | Avoid                      |
 |-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
-| Event                   | An international Cevi gathering announced on the platform, with title, Date Text, location, Display Date and Description. Labelled *Anlass* in the interface. Registration happens with the organiser, not here. | Camp                       |
+| Event                   | An international Cevi gathering announced on the platform, with title, Date Text, location, Display Date and Description, and optionally a First Day and a Last Day. Labelled *Anlass* in the interface. Registration happens with the organiser, not here. | Camp                       |
 | Upcoming Event          | An Event whose Display Date is today or later; only Upcoming Events appear on the Event List (UC-001 BR-001).                                                                                      | Current event, Future event |
 | Date Text               | The free-text period of an Event as Visitors read it, e.g. "15. – 24. Oktober 2023"; never compared by the system.                                                                          |                            |
 | Display Date            | The single calendar date until which an Event stays on the Event List; the system compares it with today and derives from it how much time is left (UC-001 BR-005).                               | Expiry date, End date      |
+| First Day               | The optional calendar date on which an Event begins; together with the Last Day it forms the period of the Calendar Entry. Labelled *Erster Tag* in the event form. | Start date                 |
+| Last Day                | The optional calendar date on which an Event ends, never before its First Day; independent of the Display Date, which decides only the listing. Labelled *Letzter Tag* in the event form. |                            |
+| Calendar Entry          | An iCalendar file (`.ics`) delivered from an Event Page that holds the Event as one all-day entry from its First Day to its Last Day; the Visitor's device opens it in its calendar app or saves it (FR-047). | Calendar invite |
 | Short Name              | The unique, readable identifier of an Event or a Voluntary Service Offer that forms its Public Address; derived when the Administrator supplies none — for an Event from its title (FR-007), for an offer from its Organisation and location (FR-044). Stored as the attribute `slug`. | Permalink                  |
 | Public Address          | The stable, shareable URL of a page — for an Event or a Voluntary Service Offer built from its Short Name — that still resolves months later, as long as the Administrator does not change the Short Name (UC-001 BR-003, UC-004 BR-008). | Permalink                  |
 | Voluntary Service Offer | A voluntary service opportunity abroad that an Organisation runs and the International Working Group recommends, with Organisation, Organisation Link, location and Description. Short form *offer*. | Job, Internship            |

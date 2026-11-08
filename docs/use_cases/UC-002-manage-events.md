@@ -6,10 +6,9 @@
 **Use Case Name:** Manage Events
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
-**Status:** Done
-**Revised:** 2026-11-07, as decided by the product owner: step 9 no longer promises that the new event is visible in the list, because an event whose display date has passed is stored but not listed publicly (A9, UC-001 BR-001); BR-011 states that a Short Name stays until the administrator changes it. The behaviour is unchanged.
+**Status:** Draft
 
-**Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, NFR-006, NFR-011, NFR-021](../requirements.md)
+**Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, FR-046, NFR-006, NFR-011, NFR-021](../requirements.md)
 
 ## Preconditions
 
@@ -20,11 +19,11 @@
 
 1. The administrator opens the event list and chooses to add a new event.
 2. The system presents an empty event form with today's date pre-filled as the display date.
-3. The administrator enters the title, the date text as visitors read it, the location, the display date and a formatted description, and optionally a short name for the event address.
+3. The administrator enters the title, the date text as visitors read it, the location, the display date and a formatted description, and optionally a short name for the event address and the First Day and Last Day of the event.
 4. The administrator submits the form.
 5. The system confirms that the submission comes from a form it handed out to the browser the administrator works in.
 6. The system derives a short name from the title if none was entered.
-7. The system checks that all mandatory information is present and that the short name is not already used by another event.
+7. The system checks that all mandatory information is present, that the short name is not already used by another event, and that the First Day and Last Day are either both given or both left empty, with the Last Day not before the First Day.
 8. The system reduces the formatted description to the formatting it permits, discarding anything else.
 9. The system records the event and returns the administrator to the event list.
 
@@ -42,7 +41,7 @@
 
 ### A2: Incomplete or invalid entry
 
-**Trigger:** A mandatory value is missing, a value is too long, or the short name is already used by another event (step 7)
+**Trigger:** A mandatory value is missing, a value is too long, the short name is already used by another event, or the First Day and Last Day are incomplete, unreadable or in the wrong order (step 7)
 **Flow:**
 
 1. The system rejects the entry, keeps the values the administrator typed and marks the fields that need correction.
@@ -164,3 +163,7 @@ Before a description is stored, it is reduced to the formatting the platform per
 ### BR-011: A Short Name stays until the administrator changes it
 
 Changing the title of an existing event does not change its Short Name, so a link to the event that visitors have already passed on keeps working. Only an administrator who edits the Short Name itself changes the Public Address — the previous address then no longer leads to the event. An administrator who empties the Short Name while editing changes it, too: the system derives a new one from the title as in BR-005, and the previous address no longer leads to the event.
+
+### BR-012: First Day and Last Day are optional, but only together
+
+An event may be recorded without a First Day and Last Day; it then offers no Calendar Entry (UC-012 BR-001). When the administrator gives one of the two, the other must be given as well, and the Last Day must not lie before the First Day; an event of a single day has the same date in both. A value that cannot be read as a date rejects the entry, it is not ignored as the display date is (BR-008). First Day and Last Day are not compared with the display date or the date text, and may lie in the past. An administrator who empties both while editing removes the event's period, and with it the offer of the Calendar Entry.

@@ -7,7 +7,6 @@
 **Primary Actor:** Besucher, Operator
 **Goal:** A visitor learns who runs the platform and how their data is handled, and an operator can check which version of the application is running.
 **Status:** Done
-**Revised:** 2026-08-25 for requirements revision 5 (FR-023, FR-034, FR-039). Entering the site is no longer part of this use case: the start page gained content of its own and is specified separately as UC-008. The collected external sources are grouped by channel so that one link can be found without reading all of them.
 
 **Requirements:** [FR-024, FR-025, FR-026, FR-028, FR-039](../requirements.md)
 

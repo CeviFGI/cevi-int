@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Gives every voluntary service offer a Short Name (requirements revision 8, FR-044). An offer
+ * Gives every voluntary service offer a Short Name (FR-044). An offer
  * recorded before this revision receives one derived from its Organisation and location, so that no
  * row is left without a Public Address (entity model, VOLUNTARY_SERVICE constraints).
  * <p>

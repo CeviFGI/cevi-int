@@ -87,7 +87,7 @@ neither a letter nor a digit separates words, in the Search Term and in the entr
 **Blocking:** No
 **Status:** Open
 
-FR-029 records exchange offers as present in the schema but used by no use case. Readings: (a) complete them with a use case of their own; (b) drop the table and the fragment. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+FR-029 records exchange offers as present in the schema but used by no use case. Readings: (a) complete them with a use case of their own; (b) drop the table and the fragment.
 
 ## OQ-006: Do administrators manage accounts in the application, or does the operator do it at deployment level?
 
@@ -96,7 +96,7 @@ FR-029 records exchange offers as present in the schema but used by no use case.
 **Blocking:** No
 **Status:** Open
 
-The initial account comes from a deployment secret (UC-006 BR-008). Readings: (a) in-application account management for administrators; (b) accounts stay a deployment matter of the operator. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+The initial account comes from a deployment secret (UC-006 BR-008). Readings: (a) in-application account management for administrators; (b) accounts stay a deployment matter of the operator.
 
 ## OQ-007: Are 1000 ms p95 and 50 concurrent visitors the right targets for the expected audience?
 
@@ -105,7 +105,7 @@ The initial account comes from a deployment secret (UC-006 BR-008). Readings: (a
 **Blocking:** No
 **Status:** Open
 
-Asks about NFR-001 and NFR-002 together; both thresholds are marked as assumed in the catalog. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+Asks about NFR-001 and NFR-002 together; both thresholds are marked as assumed in the catalog.
 
 ## OQ-008: Which availability, startup and backup expectations are binding?
 
@@ -114,7 +114,7 @@ Asks about NFR-001 and NFR-002 together; both thresholds are marked as assumed i
 **Blocking:** No
 **Status:** Open
 
-Asks about NFR-003, NFR-004 and NFR-020 together; the platform has no monitoring and no documented backup today, so the assumed thresholds cannot be checked yet. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+Asks about NFR-003, NFR-004 and NFR-020 together; the platform has no monitoring and no documented backup today, so the assumed thresholds cannot be checked yet.
 
 ## OQ-009: Are 5 sign-in attempts and 1 contact submission per 10 seconds and source address the right limits?
 
@@ -123,7 +123,7 @@ Asks about NFR-003, NFR-004 and NFR-020 together; the platform has no monitoring
 **Blocking:** No
 **Status:** Open
 
-NFR-026 states the rate limits as assumptions. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+NFR-026 states the rate limits as assumptions.
 
 ## OQ-010: Which browsers must be supported, and down to which version?
 
@@ -132,7 +132,7 @@ NFR-026 states the rate limits as assumptions. Moved here on 2026-11-07 from the
 **Blocking:** No
 **Status:** Open
 
-C-006 names the browser support without a confirmed lower bound. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+C-006 names the browser support without a confirmed lower bound.
 
 ## OQ-011: Does the working group supply the start page's headline and lead copy, or is a proposal enough?
 
@@ -141,7 +141,7 @@ C-006 names the browser support without a confirmed lower bound. Moved here on 2
 **Blocking:** No
 **Status:** Open
 
-FR-034 requires the start page to state in one screen what the platform is; the wording itself is not decided. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+FR-034 requires the start page to state in one screen what the platform is; the wording itself is not decided.
 
 ## OQ-012: Is a 160-character excerpt in the list acceptable to the administrators who write the descriptions?
 
@@ -150,7 +150,7 @@ FR-034 requires the start page to state in one screen what the platform is; the 
 **Blocking:** No
 **Status:** Open
 
-FR-035 and UC-001 BR-004 ask for a short excerpt without naming a length; the implementation and UC-010 BR-008 use 160 characters, which the administrators have not confirmed. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+FR-035 and UC-001 BR-004 ask for a short excerpt without naming a length; the implementation and UC-010 BR-008 use 160 characters, which the administrators have not confirmed.
 
 ## OQ-013: Is Lora accepted as body typeface, or does body copy use the Corporate Design's third face (Helvetica Neue / system sans)?
 
@@ -159,7 +159,7 @@ FR-035 and UC-001 BR-004 ask for a short excerpt without naming a length; the im
 **Blocking:** No
 **Status:** Open
 
-NFR-044 binds the Cevi Corporate Design; the body typeface is a proposal. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+NFR-044 binds the Cevi Corporate Design; the body typeface is a proposal.
 
 ## OQ-014: Is the dark colour scheme part of this redesign or of a later one?
 
@@ -168,7 +168,7 @@ NFR-044 binds the Cevi Corporate Design; the body typeface is a proposal. Moved 
 **Blocking:** No
 **Status:** Open
 
-NFR-045 describes the dark scheme; its timing is not decided. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+NFR-045 describes the dark scheme; its timing is not decided.
 
 ## OQ-015: Is 8 KB of self-hosted script per public page the right ceiling, and are 300 ms p95 at 500 events and 200 offers the right search target?
 
@@ -177,4 +177,4 @@ NFR-045 describes the dark scheme; its timing is not decided. Moved here on 2026
 **Blocking:** No
 **Status:** Open
 
-Asks about NFR-041 and NFR-046 together; both thresholds were set with revision 7 as proposals. Moved here on 2026-11-07 from the section "Open Points for Confirmation" of `requirements.md`.
+Asks about NFR-041 and NFR-046 together; both thresholds were set on 2026-11-06 as proposals.

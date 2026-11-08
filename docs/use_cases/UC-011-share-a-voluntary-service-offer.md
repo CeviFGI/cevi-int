@@ -8,7 +8,6 @@
 **Goal:** A visitor passes a Voluntary Service Offer on to friends — in a chat, a message or an e-mail — without copying its address by hand, so that the people they want to tell about it land directly on the offer.
 **Trigger:** The visitor asks to share the offer they are reading on its Offer Page.
 **Status:** Done
-**Introduced:** 2026-11-07 with requirements revision 8 (FR-045). It is the sharing of UC-009 on the second page that has a Public Address of its own; it behaves the same way and differs only in what the Share Dialog shows, because an offer has neither title nor Date Text.
 
 **Requirements:** [FR-045, NFR-041, C-021](../requirements.md)
 **Layers:** UI

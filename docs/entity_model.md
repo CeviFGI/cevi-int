@@ -27,14 +27,23 @@ An international Cevi event that visitors can attend, announced on the public ev
 | date        | Date of the event as free text, as it should be read by visitors   | String    | 255              | Not Null              |
 | location    | Place or country where the event takes place                       | String    | 255              | Not Null              |
 | displayDate | Date until which the event stays in the list of upcoming events    | Date      | -                | Not Null              |
+| firstDay    | Day on which the event begins, the start of its Calendar Entry     | Date      | -                | Optional              |
+| lastDay     | Day on which the event ends, the last day of its Calendar Entry    | Date      | -                | Optional              |
 | description | Formatted description with costs, programme and further links      | String    | 65535            | Not Null              |
 
-The event carries two dates on purpose: `date` is the human-readable period shown to visitors
-("15. - 24. Oktober 2023"), while `displayDate` is the single date the system compares against
-today to decide whether the event is still upcoming.
+The event carries up to four dates on purpose: `date` is the human-readable period shown to
+visitors ("15. - 24. Oktober 2023"), `displayDate` is the single date the system compares against
+today to decide whether the event is still upcoming, and `firstDay` and `lastDay` are the calendar
+period the Calendar Entry is built from (FR-046, FR-047). None is derived from another: the
+Display Date may lie on the first day, the last day or the close of registration, and the Date Text
+is never read by the system. An event recorded before 2026-11-08 has neither
+`firstDay` nor `lastDay` and stays valid.
 
 #### Constraints
 
+- `firstDay` and `lastDay` are either both present or both empty; an event of a single day has the
+  same value in both.
+- `lastDay` does not lie before `firstDay`.
 - When the administrator supplies no `slug`, it is derived from `title` (FR-007) and then consists
   only of lowercase letters `a`–`z`, digits and single hyphens, neither starting nor ending with a
   hyphen. A `slug` the administrator supplies is stored as entered and only checked for uniqueness
@@ -59,7 +68,7 @@ A voluntary service opportunity abroad that an organisation offers and that the 
 
 The database stores the text columns as unbounded text; the lengths above are the limits the
 application enforces before storing, not constraints the schema declares today. `slug` is new
-with requirements revision 8 (FR-043, FR-044): an offer has no title, so its public address is
+since 2026-11-07 (FR-043, FR-044): an offer has no title, so its public address is
 built from a short name of its own, unique among the offers. It does not have to differ from the
 `slug` of an event, because offer pages and event pages live under different address prefixes.
 

@@ -8,7 +8,6 @@
 **Secondary Actors:** Mail Service
 **Goal:** A visitor asks the international working group for advice or support and reaches a real person without needing an account.
 **Status:** Done
-**Revised:** 2026-08-25 for requirements revision 5 (FR-037). Every input gains a visible label and an explanation of why it is asked, and a rejected submission names the fault at the field that caused it. No rule about what is accepted changes — the spam protection answer, the hidden field and the absence of sender fields are exactly as before. 2026-11-07: links NFR-009 (spam rejection, BR-001) and NFR-011 (every submission carries the protection against forged requests), as decided by the product owner after the coverage audit; no behaviour changes.
 
 **Requirements:** [FR-014, FR-015, FR-016, FR-017, FR-018, FR-032, FR-037, NFR-009, NFR-011](../requirements.md)
 

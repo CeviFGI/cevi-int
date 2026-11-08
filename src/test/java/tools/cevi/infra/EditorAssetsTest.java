@@ -48,7 +48,7 @@ class EditorAssetsTest {
     }
 
     /**
-     * The rule C-021 and NFR-041 state since revision 7: script may enhance a public page, never
+     * The rule C-021 and NFR-041 state since 2026-11-06: script may enhance a public page, never
      * carry it — so a public page carries no inline script (it would need an exception in
      * {@code script-src 'self'}, NFR-024), only files from its own {@code /js/} folder, never a
      * library from a WebJar, and at most 8 KB of them in total. The event page, which also loads

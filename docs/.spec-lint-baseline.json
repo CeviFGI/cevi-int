@@ -1,4 +1,68 @@
 {
   "version": 1,
-  "findings": []
+  "findings": [
+    {
+      "fingerprint": "fdab575c4c76e9efc0f1d4ad65e5b06640cacb75",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-001-browse-upcoming-events.md",
+      "element": "UC-001",
+      "message": "UC-001 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 97d7e0cf)"
+    },
+    {
+      "fingerprint": "2d09a20f8d5d9143ce8af5eea16f29c3bb6717bf",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-003-browse-voluntary-service-offers.md",
+      "element": "UC-003",
+      "message": "UC-003 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 99f2409b)"
+    },
+    {
+      "fingerprint": "7e63b6723572dab40cfeaa527bfa26bb631106f5",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-004-manage-voluntary-service-offers.md",
+      "element": "UC-004",
+      "message": "UC-004 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 395efbf0)"
+    },
+    {
+      "fingerprint": "ba1bd4c342f1e6ddc4b6bc0498ed9efebb6bfe8c",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-005-contact-the-international-working-group.md",
+      "element": "UC-005",
+      "message": "UC-005 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state f0d6c480)"
+    },
+    {
+      "fingerprint": "c2d0f668f2c419f89094efe66b2dd4f9efb068b5",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-007-view-site-information.md",
+      "element": "UC-007",
+      "message": "UC-007 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 3880795e)"
+    },
+    {
+      "fingerprint": "45d42c802967c2721af165d1e104ae2cc2fb6771",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-008-enter-the-platform.md",
+      "element": "UC-008",
+      "message": "UC-008 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 8e2855ff)"
+    },
+    {
+      "fingerprint": "093771da87d45d1e5ac5a867cf7b9ceda00eb64a",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-009-share-an-event.md",
+      "element": "UC-009",
+      "message": "UC-009 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 0d06ff35)"
+    },
+    {
+      "fingerprint": "98dcd05497cae8a8fe7273f90779a071558ca46b",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-010-search-events-and-offers.md",
+      "element": "UC-010",
+      "message": "UC-010 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state 43982bdd)"
+    },
+    {
+      "fingerprint": "500face07ae3951d96346d7ff5eea375238b8b01",
+      "code": "SPEC_CHANGED_AFTER_STATUS",
+      "path": "use_cases/UC-011-share-a-voluntary-service-offer.md",
+      "element": "UC-011",
+      "message": "UC-011 is Done, but the specification changed after that status was set in 6c7e35c; run the coverage audit again (state c69da132)"
+    }
+  ]
 }

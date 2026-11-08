@@ -101,7 +101,7 @@ class EventShareTest {
     }
 
     /**
-     * NFR-041 and C-021 (revision 7): the event page loads the share script from its own origin;
+     * NFR-041 and C-021: the event page loads the share script from its own origin;
      * every script it carries is self-hosted, none is inline, and together they stay within 8 KB.
      */
     @Test

@@ -20,6 +20,7 @@ rectangle "Cevi International" {
     usecase "UC-009\nShare an Event" as UC009
     usecase "UC-010\nSearch Events and Offers" as UC010
     usecase "UC-011\nShare a Voluntary Service Offer" as UC011
+    usecase "UC-012\nAdd an Event to the Calendar" as UC012
 }
 
 visitor --> UC001
@@ -30,6 +31,7 @@ visitor --> UC008
 visitor --> UC009
 visitor --> UC010
 visitor --> UC011
+visitor --> UC012
 
 admin --> UC002
 admin --> UC004
@@ -43,6 +45,7 @@ UC008 ..> UC001 : <<include>>
 UC008 ..> UC003 : <<include>>
 UC009 ..> UC001 : <<extend>>
 UC011 ..> UC003 : <<extend>>
+UC012 ..> UC001 : <<extend>>
 
 note bottom of UC007
   Besucher: nur die Informationsseiten.
@@ -80,6 +83,14 @@ note bottom of UC011
   (FR-045), gleich wie UC-009 auf der
   Anlassseite: Share-Dialog mit Organisation,
   Ort und Adresse, sonst Zwischenablage.
+end note
+
+note bottom of UC012
+  Erweitert UC-001 auf der Anlassseite
+  (FR-047), sobald der Anlass einen ersten
+  und letzten Tag hat (FR-046, gepflegt in
+  UC-002): Kalendereintrag als .ics-Datei,
+  ohne Skript und ohne Drittanbieter.
 end note
 
 @enduml

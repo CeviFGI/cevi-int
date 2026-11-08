@@ -47,7 +47,7 @@ public class IndexResourceTest {
 
     /**
      * Main success scenario steps 1-2, BR-001: the start page answers instead of forwarding. Until
-     * requirements revision 5 this asserted the 303 to /anlaesse.
+     * 2026-08-25 (FR-034) this asserted the 303 to /anlaesse.
      */
     @Test
     public void index_is_a_page_of_its_own() {
