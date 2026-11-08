@@ -1,9 +1,9 @@
-# Handover – Stand 2026-11-08 (nach der 14. Session)
+# Handover – Stand 2026-11-08 (nach der 15. Session)
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Kleinigkeiten unten erledigen; danach `/acceptance-protocol` (alle Use Cases
-sind `Tested`).
+**Nächster Schritt:** `/acceptance-protocol` – alle Use Cases sind `Tested`, die Abnahme mit dem
+Product Owner steht an.
 
 ## Stand
 
@@ -17,16 +17,7 @@ sind `Tested`).
 
 ## Massnahmen
 
-### 1. Kleinigkeiten
-
-- `docs/requirements.md:266` (Verifikationstabelle NFR-041) nennt nur `EventShareTest` für das
-  8-KB-Skriptlimit; `VoluntaryShareTest` prüft es jetzt auch für die Volontariatsseite – über
-  `/requirements` ergänzen.
-- UC-009 BR-004 hat dieselbe Schwäche, die der Audit von UC-011 fand: `ShareEventE2ETest` prüft nur
-  Anfragen an fremde Hosts, nicht, dass das Teilen gar keine Anfrage auslöst. Muster:
-  `ShareOfferE2ETest.requestsFromNowOn()`.
-
-### 2. Optional / später
+### 1. Optional / später
 
 - Voller Audit für UC-001 und UC-002 (in der 9. Session nur Delta-Audit); `/spec-review UC-003` für
   die Ergänzung von Schritt 2 (Reihenfolge der Liste); die drei überlappenden Testpaare in
