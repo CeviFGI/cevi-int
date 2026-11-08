@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor who arrives on the platform, usually by following a link shared in a chat, understands within one screen what the site offers and reaches the part of it that concerns them.
 **Trigger:** The visitor opens the start page, usually by following a link shared in a chat.
-**Status:** Tested
+**Status:** Done
 **Introduced:** 2026-08-25 with requirements revision 5 (FR-034, FR-023). Until then the start page forwarded to the event list and had no content of its own, so a visitor arriving from a shared link was given a bare list and never learned what the site was.
 **Revised:** 2026-11-07 for requirements revision 8 (FR-043): every entry of an extract leads to the entry's own page — an event to its Event Page, an offer to its Offer Page — as it does in the complete list (BR-004).
 

@@ -6,7 +6,7 @@
 **Use Case Name:** Manage Events
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
-**Status:** Tested
+**Status:** Done
 **Revised:** 2026-11-07, as decided by the product owner: step 9 no longer promises that the new event is visible in the list, because an event whose display date has passed is stored but not listed publicly (A9, UC-001 BR-001); BR-011 states that a Short Name stays until the administrator changes it. The behaviour is unchanged.
 
 **Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, NFR-006, NFR-011, NFR-021](../requirements.md)

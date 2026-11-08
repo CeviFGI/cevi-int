@@ -6,7 +6,7 @@
 **Use Case Name:** Sign In as Administrator
 **Primary Actor:** Administrator
 **Goal:** An administrator identifies themselves so that the maintenance functions for events and voluntary service offers become available, and gives up that access again when finished.
-**Status:** Tested
+**Status:** Done
 
 **Requirements:** [FR-019, FR-020, FR-021, FR-031](../requirements.md)
 

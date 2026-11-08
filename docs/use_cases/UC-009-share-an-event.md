@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor passes an event on to friends — in a chat, a message or an e-mail — without copying its address by hand, so that the people they want to bring along land directly on the event.
 **Trigger:** The visitor asks to share the event they are reading on its Event Page.
-**Status:** Tested
+**Status:** Done
 **Introduced:** 2026-11-06 with requirements revision 6 (FR-040). Until then a visitor could pass an event on only by copying the address from the browser's address bar, which most visitors on a phone never see.
 **Revised:** 2026-11-07: BR-005 no longer claims that the share control is the only script on a public page, which has not been true since the Live Results of UC-010 (C-021 as relaxed in requirements revision 7). The behaviour of the Event Page is unchanged.
 
