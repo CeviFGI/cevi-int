@@ -31,7 +31,7 @@ public class IndexResource {
     @Inject
     SecurityIdentity identity;
 
-    /** How much of each list the start page shows before pointing at the whole of it (UC-008 BR-002). */
+    // UC-008 BR-002: how much of each list the start page shows before pointing at the whole of it
     private static final int EVENT_TEASERS = 3;
     private static final int OFFER_TEASERS = 2;
 
@@ -44,14 +44,16 @@ public class IndexResource {
     }
 
     /**
-     * The start page answers instead of forwarding (UC-008 BR-001, FR-023 as amended). The typical visitor
+     * The start page answers instead of forwarding. The typical visitor
      * follows a link shared in a chat group and has not chosen this site from a menu, so the first
      * screen has to say what the platform is before it offers anything to do. {@code /anlaesse}
      * keeps its own address, so every link shared before this change still leads where it did.
      */
+    // UC-008 BR-001: the start page presents content, not a forwarding
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance index() {
+        // UC-008 BR-002: an extract of each list, never the whole list
         return Templates.home(Event.upcomingEvents(EVENT_TEASERS), VoluntaryService.newest(OFFER_TEASERS));
     }
 

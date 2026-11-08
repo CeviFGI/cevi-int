@@ -1,5 +1,5 @@
 {!
-An offer in a list (UC-003 step 2, BR-003, BR-004; UC-008 BR-004). The whole card is the target;
+An offer in a list (UC-003 step 2, BR-003, BR-004) and in the extract of the start page. The whole card is the target;
 the Organisation carries the link to the Offer Page and the "Details" pill is the affordance, not a
 second link. The complete Description and the link to the Organisation are on the Offer Page, never
 here.
@@ -11,6 +11,7 @@ here.
     </div>
     <div class="card__body">
         {! UC-003 BR-003: one action per entry, selecting anywhere on it opens the Offer Page !}
+        {! UC-008 BR-004: the extract entry leads to the Offer Page as the list entry does, never to the Organisation !}
         <h2 class="card__title"><a href="/volontariat/detail?slug={it.slug.queryValue}">{it.organization}</a></h2>
         {! UC-003 BR-004: an Excerpt only; A2: a short Description stands in full, without an ellipsis !}
         <p class="card__excerpt">{it.description.excerpt}</p>

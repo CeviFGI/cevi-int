@@ -59,6 +59,7 @@ public class Event extends PanacheEntityBase {
      * The nearest events only, for the extract on the start page (UC-008 BR-002). Reading the whole list
      * and cutting it in the template would grow with the table; this one does not.
      */
+    // UC-008 BR-002: only the nearest events still ahead
     public static List<Event> upcomingEvents(int limit) {
         return find("displayDate >= :today", Sort.by("displayDate"), Parameters.with("today", LocalDate.now()))
                 .page(0, limit).list();

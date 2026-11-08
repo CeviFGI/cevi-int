@@ -1,67 +1,23 @@
-# Handover – Stand 2026-11-08 (nach der 13. Session)
+# Handover – Stand 2026-11-08 (nach der 14. Session)
 
 Nach Erledigung der Punkte diese Datei löschen oder nachführen.
 
-**Nächster Schritt:** Die Lücken des Coverage-Audits von UC-008 schliessen (unten), dann UC-008 auf
-`Tested` setzen – danach sind alle Use Cases `Tested`.
+**Nächster Schritt:** Kleinigkeiten unten erledigen; danach `/acceptance-protocol` (alle Use Cases
+sind `Tested`).
 
 ## Stand
 
-- UC-001 … 007, 009, 010, 011 `Tested`. `tooling/docker.sh verify` grün, alles committet.
-- UC-008: Code vollständig (Audit 2026-11-08: Implementierung 17/17), Tests lückenhaft (6/17, siehe
-  unten). Status noch `Approved`.
+- UC-001 … UC-011 alle `Tested`. `tooling/docker.sh verify` grün, alles committet.
 - Spec-Lint grün mit `--strict` (3 Befunde `SPEC_CHANGED_AFTER_STATUS` in
   `docs/.spec-lint-baseline.json` akzeptiert: UC-001, UC-002, UC-009). Nach einer Spec-Änderung an
   einem `Tested`-Use-Case: Audit, dann `--update-baseline`.
-  `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.13.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
+  `python3 ~/.claude/plugins/cache/ai-unified-process-marketplace/aiup-core/3.14.0/skills/spec-review/scripts/spec_lint.py --docs docs --strict`
 - FR-/NFR-Status: `Verified`, sobald alle Use Cases, die die Anforderung verlinken, `Tested` sind;
   `In Progress`, solange erst ein Teil davon `Tested` ist.
 
 ## Massnahmen
 
-### 1. UC-008 Enter the Platform – Testlücken schliessen (`/use-case-test UC-008`)
-
-Audit: Tests 6/17. Alle Punkte betreffen Tests (`IndexResourceTest`, `StartPageE2ETest`), ausser den
-Markern in 1.9.
-
-1. **Schritt 5:** Test für den Fachgruppen-Hinweis („Du weisst noch nicht, was passt?“). Auf den Link
-   der Seite selbst ankern: `href="/kontakt">Kontakt aufnehmen</a>` (Header/Footer verlinken
-   `/kontakt` überall).
-2. **Post-S-2:** Test, dass `GET /` keine Daten ändert (Muster
-   `VoluntaryBrowseTest.browsing_changes_no_data`).
-3. **Schritt 3 / BR-004 (Anlass-Hälfte):** kommenden Anlass anlegen → erscheint im Auszug auf `/`,
-   Link führt auf `/anlaesse/detail?slug=…`; vergangener Anlass (Display Date vorbei) fehlt. Die
-   Startseite nutzt `Event.upcomingEvents(int)` – die bisherigen Tests decken nur die Variante ohne
-   Argument. Muster für Angebote: `VoluntaryBrowseTest.the_entry_on_the_start_page_leads_to_the_offer_page`.
-4. **Schritt 2:** Lead prüfen, der die Fachgruppe International des Cevi Schweiz als Betreiberin
-   nennt (`home.html:15-16`), nicht nur den Titel.
-5. **A1 / A2 / BR-003 / Post-F-1:** im Test mit leeren Abschnitten (`IndexResourceTest:71`) auch den
-   „Schreib uns“-Button in jedem `.empty`-Block (`home.html:51`, `:75`) prüfen, dass der Hinweis aus
-   Schritt 5 trotzdem folgt (A2 „continues at step 5“) und dass keine Daten geändert wurden.
-6. **A4:** mit `@TestSecurity` auf `/` prüfen, dass die Wartungslinks in `<div class="admin-bar">` als
-   `btn--ghost` stehen, kein `btn--primary` (Muster `VoluntaryBrowseTest:306-318`).
-7. **BR-002:** Limit des Auszugs testen: 4 kommende Anlässe bzw. 3 Angebote → der überzählige fehlt
-   auf `/` (`IndexResource.EVENT_TEASERS = 3`, `OFFER_TEASERS = 2`).
-8. **BR-004 (Gegenfall):** Angebotskarte auf `/` hat keinen Link auf die Organisation
-   (`organizationLink`).
-9. **Marker / Javadoc:**
-   - `// UC-008 BR-00X:` bzw. `{! UC-008 BR-00X: … !}` direkt über dem durchsetzenden Code statt nur in
-     Javadoc/Qute-Kommentaren: `IndexResource.java:34,47`, `Event.java:59`,
-     `VoluntaryService.java:53`, `home.html:46-47,54-55`, `tags/voluntaryService.html:2`.
-   - Leerer A2-Block (`home.html:71`) hat gar keinen Marker.
-   - `StartPageE2ETest`: Tests in Zeile 26 und 40 ohne Javadoc mit Flow/Regel.
-   - `IndexResourceTest:53` soll BR-002/A3 nennen.
-   - FR-IDs (FR-023, FR-034) aus den Test-Javadocs `IndexResourceTest:38` und `StartPageE2ETest:13`
-     entfernen.
-10. **Drift (entschieden):** `StartPageE2ETest.java:56-60` nennt NFR-013, das UC-008 nicht verlinkt.
-    Entscheid des Users: Verweis aus dem Test entfernen (NFR-013 ist über die Design-System-Tests
-    für alle Seiten abgedeckt); die Spezifikation bleibt unverändert. Ist die Prüfung im Test dann
-    nur noch eine Doublette der Design-System-Tests, den Test ganz streichen.
-
-Danach Coverage-Audit wiederholen, `verify`, dann UC-008 `Tested`; FR-023, FR-034 `Verified`, FR-043
-von `In Progress` auf `Verified`.
-
-### 2. Kleinigkeiten
+### 1. Kleinigkeiten
 
 - `docs/requirements.md:266` (Verifikationstabelle NFR-041) nennt nur `EventShareTest` für das
   8-KB-Skriptlimit; `VoluntaryShareTest` prüft es jetzt auch für die Volontariatsseite – über
@@ -70,7 +26,7 @@ von `In Progress` auf `Verified`.
   Anfragen an fremde Hosts, nicht, dass das Teilen gar keine Anfrage auslöst. Muster:
   `ShareOfferE2ETest.requestsFromNowOn()`.
 
-### 3. Optional / später
+### 2. Optional / später
 
 - Voller Audit für UC-001 und UC-002 (in der 9. Session nur Delta-Audit); `/spec-review UC-003` für
   die Ergänzung von Schritt 2 (Reihenfolge der Liste); die drei überlappenden Testpaare in

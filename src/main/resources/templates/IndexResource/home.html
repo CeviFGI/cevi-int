@@ -24,8 +24,8 @@ band span the full width while everything inside them stays on the container (UC
 {! UC-006 BR-003: maintenance links only for a signed-in administrator !}
 
 {#if inject:currentUser.admin}
-{!A4 of UC-008: the maintenance functions are offered, as a separate and quieter group than
-anything meant for a visitor (FR-038, UC-001 BR-006).!}
+{! UC-008 A4: the maintenance functions are offered as a separate and quieter group than
+anything meant for a visitor !}
 <div class="container">
     <div class="admin-bar">
         <span class="admin-bar__who">Angemeldet als Administrator</span>
@@ -43,16 +43,16 @@ anything meant for a visitor (FR-038, UC-001 BR-006).!}
             <a href="/anlaesse">Alle Anlässe <span aria-hidden="true">→</span></a>
         </div>
         {#if events.isEmpty}
-        {!A1 of UC-008: an empty section explains itself rather than leaving a hole on the first
-        screen, which is what tells a visitor a site has been abandoned (UC-008 BR-003).!}
+        {! UC-008 BR-003: A1 — an empty section explains itself and offers the way to the working group
+        rather than leaving a hole on the first screen, which tells a visitor a site has been abandoned !}
         <div class="empty">
             <h3>Gerade ist nichts ausgeschrieben</h3>
             <p>Das heisst selten, dass nichts läuft — schreib uns, wir wissen meistens mehr.</p>
             <a class="btn btn--primary" href="/kontakt">Schreib uns</a>
         </div>
         {#else}
-        {!The same card as /anlaesse, without the maintenance strip: this is an extract, and
-        maintaining an entry happens in the list it belongs to (UC-008 BR-002).!}
+        {! UC-008 BR-002: the same card as /anlaesse, without the maintenance strip — this is an
+        extract, and maintaining an entry happens in the list it belongs to !}
         <div class="grid">
             {#for event in events}
             {#event event showActions=false}{/event}
@@ -69,6 +69,8 @@ anything meant for a visitor (FR-038, UC-001 BR-006).!}
             <a href="/volontariat">Alle Angebote <span aria-hidden="true">→</span></a>
         </div>
         {#if services.isEmpty}
+        {! UC-008 BR-003: A2 — no offer recorded, the section explains itself and offers the way to
+        the working group !}
         <div class="empty">
             <h3>Noch kein Angebot erfasst</h3>
             <p>Volontariate finden wir laufend — sag uns, wohin es gehen soll.</p>

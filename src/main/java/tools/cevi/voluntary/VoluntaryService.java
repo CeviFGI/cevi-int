@@ -53,6 +53,7 @@ public class VoluntaryService extends PanacheEntityBase {
      * The most recently recorded offers, for the extract on the start page (UC-008 BR-002). An offer
      * carries no date of its own, so the id is the only order the entity model offers.
      */
+    // UC-008 BR-002: only the most recently recorded offers
     public static List<VoluntaryService> newest(int limit) {
         return findAll(Sort.by("id", Sort.Direction.Descending)).page(0, limit).list();
     }
