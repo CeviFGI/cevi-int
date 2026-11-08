@@ -47,6 +47,7 @@ class CalendarEntryTest {
         return Arrays.asList(file.replace("\r\n ", "").split("\r\n"));
     }
 
+    /** Main success scenario step 2, BR-002, NFR-048: exactly one all-day event with title, location and notes, from the First Day through the Last Day. */
     @Test
     void the_file_holds_exactly_one_all_day_event() {
         List<String> lines = unfolded(CalendarEntry.of(event(), ADDRESS, NOW));
@@ -167,6 +168,7 @@ class CalendarEntryTest {
         assertThat(unfolded(file), hasItem("SUMMARY:" + event.title));
     }
 
+    /** NFR-048: a line of exactly 75 octets stays whole, one of 76 folds after the 75th. */
     @Test
     void a_line_of_exactly_75_octets_is_not_folded() {
         StringBuilder file = new StringBuilder();

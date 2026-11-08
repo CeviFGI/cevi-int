@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 /**
  * UC-002 BR-010 and UC-004, which adopts it: a description keeps the formatting the platform
- * permits — emphasis, lists, tables, links, images, colours — and loses everything else.
+ * permits — emphasis, headings, lists, tables, links, images, colours — and loses everything else.
  */
 class HtmlSanitizerTest {
 
@@ -30,6 +30,14 @@ class HtmlSanitizerTest {
         assertThat(sanitized, containsString("<strong>Kosten:</strong>"));
         assertThat(sanitized, containsString("<em>inkl.</em>"));
         assertThat(sanitized, containsString("<br"));
+    }
+
+    /** BR-010: headings of every level are permitted formatting and survive. */
+    @Test
+    void keeps_headings() {
+        String headings = "<h1>Eins</h1><h2>Zwei</h2><h3>Drei</h3><h4>Vier</h4><h5>Fünf</h5><h6>Sechs</h6>";
+
+        assertThat(HtmlSanitizer.sanitize(headings), equalTo(headings));
     }
 
     /** BR-010: lists, tables and colours are permitted formatting and survive. */

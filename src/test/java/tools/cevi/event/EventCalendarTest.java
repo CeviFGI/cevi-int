@@ -9,6 +9,9 @@ import tools.cevi.fixture.EventFixture;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +19,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
@@ -57,6 +61,22 @@ class EventCalendarTest {
 
     private static String unfolded(String file) {
         return file.replace("\r\n ", "");
+    }
+
+    /** The number of rows in every table of the database, by table name. */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Long> rowsPerTable() {
+        return QuarkusTransaction.requiringNew().call(() -> {
+            var em = Event.getEntityManager();
+            List<String> tables = em.createNativeQuery(
+                    "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").getResultList();
+            Map<String, Long> rows = new TreeMap<>();
+            for (String table : tables) {
+                Number count = (Number) em.createNativeQuery("SELECT COUNT(*) FROM \"" + table + "\"").getSingleResult();
+                rows.put(table, count.longValue());
+            }
+            return rows;
+        });
     }
 
     private static String uidOf(String file) {
@@ -178,6 +198,34 @@ class EventCalendarTest {
         assertThat(after, containsString("SUMMARY:CLEANUP UC-012 identity renamed"));
         assertThat(after, containsString("DTSTART;VALUE=DATE:20990711"));
         assertThat(uidOf(calendarEntry(reload(other).slug)), not(equalTo(uidOf(before))));
+    }
+
+    /**
+     * Success postcondition "No data is stored or changed on the platform", BR-006: delivering the
+     * Calendar Entry adds no row to any table — no counter, no record of its own — and leaves the
+     * event exactly as it was.
+     */
+    @Test
+    void taking_the_event_into_the_calendar_stores_and_changes_nothing() {
+        long id = EventFixture.createEventWithPeriod("CLEANUP UC-012 stores nothing",
+                "<p>Ein Lager.</p>", FIRST, LAST);
+        Event original = reload(id);
+        Map<String, Long> rowsBefore = rowsPerTable();
+        assertThat(rowsBefore, hasKey("events"));
+
+        calendarEntry(original.slug);
+        calendarEntry(original.slug);
+
+        assertThat(rowsPerTable(), equalTo(rowsBefore));
+        Event after = reload(id);
+        assertThat(after.title, equalTo(original.title));
+        assertThat(after.slug, equalTo(original.slug));
+        assertThat(after.date, equalTo(original.date));
+        assertThat(after.location, equalTo(original.location));
+        assertThat(after.description, equalTo(original.description));
+        assertThat(after.displayDate, equalTo(original.displayDate));
+        assertThat(after.firstDay, equalTo(original.firstDay));
+        assertThat(after.lastDay, equalTo(original.lastDay));
     }
 
     /** A2: an unknown Short Name — removed or renamed event — leads to the Not-Found Page. */

@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor takes an event they want to attend into their own calendar without typing its dates, place and address in by hand, so that the event is not forgotten until it begins.
 **Trigger:** The visitor asks to take the event they are reading on its Event Page into their calendar.
-**Status:** Approved
+**Status:** Tested
 
 **Requirements:** [FR-047, NFR-042, NFR-048, C-021](../requirements.md)
 **Layers:** UI
