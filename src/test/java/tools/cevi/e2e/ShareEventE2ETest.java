@@ -7,6 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
+import tools.cevi.e2e.ShareStandIns.Outcome;
 import tools.cevi.event.Event;
 import tools.cevi.fixture.EventFixture;
 
@@ -16,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static tools.cevi.e2e.ShareStandIns.NO_SHARE_DIALOG;
+import static tools.cevi.e2e.ShareStandIns.REFUSING_CLIPBOARD;
+import static tools.cevi.e2e.ShareStandIns.shareDialog;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -23,33 +27,13 @@ import static org.hamcrest.Matchers.is;
 /**
  * UC-009 Share an Event in a real browser.
  *
- * <p>Headless Chromium offers no Share Dialog of its own, so the tests that need one install a
- * stand-in for {@code navigator.share} before the page loads; it records what it was given and
- * answers like the real dialog would: resolved when an app was chosen, an {@code AbortError} when
- * the visitor cancelled. The clipboard is the browser's own, read back with the permission the
- * context grants.
+ * <p>The Share Dialog is a stand-in ({@link ShareStandIns}). The clipboard is the browser's own,
+ * read back with the permission the context grants.
  */
 @QuarkusTest
 public class ShareEventE2ETest extends PlaywrightTestBase {
 
     private static final String TITLE = "CLEANUP Share Workcamp Ghana";
-
-    /** A Share Dialog that records its arguments and ends the way {@code outcome} says. */
-    private static String shareDialog(String outcome) {
-        return "window.__shared = [];"
-                + "navigator.share = function (data) { window.__shared.push(data); "
-                + switch (outcome) {
-                    case "sent" -> "return Promise.resolve(); };";
-                    case "cancelled" -> "return Promise.reject(new DOMException('cancelled', 'AbortError')); };";
-                    default -> "return Promise.reject(new DOMException('failed', 'NotAllowedError')); };";
-                };
-    }
-
-    private static final String NO_SHARE_DIALOG = "delete Navigator.prototype.share; delete navigator.share;";
-
-    private static final String REFUSING_CLIPBOARD = NO_SHARE_DIALOG
-            + "Object.defineProperty(navigator, 'clipboard', { value: { writeText: function () {"
-            + " return Promise.reject(new DOMException('refused', 'NotAllowedError')); } } });";
 
     private String slug;
 
@@ -109,7 +93,7 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
     @Test
     void the_share_dialog_receives_title_date_text_and_public_address() {
         List<String> foreign = foreignRequests();
-        String before = openEventPage(shareDialog("sent"));
+        String before = openEventPage(shareDialog(Outcome.SENT));
 
         shareButton().click();
 
@@ -131,7 +115,7 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
     @Test
     void the_shared_address_drops_parameters_and_fragment() {
         slug = Event.<Event>findById(EventFixture.createEvent(TITLE)).slug;
-        page.addInitScript(shareDialog("sent"));
+        page.addInitScript(shareDialog(Outcome.SENT));
         page.navigate(url("/anlaesse/detail?utm_source=chat&slug=" + slug + "#programm"));
 
         shareButton().click();
@@ -172,7 +156,7 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
     @Test
     void a_failing_share_dialog_falls_back_to_the_clipboard() {
         allowClipboard();
-        openEventPage(shareDialog("failed"));
+        openEventPage(shareDialog(Outcome.FAILED));
 
         shareButton().click();
 
@@ -184,7 +168,7 @@ public class ShareEventE2ETest extends PlaywrightTestBase {
     @Test
     void a_cancelled_share_dialog_leaves_the_page_unchanged() {
         allowClipboard();
-        String before = openEventPage(shareDialog("cancelled"));
+        String before = openEventPage(shareDialog(Outcome.CANCELLED));
         page.evaluate("() => navigator.clipboard.writeText('untouched')");
 
         shareButton().click();

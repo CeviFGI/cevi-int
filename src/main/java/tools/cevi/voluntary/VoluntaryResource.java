@@ -8,6 +8,7 @@ import io.quarkus.qute.TemplateInstance;
 
 import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.HtmlSanitizer;
+import tools.cevi.infra.PublicAddress;
 import tools.cevi.infra.Slug;
 import tools.cevi.infra.ValidationMessage;
 import tools.cevi.infra.ValidationMessages;
@@ -20,8 +21,10 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 @Path("volontariat")
 public class VoluntaryResource {
@@ -41,7 +44,7 @@ public class VoluntaryResource {
         }
 
         public static native TemplateInstance list(List<VoluntaryService> services);
-        public static native TemplateInstance detail(VoluntaryService service);
+        public static native TemplateInstance detail(VoluntaryService service, PublicAddress share);
         public static native TemplateInstance form(long id, String slug, String organization, String organizationLink, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(VoluntaryService service, boolean removalFailed);
     }
@@ -61,13 +64,14 @@ public class VoluntaryResource {
     @GET
     @Path("detail")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance detail(@QueryParam("slug") String slug) {
+    public TemplateInstance detail(@QueryParam("slug") String slug, @Context UriInfo uriInfo) {
         VoluntaryService service = slug == null ? null : VoluntaryService.findBySlug(slug);
         if (service == null) {
             // UC-003 A5: an unknown Short Name, e.g. a removed offer or a changed Short Name
             throw new NotFoundException("VoluntaryService with slug " + slug + " not found");
         }
-        return Templates.detail(service);
+        // UC-011 BR-003: the Public Address the share control passes on
+        return Templates.detail(service, PublicAddress.of(uriInfo, "/volontariat/detail", service.slug));
     }
 
     // UC-004 BR-001: only an administrator may add, change or remove offers

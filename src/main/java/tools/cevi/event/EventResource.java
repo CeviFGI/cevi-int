@@ -22,6 +22,7 @@ import jakarta.ws.rs.core.UriInfo;
 
 import jakarta.annotation.security.RolesAllowed;
 import tools.cevi.infra.HtmlSanitizer;
+import tools.cevi.infra.PublicAddress;
 import tools.cevi.infra.Slug;
 import tools.cevi.infra.ValidationMessage;
 import tools.cevi.infra.ValidationMessages;
@@ -39,7 +40,7 @@ public class EventResource {
         public static native TemplateInstance list(List<Event> events);
         public static native TemplateInstance form(long id, String title, String slug, String date, String displayDate, String location, String description, ValidationMessages validationMessages);
         public static native TemplateInstance delete(Event event, boolean removalFailed);
-        public static native TemplateInstance detail(Event event, String publicAddress, String publicPath);
+        public static native TemplateInstance detail(Event event, PublicAddress share);
     }
 
     @GET
@@ -80,24 +81,8 @@ public class EventResource {
         if (event == null) {
             throw new NotFoundException("Event with slug " + slug + " not found");
         }
-        URI publicAddress = publicAddress(uriInfo, event);
-        return Templates.detail(event, publicAddress.toString(),
-                publicAddress.getRawPath() + "?" + publicAddress.getRawQuery());
-    }
-
-    /**
-     * The address the share control passes on and the page shows without script (UC-009 A4).
-     * The script replaces the origin with the one the browser actually loaded the page from, so
-     * the host taken from the request here only reaches a visitor whose browser runs no script.
-     */
-    // UC-009 BR-003: origin of the request, path from the Short Name, no other parameter.
-    static URI publicAddress(UriInfo uriInfo, Event event) {
-        return uriInfo.getBaseUriBuilder()
-                .replacePath("/anlaesse/detail")
-                .replaceQuery(null)
-                .fragment(null)
-                .queryParam("slug", event.slug)
-                .build();
+        // UC-009 BR-003: the Public Address the share control passes on
+        return Templates.detail(event, PublicAddress.of(uriInfo, "/anlaesse/detail", event.slug));
     }
 
     /**

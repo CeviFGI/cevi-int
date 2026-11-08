@@ -1,4 +1,5 @@
-// UC-009 share control; see EventResource/detail.html. Counts towards the 8 KB script total of a public page (NFR-041).
+// UC-009 and UC-011 share control; see EventResource/detail.html and VoluntaryResource/detail.html.
+// Counts towards the 8 KB script total of a public page (NFR-041).
 (function () {
     var box = document.querySelector('[data-share]');
     if (!box) return;
@@ -7,7 +8,7 @@
     var address = box.querySelector('.share__address');
     var input = box.querySelector('input');
     var timer;
-    // UC-009 BR-003: the origin the browser loaded, the path from the Short Name.
+    // UC-009 BR-003, UC-011 BR-003: the origin the browser loaded, the path from the Short Name.
     var url = location.origin + box.dataset.path;
     input.value = url;
     address.hidden = true;
@@ -21,11 +22,11 @@
         input.select();
     }
 
-    // UC-009 BR-002: the clipboard receives the address alone.
+    // UC-009 BR-002, UC-011 BR-002: the clipboard receives the address alone.
     function copy() {
         if (!navigator.clipboard) return byHand();
         navigator.clipboard.writeText(url).then(function () {
-            // UC-009 BR-006: a copy is confirmed, and the note goes away on its own.
+            // UC-009 BR-006, UC-011 BR-006: a copy is confirmed, and the note goes away on its own.
             status.textContent = 'Link kopiert';
             clearTimeout(timer);
             timer = setTimeout(function () { status.textContent = ''; }, 5000);
@@ -33,11 +34,11 @@
     }
 
     button.addEventListener('click', function () {
-        // UC-009 BR-001: what the browser offers decides, not the device.
+        // UC-009 BR-001, UC-011 BR-001: what the browser offers decides, not the device.
         if (!navigator.share) return copy();
         navigator.share({ title: box.dataset.title, text: box.dataset.text, url: url })
             .catch(function (e) {
-                // UC-009 BR-006: a cancelled Share Dialog is answered with nothing.
+                // UC-009 BR-006, UC-011 BR-006: a cancelled Share Dialog is answered with nothing.
                 if (e.name !== 'AbortError') copy();
             });
     });

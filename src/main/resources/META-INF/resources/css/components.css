@@ -348,7 +348,7 @@ dl.panel dd:last-child { margin-bottom: 0; }
     margin-bottom: var(--space-5);
 }
 
-/* Share control of the event page (UC-009). Without script only the address field shows. */
+/* Share control of the event and offer pages (UC-009, UC-011). Without script only the address field shows. */
 .share {
     display: flex;
     flex-wrap: wrap;
