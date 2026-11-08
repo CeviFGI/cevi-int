@@ -30,6 +30,8 @@ An international Cevi event that visitors can attend, announced on the public ev
 | firstDay    | Day on which the event begins, the start of its Calendar Entry     | Date      | -                | Optional              |
 | lastDay     | Day on which the event ends, the last day of its Calendar Entry    | Date      | -                | Optional              |
 | description | Formatted description with costs, programme and further links      | String    | 65535            | Not Null              |
+| created     | Moment the event was first recorded                                | DateTime  | -                | Not Null              |
+| lastChange  | Moment the event was last created or changed, its Last Change      | DateTime  | -                | Not Null              |
 
 The event carries up to four dates on purpose: `date` is the human-readable period shown to
 visitors ("15. - 24. Oktober 2023"), `displayDate` is the single date the system compares against
@@ -52,6 +54,13 @@ is never read by the system. An event recorded before 2026-11-08 has neither
   already reduced to the allow-list documented in [Rich Text Allow-List](#rich-text-allow-list);
   the stored value, not the submitted one, is the authority. The length limit applies after that
   reduction.
+- `created` and `lastChange` are set by the system, never entered by the administrator. Both
+  receive the moment of creation; `lastChange` moves on every save that changes at least one other
+  attribute, while `created` never changes. A save that changes nothing leaves both as they are.
+- `lastChange` never lies before `created`; the event counts as updated in the News Feed exactly
+  when `lastChange` lies after `created` (FR-048).
+- An event recorded before the News Feed existed receives the moment of the migration that
+  introduced both attributes, in both of them.
 
 ### VOLUNTARY_SERVICE
 
@@ -65,6 +74,8 @@ A voluntary service opportunity abroad that an organisation offers and that the 
 | organizationLink | Address of the organisation's own website                    | String    | 255              | Not Null, Format: URL |
 | location         | Country or region of the assignment                          | String    | 255              | Not Null              |
 | description      | Formatted description with duration and further links        | String    | 65535            | Not Null              |
+| created          | Moment the offer was first recorded                          | DateTime  | -                | Not Null              |
+| lastChange       | Moment the offer was last created or changed, its Last Change | DateTime  | -                | Not Null              |
 
 The database stores the text columns as unbounded text; the lengths above are the limits the
 application enforces before storing, not constraints the schema declares today. `slug` is new
@@ -83,6 +94,7 @@ built from a short name of its own, unique among the offers. It does not have to
   a script-executing link once the field is rendered as a hyperlink.
 - `description` is subject to the same [Rich Text Allow-List](#rich-text-allow-list) as
   `EVENT.description`.
+- `created` and `lastChange` follow the same rules as `EVENT.created` and `EVENT.lastChange`.
 
 ### EXCHANGE
 

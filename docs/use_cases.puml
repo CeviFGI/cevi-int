@@ -21,6 +21,7 @@ rectangle "Cevi International" {
     usecase "UC-010\nSearch Events and Offers" as UC010
     usecase "UC-011\nShare a Voluntary Service Offer" as UC011
     usecase "UC-012\nAdd an Event to the Calendar" as UC012
+    usecase "UC-013\nSubscribe to the News Feed" as UC013
 }
 
 visitor --> UC001
@@ -32,6 +33,7 @@ visitor --> UC009
 visitor --> UC010
 visitor --> UC011
 visitor --> UC012
+visitor --> UC013
 
 admin --> UC002
 admin --> UC004
@@ -91,6 +93,15 @@ note bottom of UC012
   und letzten Tag hat (FR-046, gepflegt in
   UC-002): Kalendereintrag als .ics-Datei,
   ohne Skript und ohne Drittanbieter.
+end note
+
+note bottom of UC013
+  Ein gemeinsamer RSS-Feed mit allen
+  Volontariaten und kommenden Anlaessen
+  (FR-048), auf jeder Seite auffindbar
+  (FR-049). Den Zeitpunkt der letzten
+  Aenderung setzt das System, wenn in
+  UC-002 oder UC-004 gespeichert wird.
 end note
 
 @enduml

@@ -1,7 +1,7 @@
 # Glossary
 
 **Source:** `docs/vision.md`, `docs/requirements.md`, `docs/entity_model.md`, `docs/use_cases.puml`,
-`docs/use_cases/UC-001` … `UC-012`
+`docs/use_cases/UC-001` … `UC-013`
 
 One name per domain concept. The specifications are written in English; where the German
 interface uses its own label, the definition names it so the screens can be matched to the terms.
@@ -45,6 +45,7 @@ test cases.
 | Description             | The formatted text of an Event or offer, written in the rich-text editor and reduced to the Allow-List before it is stored.                                                                |                            |
 | Allow-List              | The documented set of HTML tags, attributes and URL schemes a Description may keep; everything else is removed on the server before storage (NFR-010).                                     | Whitelist                  |
 | Excerpt                 | At most 160 characters of a Description's visible text shown instead of the full text: in a list entry its beginning (UC-001 BR-004); on the Search Results Page the passage around the earliest occurrence of the Search Term, or the beginning when it does not occur there (UC-010 BR-008). | Teaser                     |
+| Last Change             | The moment an Event or a Voluntary Service Offer was last created or changed by an Administrator; set by the system on every save that changes it, never entered by hand. Entries that existed before the News Feed carry the moment of the migration that introduced it. | Timestamp |
 
 ## Contact
 
@@ -90,3 +91,5 @@ test cases.
 | Schema Version             | The version of the last Flyway migration applied to the database, shown on the Version Page.                                                                      |                        |
 | Not-Found Page             | The explanatory page with a way back that answers an unknown address (FR-027).                                                                                     | 404 page               |
 | Error Page                 | The plain page shown when the system cannot produce the requested page, without technical details (FR-028).                                                       |                        |
+| News Feed                  | The RSS 2.0 document under its own Public Address that lists the Voluntary Service Offers and Upcoming Events as Feed Items for a feed reader to subscribe to (FR-048). Labelled *RSS-Feed* in the interface. | |
+| Feed Item                  | One entry of the News Feed: one Event or Voluntary Service Offer in the state of its Last Change, with an identity that changes whenever the Last Change does, so a feed reader shows a change as a new item. | |
