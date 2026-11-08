@@ -6,7 +6,7 @@
 **Use Case Name:** Manage Events
 **Primary Actor:** Administrator
 **Goal:** An administrator keeps the published list of international events current by adding new events, correcting existing ones and removing events that no longer belong on the list.
-**Status:** Draft
+**Status:** Approved
 
 **Requirements:** [FR-004, FR-005, FR-006, FR-007, FR-008, FR-033, FR-046, NFR-006, NFR-011, NFR-021](../requirements.md)
 

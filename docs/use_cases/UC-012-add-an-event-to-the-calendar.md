@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor takes an event they want to attend into their own calendar without typing its dates, place and address in by hand, so that the event is not forgotten until it begins.
 **Trigger:** The visitor asks to take the event they are reading on its Event Page into their calendar.
-**Status:** Draft
+**Status:** Approved
 
 **Requirements:** [FR-047, NFR-042, NFR-048, C-021](../requirements.md)
 **Layers:** UI
@@ -50,14 +50,6 @@
 2. The visitor can add it to a calendar later, on this or another device, by opening the file there.
 3. Use case ends.
 
-### A4: The event is already in the visitor's calendar
-
-**Trigger:** The visitor has taken the same event into the same calendar before (step 4)
-**Flow:**
-
-1. The calendar app recognises the Calendar Entry as the event it already holds and offers to update it with the current details instead of adding it a second time (BR-004).
-2. Use case ends.
-
 ## Postconditions
 
 ### Success Postconditions
@@ -85,12 +77,12 @@ The Public Address in the Calendar Entry is built as for sharing without script 
 
 ### BR-004: The same event is always the same entry
 
-Every Calendar Entry of one event identifies itself as that event, also after the administrator has changed the event's title, period or Short Name. A visitor who takes the event into the same calendar a second time therefore updates the entry they already have instead of holding it twice.
+Every Calendar Entry of one event carries the same identity, also after the administrator has changed the event's title, period or Short Name, and the identities of two different events never coincide. This is all the system guarantees: whether a calendar app that receives the event a second time updates the entry it already holds or adds a second one is decided by that app. That the calendar apps named in NFR-048 accept the entry is checked once at acceptance, not by the system.
 
 ### BR-005: A Calendar Entry is a copy, not a subscription
 
-The Calendar Entry reflects the event at the moment it is delivered. A later change by an administrator does not reach the visitor's calendar on its own; the visitor takes the event in again to update it (BR-004). A removed event stays in the visitor's calendar until the visitor removes it.
+The Calendar Entry reflects the event at the moment it is delivered. A later change by an administrator does not reach the visitor's calendar on its own; a visitor who takes the event in again receives the current details under the same identity (BR-004). A removed event stays in the visitor's calendar until the visitor removes it.
 
 ### BR-006: Taking an event into the calendar reveals nothing and needs no script
 
-The system records nothing about a delivered Calendar Entry: no counter and no log entry of who took which event. The Calendar Entry comes from the platform itself; no request is issued to another host and no online calendar service is involved (NFR-042). The offer is a plain link that works without script (C-021), and the Event Page reads and works exactly as before when the offer is absent.
+Delivering a Calendar Entry is logged like any other page view and nothing more (NFR-031): no counter and no record of its own, and the visitor's address only at the detail level NFR-031 allows for every page view. The Calendar Entry comes from the platform itself; no request is issued to another host and no online calendar service is involved (NFR-042). The offer is a plain link that works without script (C-021), and the Event Page reads and works exactly as before when the offer is absent.
