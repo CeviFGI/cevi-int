@@ -12,6 +12,9 @@
 
   <link rel="stylesheet" href="/css/site.css">
 
+  <!-- UC-013 BR-001: names the News Feed to browsers and feed readers on every page -->
+  <link rel="alternate" type="application/rss+xml" title="Cevi International: Anlässe und Volontariate" href="/feed.xml">
+
   <!-- Pages that need more than the site stylesheet fill this in. The rich-text editor is the
        only user today: it is loaded by the two administrator form pages and by nothing else, so a
        visitor never downloads it (NFR-036). -->
@@ -97,6 +100,8 @@
             <ul>
               <li><a href="/anlaesse">Anlässe</a></li>
               <li><a href="/volontariat">Volontariat</a></li>
+              {! UC-013 BR-001: the visible link to the News Feed !}
+              <li><a href="/feed.xml" type="application/rss+xml">RSS-Feed</a></li>
             </ul>
           </div>
           <div>

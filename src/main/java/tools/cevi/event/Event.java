@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +16,9 @@ import jakarta.validation.constraints.Size;
 
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
+import tools.cevi.infra.Changes;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,6 +58,30 @@ public class Event extends PanacheEntityBase {
     @Size(max= 65535)
     public String description;
 
+    // UC-013 BR-004: set by the system, never by the administrator. Both receive the moment of
+    // creation; the Last Change moves on every save that changes a detail. Hibernate calls
+    // @PreUpdate only for an entity it found changed, so a save that changes nothing keeps both.
+    @Column(nullable = false, updatable = false)
+    public Instant created;
+    @Column(nullable = false)
+    public Instant lastChange;
+
+    @PrePersist
+    void recordCreation() {
+        created = Changes.now();
+        lastChange = created;
+    }
+
+    @PreUpdate
+    void recordChange() {
+        lastChange = Changes.now();
+    }
+
+    /** Whether the entry was changed after it was created (UC-013 BR-005). */
+    public boolean wasChanged() {
+        return lastChange.isAfter(created);
+    }
+
     /** Whether the event has a period, and with it a Calendar Entry. */
     // UC-012 BR-001: the Calendar Entry is offered only while both days are recorded
     public boolean hasPeriod() {
@@ -74,6 +102,12 @@ public class Event extends PanacheEntityBase {
     public static List<Event> upcomingEvents(int limit) {
         return find("displayDate >= :today", Sort.by("displayDate"), Parameters.with("today", LocalDate.now()))
                 .page(0, limit).list();
+    }
+
+    /** The Upcoming Events changed most recently, the latest first (UC-013 BR-002). */
+    public static List<Event> recentlyChangedUpcoming(int limit) {
+        return find("displayDate >= :today", Sort.by("lastChange", Sort.Direction.Descending).and("id", Sort.Direction.Descending),
+                Parameters.with("today", LocalDate.now())).page(0, limit).list();
     }
 
     // UC-001 BR-003: an event is reached under its short name
@@ -97,6 +131,8 @@ public class Event extends PanacheEntityBase {
                 ", firstDay=" + firstDay +
                 ", lastDay=" + lastDay +
                 ", description='" + description + '\'' +
+                ", created=" + created +
+                ", lastChange=" + lastChange +
                 '}';
     }
 }

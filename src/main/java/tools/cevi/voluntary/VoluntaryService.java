@@ -1,6 +1,7 @@
 package tools.cevi.voluntary;
 
 import java.text.Collator;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -13,10 +14,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import tools.cevi.infra.Changes;
 
 @Table(name = "voluntary_services")
 @Entity
@@ -49,6 +53,30 @@ public class VoluntaryService extends PanacheEntityBase {
     @Size(max = 65535)
     public String description;
 
+    // UC-013 BR-004: set by the system, never by the administrator. Both receive the moment of
+    // creation; the Last Change moves on every save that changes a detail. Hibernate calls
+    // @PreUpdate only for an entity it found changed, so a save that changes nothing keeps both.
+    @Column(nullable = false, updatable = false)
+    public Instant created;
+    @Column(nullable = false)
+    public Instant lastChange;
+
+    @PrePersist
+    void recordCreation() {
+        created = Changes.now();
+        lastChange = created;
+    }
+
+    @PreUpdate
+    void recordChange() {
+        lastChange = Changes.now();
+    }
+
+    /** Whether the entry was changed after it was created (UC-013 BR-005). */
+    public boolean wasChanged() {
+        return lastChange.isAfter(created);
+    }
+
     /**
      * The most recently recorded offers, for the extract on the start page (UC-008 BR-002). An offer
      * carries no date of its own, so the id is the only order the entity model offers.
@@ -72,6 +100,12 @@ public class VoluntaryService extends PanacheEntityBase {
                 .toList();
     }
 
+    /** The offers changed most recently, the latest first (UC-013 BR-002). */
+    public static List<VoluntaryService> recentlyChanged(int limit) {
+        return findAll(Sort.by("lastChange", Sort.Direction.Descending).and("id", Sort.Direction.Descending))
+                .page(0, limit).list();
+    }
+
     /** The offer stored under {@code slug}, or {@code null} (UC-004 BR-006). */
     public static VoluntaryService findBySlug(String slug) {
         return find("slug = :slug", Parameters.with("slug", slug)).firstResult();
@@ -86,6 +120,8 @@ public class VoluntaryService extends PanacheEntityBase {
                 ", organizationLink='" + organizationLink + '\'' +
                 ", location='" + location + '\'' +
                 ", description='" + description + '\'' +
+                ", created=" + created +
+                ", lastChange=" + lastChange +
                 '}';
     }
 }

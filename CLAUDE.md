@@ -104,6 +104,7 @@ The app follows the Quarkus resource/template pattern:
 | `tools.cevi.event` | `Event` entity + `EventResource` (CRUD for international events at `/anlaesse`) |
 | `tools.cevi.voluntary` | `VoluntaryService` entity + `VoluntaryResource` (CRUD at `/voluntary`) |
 | `tools.cevi.contact` | `ContactFormEntry` + `ContactResource` (contact form, sends email) |
+| `tools.cevi.feed` | `FeedResource` + `FeedItem` (RSS 2.0 News Feed at `/feed.xml`, UC-013; `created`/`lastChange` are set by `@PrePersist`/`@PreUpdate` on the entities) |
 | `tools.cevi.auth` | `User` entity (bcrypt passwords, JPA security) + `AuthResource` (login/logout at `/auth`) |
 | `tools.cevi.infra` | Cross-cutting: `DemoData` (startup seed), `Slug` (URL slug generator), `ValidationMessage`, exception mappers, `LoggingFilter` |
 

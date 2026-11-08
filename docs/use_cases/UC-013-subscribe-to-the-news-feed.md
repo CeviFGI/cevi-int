@@ -7,7 +7,7 @@
 **Primary Actor:** Besucher
 **Goal:** A visitor subscribes to the News Feed in their feed reader, so that new and changed Voluntary Service Offers and Upcoming Events reach them without visiting the site.
 **Trigger:** The visitor wants to follow the platform from their feed reader.
-**Status:** Approved
+**Status:** Implemented
 
 **Requirements:** [FR-048, FR-049, NFR-031, NFR-042, C-021](../requirements.md)
 **Layers:** UI
