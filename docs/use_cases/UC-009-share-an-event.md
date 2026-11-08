@@ -9,7 +9,7 @@
 **Trigger:** The visitor asks to share the event they are reading on its Event Page.
 **Status:** Done
 
-**Requirements:** [FR-040, NFR-041, C-021](../requirements.md)
+**Requirements:** [FR-040, C-021](../requirements.md)
 **Layers:** UI
 
 ## Preconditions

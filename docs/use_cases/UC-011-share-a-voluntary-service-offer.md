@@ -9,7 +9,7 @@
 **Trigger:** The visitor asks to share the offer they are reading on its Offer Page.
 **Status:** Done
 
-**Requirements:** [FR-045, NFR-041, C-021](../requirements.md)
+**Requirements:** [FR-045, C-021](../requirements.md)
 **Layers:** UI
 
 ## Preconditions
