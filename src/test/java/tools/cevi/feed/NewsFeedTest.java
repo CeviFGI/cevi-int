@@ -6,6 +6,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import org.jboss.logmanager.ExtLogRecord;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import tools.cevi.infra.LoggingFilter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,13 +32,22 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
@@ -60,6 +73,35 @@ class NewsFeedTest {
     @TestHTTPResource("/volontariat")
     URL offerEndpoint;
 
+    private final List<ExtLogRecord> records = new CopyOnWriteArrayList<>();
+    private final Logger requestLog = Logger.getLogger(LoggingFilter.class.getName());
+    private final Handler capture = new Handler() {
+        @Override
+        public void publish(LogRecord logRecord) {
+            records.add((ExtLogRecord) logRecord);
+        }
+
+        @Override
+        public void flush() {
+            // nothing buffered
+        }
+
+        @Override
+        public void close() {
+            // nothing to release
+        }
+    };
+
+    @BeforeEach
+    void captureRequestLog() {
+        requestLog.addHandler(capture);
+    }
+
+    @AfterEach
+    void releaseRequestLog() {
+        requestLog.removeHandler(capture);
+    }
+
     private String origin() {
         return root.getProtocol() + "://" + root.getHost() + ":" + root.getPort();
     }
@@ -73,6 +115,10 @@ class NewsFeedTest {
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(startsWith("application/rss+xml"))
                 .extract().body().asString();
+        return parse(body);
+    }
+
+    private static Document parse(String body) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -121,6 +167,22 @@ class NewsFeedTest {
                 .setParameter("moment", anHourAgo)
                 .setParameter("id", id)
                 .executeUpdate());
+    }
+
+    /** The number of rows in every table of the database, by table name. */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Long> rowsPerTable() {
+        return QuarkusTransaction.requiringNew().call(() -> {
+            var em = Event.getEntityManager();
+            List<String> tables = em.createNativeQuery(
+                    "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").getResultList();
+            Map<String, Long> rows = new TreeMap<>();
+            for (String table : tables) {
+                Number count = (Number) em.createNativeQuery("SELECT COUNT(*) FROM \"" + table + "\"").getSingleResult();
+                rows.put(table, count.longValue());
+            }
+            return rows;
+        });
     }
 
     private static Event event(long id) {
@@ -312,5 +374,104 @@ class NewsFeedTest {
                     "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Cevi International: Anlässe und Volontariate\" href=\"/feed.xml\">"));
             assertThat(page, body, containsString("<a href=\"/feed.xml\" type=\"application/rss+xml\">RSS-Feed</a>"));
         }
+    }
+
+    /**
+     * A2: with no offer and no Upcoming Event the News Feed is still a readable RSS document, only
+     * without Feed Items and without a moment of the last change. Rendered through the News Feed's own
+     * template: the shared test database always holds the Demo Seed, so it is never empty over HTTP.
+     */
+    @Test
+    void with_nothing_to_report_the_news_feed_has_no_items() throws Exception {
+        String body = FeedResource.Templates.feed(origin() + "/", origin() + FEED, List.of()).render();
+
+        Document feed = parse(body);
+
+        Element channel = (Element) feed.getDocumentElement().getElementsByTagName("channel").item(0);
+        assertThat(text(channel, "title"), equalTo("Cevi International"));
+        assertThat(feed.getElementsByTagName("item").getLength(), equalTo(0));
+        assertThat(feed.getElementsByTagName("lastBuildDate").getLength(), equalTo(0));
+    }
+
+    /** BR-002: a removed event or offer is no longer listed from the next fetch on. */
+    @Test
+    void a_removed_entry_is_no_longer_listed() throws Exception {
+        long event = EventFixture.createEvent("CLEANUP UC-013 removed event", LocalDate.now().plusDays(4));
+        long offer = VoluntaryFixture.createVoluntaryService("CLEANUP UC-013 removed offer");
+        List<Item> before = items();
+        assertThat(itemTitled(before, "CLEANUP UC-013 removed event").isPresent(), is(true));
+        assertThat(itemTitled(before, "CLEANUP UC-013 removed offer, some location").isPresent(), is(true));
+
+        QuarkusTransaction.requiringNew().run(() -> {
+            Event.deleteById((long) event);
+            VoluntaryService.deleteById((int) offer);
+        });
+
+        List<Item> after = items();
+        assertThat(itemTitled(after, "CLEANUP UC-013 removed event").isPresent(), is(false));
+        assertThat(itemTitled(after, "CLEANUP UC-013 removed offer, some location").isPresent(), is(false));
+    }
+
+    /** BR-004: an offer saved without a change keeps its Last Change, and so its Feed Item. */
+    @Test
+    @TestSecurity(user = "admin", roles = {"admin"})
+    void an_offer_saved_without_change_keeps_the_item() throws Exception {
+        long id = VoluntaryFixture.createVoluntaryService("CLEANUP UC-013 offer unchanged", "<p>Ein Jahr in Peru</p>",
+                "https://example.org");
+        recordedAnHourAgo(OFFERS, id);
+        VoluntaryService before = offer(id);
+
+        Csrf.given()
+                .formParam("id", id)
+                .formParam("slug", before.slug)
+                .formParam("organization", before.organization)
+                .formParam("organizationLink", before.organizationLink)
+                .formParam("location", before.location)
+                .formParam("description", before.description)
+                .when().post(offerEndpoint)
+                .then().statusCode(HttpStatus.SC_OK);
+
+        assertThat(offer(id).lastChange, equalTo(before.lastChange));
+        Item item = itemTitled(items(), "CLEANUP UC-013 offer unchanged, some location").orElseThrow();
+        assertThat(item.guid(), containsString("-" + before.lastChange.toEpochMilli()));
+    }
+
+    /**
+     * Success postcondition "No data is stored or changed on the platform", BR-006: fetching the News
+     * Feed adds no row to any table — no counter of subscribers, no record of who fetched it — and
+     * leaves the Last Change of the entries as it was, so their Feed Items keep their identity.
+     */
+    @Test
+    void fetching_the_news_feed_stores_and_changes_nothing() throws Exception {
+        long id = EventFixture.createEvent("CLEANUP UC-013 stores nothing", LocalDate.now().plusDays(2));
+        recordedAnHourAgo(EVENTS, id);
+        Event original = event(id);
+        Map<String, Long> rowsBefore = rowsPerTable();
+        assertThat(rowsBefore, hasKey("events"));
+
+        String first = itemTitled(items(), "CLEANUP UC-013 stores nothing").orElseThrow().guid();
+        String second = itemTitled(items(), "CLEANUP UC-013 stores nothing").orElseThrow().guid();
+
+        assertThat(rowsPerTable(), equalTo(rowsBefore));
+        Event after = event(id);
+        assertThat(after.created, equalTo(original.created));
+        assertThat(after.lastChange, equalTo(original.lastChange));
+        assertThat(second, equalTo(first));
+    }
+
+    /**
+     * BR-006, NFR-031: the fetch is logged like any other page view — at INFO with method and path —
+     * and no record at INFO or above names the client's address.
+     */
+    @Test
+    void fetching_the_news_feed_logs_no_client_address() {
+        given().when().get(FEED).then().statusCode(HttpStatus.SC_OK);
+
+        List<String> logged = records.stream()
+                .filter(r -> r.getLevel().intValue() >= Level.INFO.intValue())
+                .map(ExtLogRecord::getFormattedMessage)
+                .toList();
+        assertThat(logged.contains("Request GET /feed.xml"), is(true));
+        assertThat(logged.stream().filter(m -> m.contains("127.0.0.1") || m.contains("from IP")).toList(), empty());
     }
 }
