@@ -6,13 +6,12 @@
 erDiagram
     EVENT { }
     VOLUNTARY_SERVICE { }
-    EXCHANGE { }
     CONTACT_FORM_ENTRY { }
     USER { }
 ```
 
 The schema contains no foreign keys and no associations: every entity stands on its own.
-Events, voluntary service offers, exchange offers, contact messages and user accounts are
+Events, voluntary service offers, contact messages and user accounts are
 maintained independently of each other.
 
 ### EVENT
@@ -95,22 +94,6 @@ built from a short name of its own, unique among the offers. It does not have to
 - `description` is subject to the same [Rich Text Allow-List](#rich-text-allow-list) as
   `EVENT.description`.
 - `created` and `lastChange` follow the same rules as `EVENT.created` and `EVENT.lastChange`.
-
-### EXCHANGE
-
-An exchange opportunity with a partner organisation abroad.
-
-| Attribute        | Description                                     | Data Type | Length/Precision | Validation Rules      |
-|------------------|-------------------------------------------------|-----------|------------------|-----------------------|
-| id               | Unique identifier                               | Long      | 19               | Primary Key, Sequence |
-| organization     | Organisation offering the exchange              | String    | 255              | Not Null              |
-| organizationLink | Address of the organisation's own website       | String    | 255              | Not Null, Format: URL |
-| description      | Formatted description of the exchange offer     | String    | 65535            | Not Null              |
-
-This entity exists in the database and a display fragment for it exists in the user interface,
-but no application code currently reads or writes it — there is no use case for exchange offers.
-It is documented here because the schema is the authority; whether the feature should be
-completed or the table dropped is a decision for the product owner.
 
 ### CONTACT_FORM_ENTRY
 
